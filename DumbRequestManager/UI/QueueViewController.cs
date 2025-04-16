@@ -4,6 +4,7 @@ using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
+using UnityEngine.Serialization;
 
 namespace DumbRequestManager.UI;
 
@@ -15,16 +16,16 @@ internal class QueueViewController : BSMLAutomaticViewController
     
     [UIComponent("queueTableComponent")]
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
-    public static CustomCellListTableData? QueueTableComponent = null!;
+    public CustomCellListTableData? queueTableComponent = null!;
     
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
     }
 
-    public static void ReloadQueue()
+    public void ReloadQueue()
     {
         Plugin.Log.Info("Reloading queue view...");
-        QueueTableComponent?.TableView.ReloadDataKeepingPosition();
+        queueTableComponent?.TableView.ReloadDataKeepingPosition();
     }
 }

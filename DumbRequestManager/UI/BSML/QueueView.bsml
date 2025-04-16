@@ -3,9 +3,10 @@
     <horizontal preferred-height="70" vertical-fit="PreferredSize">
         <vertical preferred-width="70" horizontal-fit="PreferredSize"
                   bg="round-rect-panel" bg-color="white">
-            <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" id="queueTableComponent" 
+            <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" id="queueTableComponent"
                          cell-size="15" show-scrollbar="true">
-                <vertical child-expand-height="true" horizontal-fit="PreferredSize" preferred-width="70"
+                <vertical vertical-fit="PreferredSize" preferred-height="15"
+                          horizontal-fit="PreferredSize" preferred-width="70"
                           padding="2" bg="round-rect-panel" bg-color="grey"
                           child-align="MiddleLeft">
                     <horizontal>

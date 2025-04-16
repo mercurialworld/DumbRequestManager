@@ -21,14 +21,6 @@ public static class QueueManager
         }
         
         QueuedSongs.Add(new QueuedSong(song.Value));
-        
-        if (QueueViewController.QueueTableComponent != null)
-        {
-            if (QueueViewController.QueueTableComponent.gameObject.activeInHierarchy)
-            {
-                QueueViewController.ReloadQueue();
-            }
-        }
 
 #if DEBUG
         Plugin.Log.Info($"Added map {key} ({song?.songAuthorName} - {song?.songName} [{song?.levelAuthorName}]), queue has {QueuedSongs.Count} map(s)");
