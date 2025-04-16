@@ -29,6 +29,8 @@ internal class QueueFlowCoordinator : FlowCoordinator
         {
             ProvideInitialViewControllers(_queueViewController);
         }
+        
+        QueueViewController.QueueTableComponent?.TableView.ReloadDataKeepingPosition();
     }
 
     // ReSharper disable once ParameterHidesMember

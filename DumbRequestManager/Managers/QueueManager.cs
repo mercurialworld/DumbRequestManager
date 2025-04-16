@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using DumbRequestManager.Classes;
+using DumbRequestManager.UI;
 using JetBrains.Annotations;
 using SongDetailsCache.Structs;
 
@@ -7,7 +9,7 @@ namespace DumbRequestManager.Managers;
 [UsedImplicitly]
 public static class QueueManager
 {
-    public static readonly List<Song> QueuedSongs = [];
+    public static readonly List<QueuedSong> QueuedSongs = [];
 
     public static void AddKey(string key)
     {
@@ -18,8 +20,16 @@ public static class QueueManager
             return;
         }
         
-        QueuedSongs.Add(song.Value);
+        QueuedSongs.Add(new QueuedSong(song.Value));
         
+        if (QueueViewController.QueueTableComponent != null)
+        {
+            if (QueueViewController.QueueTableComponent.gameObject.activeInHierarchy)
+            {
+                QueueViewController.ReloadQueue();
+            }
+        }
+
 #if DEBUG
         Plugin.Log.Info($"Added map {key} ({song?.songAuthorName} - {song?.songName} [{song?.levelAuthorName}]), queue has {QueuedSongs.Count} map(s)");
 #endif

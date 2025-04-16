@@ -1,13 +1,28 @@
 ﻿<vertical xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
           xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
-    <horizontal>
-        <vertical>
-            <custom-list clickable-cells="true" list-direction="Vertical" show-scrollbar="true">
-                
+    <horizontal preferred-height="70" vertical-fit="PreferredSize">
+        <vertical preferred-width="70" horizontal-fit="PreferredSize"
+                  bg="round-rect-panel" bg-color="white">
+            <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" id="queueTableComponent" 
+                         cell-size="15" show-scrollbar="true">
+                <vertical child-expand-height="true" horizontal-fit="PreferredSize" preferred-width="70"
+                          padding="2" bg="round-rect-panel" bg-color="grey"
+                          child-align="MiddleLeft">
+                    <horizontal>
+                        <text data="title" font-size="4" bold="true"/>
+                    </horizontal>
+                    <horizontal>
+                        <text data="artist" font-size="3" color="#FFFFFFAA"/>
+                    </horizontal>
+                    <horizontal>
+                        <text data="mapper" font-size="3" color="#DDFFCCCC"/>
+                    </horizontal>
+                </vertical>
             </custom-list>
         </vertical>
         
-        <vertical>
+        <vertical preferred-width="50" horizontal-fit="PreferredSize"
+                  bg="round-rect-panel" bg-color="white">
             
         </vertical>
     </horizontal>
