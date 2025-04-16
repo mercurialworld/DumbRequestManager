@@ -10,5 +10,9 @@ internal class MenuInstaller : Installer
     public override void InstallBindings()
     {
         Container.BindInterfacesTo<SettingsMenuManager>().AsSingle();
+        
+        Container.Bind<QueueViewController>().FromNewComponentAsViewController().AsSingle();
+        Container.Bind<QueueFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
+        Container.BindInterfacesTo<ChatRequestButton>().AsSingle();
     }
 }

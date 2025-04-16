@@ -1,0 +1,14 @@
+﻿<vertical xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+          xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+    <horizontal>
+        <vertical>
+            <custom-list clickable-cells="true" list-direction="Vertical" show-scrollbar="true">
+                
+            </custom-list>
+        </vertical>
+        
+        <vertical>
+            
+        </vertical>
+    </horizontal>
+</vertical>

@@ -1,0 +1,5 @@
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+    <button-with-icon icon="#ProModeIcon" on-click="openQueue"
+                      anchor-pos-x="150" scale="0.5 0.5 1.0"/>
+</bg>
