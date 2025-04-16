@@ -28,6 +28,10 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.5.0-beta.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="LunaBSMod.Tasks" Version="1.1.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -42,6 +46,7 @@
         <Reference Include="BeatSaber.ViewSystem">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatSaber.ViewSystem.dll</HintPath>
             <Private>false</Private>
+            <Publicize>true</Publicize>
         </Reference>
         <Reference Include="BeatSaverDownloader">
             <HintPath>$(BeatSaberDir)\Plugins\BeatSaverDownloader.dll</HintPath>
@@ -62,6 +67,7 @@
         <Reference Include="HMUI">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMUI.dll</HintPath>
             <Private>false</Private>
+            <Publicize>true</Publicize>
         </Reference>
         <Reference Include="IPA.Loader">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\IPA.Loader.dll</HintPath>
@@ -73,6 +79,10 @@
         </Reference>
         <Reference Include="mscorlib"/>
         <Reference Include="netstandard"/>
+        <Reference Include="Networking">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Networking.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
         <Reference Include="SiraUtil">
             <HintPath>$(BeatSaberDir)\Plugins\SiraUtil.dll</HintPath>
             <Private>false</Private>
@@ -87,6 +97,10 @@
         </Reference>
         <Reference Include="System"/>
         <Reference Include="System.Core"/>
+        <Reference Include="System.Net.Http">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\System.Net.Http.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
         <Reference Include="Unity.TextMeshPro">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.TextMeshPro.dll</HintPath>
             <Private>false</Private>

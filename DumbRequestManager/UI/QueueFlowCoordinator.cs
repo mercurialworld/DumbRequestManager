@@ -16,8 +16,8 @@ internal class QueueFlowCoordinator : FlowCoordinator
         _soloFreePlayFlowCoordinator = soloFreePlayFlowCoordinator;
         _queueViewController = queueViewController;
     }
-    
-    protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+
+    public override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         if (firstActivation)
         {
@@ -34,7 +34,7 @@ internal class QueueFlowCoordinator : FlowCoordinator
     }
 
     // ReSharper disable once ParameterHidesMember
-    protected override void BackButtonWasPressed(ViewController topViewController)
+    public override void BackButtonWasPressed(ViewController topViewController)
     {
         _soloFreePlayFlowCoordinator.DismissFlowCoordinator(this);
     }

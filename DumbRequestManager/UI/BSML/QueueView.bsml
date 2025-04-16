@@ -4,27 +4,40 @@
         <vertical preferred-width="70" horizontal-fit="PreferredSize"
                   bg="round-rect-panel" bg-color="white">
             <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" id="queueTableComponent"
-                         cell-size="15" show-scrollbar="true">
+                         cell-size="15" show-scrollbar="true" select-cell="selectCell">
                 <vertical vertical-fit="PreferredSize" preferred-height="15"
                           horizontal-fit="PreferredSize" preferred-width="70"
                           padding="2" bg="round-rect-panel" bg-color="grey"
                           child-align="MiddleLeft">
-                    <horizontal>
-                        <text data="title" font-size="4" bold="true"/>
-                    </horizontal>
-                    <horizontal>
-                        <text data="artist" font-size="3" color="#FFFFFFAA"/>
-                    </horizontal>
-                    <horizontal>
-                        <text data="mapper" font-size="3" color="#DDFFCCCC"/>
-                    </horizontal>
+                    <!--<vertical bg="round-rect-panel" bg-color="black">
+                        <image pref-width="15" preserve-aspect="true" id="cover"/> 
+                    </vertical>-->
+                    <!--<vertical>-->
+                        <horizontal>
+                            <text data="title" font-size="4" bold="true"/>
+                        </horizontal>
+                        <horizontal>
+                            <text data="artist" font-size="3" color="#FFFFFFAA"/>
+                        </horizontal>
+                        <horizontal>
+                            <text data="mapper" font-size="3" color="#DDFFCCCC"/>
+                        </horizontal>
+                    <!--</vertical>-->
                 </vertical>
             </custom-list>
         </vertical>
         
         <vertical preferred-width="50" horizontal-fit="PreferredSize"
                   bg="round-rect-panel" bg-color="white">
-            
+            <vertical preferred-height="50" vertical-fit="PreferredSize">
+                <text text="map details go here eventually :clueless:" word-wrapping="true"/>
+            </vertical>
+            <vertical preferred-height="20" vertical-fit="PreferredSize" child-expand-width="true">
+                <horizontal spacing="2">
+                    <primary-button text="Play"/>
+                    <button text="Skip"/>
+                </horizontal>
+            </vertical>
         </vertical>
     </horizontal>
 </vertical>
