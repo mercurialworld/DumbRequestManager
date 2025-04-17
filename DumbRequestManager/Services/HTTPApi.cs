@@ -2,14 +2,14 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
-using System.Reflection;
-using System.Threading;
+//using System.Reflection;
 using System.Threading.Tasks;
-using BeatSaverDownloader.Misc;
-using BeatSaverSharp;
-using BeatSaverSharp.Models;
+//using BeatSaverSharp;
+using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
+using SongDetailsCache.Structs;
 using Zenject;
 using PluginConfig = DumbRequestManager.Configuration.PluginConfig;
 
@@ -20,7 +20,7 @@ internal class HttpApi : IInitializable, IDisposable
 {
     private static PluginConfig Config => PluginConfig.Instance;
     private static HttpListener? _httpListener;
-    private static readonly BeatSaver BeatSaverInstance = new(nameof(DumbRequestManager), Assembly.GetExecutingAssembly().GetName().Version);
+    //private static readonly BeatSaver BeatSaverInstance = new(nameof(DumbRequestManager), Assembly.GetExecutingAssembly().GetName().Version);
 
     private static bool _keepListening = true;
     
@@ -68,22 +68,43 @@ internal class HttpApi : IInitializable, IDisposable
         Plugin.Log.Info($"path: {string.Join(", ", path)}");
 #endif
 
+        byte[] failedData = "{\"message\": \"Not implemented\"}"u8.ToArray();
+        byte[] data = failedData;
+        int statusCode = 501;
+        
         switch (path[1][..^1])
         {
-            case "addKey":
-                AddKey(path[2]);
+            case "query":
+                byte[]? queryResponse = Query(path[2]);
+                if (queryResponse != null)
+                {
+                    statusCode = 200;
+                    data = queryResponse;
+                }
+                else
+                {
+                    statusCode = 400;
+                    data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                }
                 break;
             
-            case "downloadKey":
-                Beatmap? beatmap = await BeatSaverInstance.Beatmap(path[2]);
-                await SongDownloader.Instance.DownloadSong(beatmap, CancellationToken.None);
-                SongCore.Loader.Instance.RefreshSongs();
+            case "addKey":
+                byte[]? keyResponse = AddKey(path[2]);
+                if (keyResponse != null)
+                {
+                    statusCode = 200;
+                    data = keyResponse;
+                }
+                else
+                {
+                    statusCode = 400;
+                    data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                }
                 break;
         }
         
-        byte[] data = "hello!"u8.ToArray();
-        
-        context.Response.StatusCode = 200;
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = statusCode;
         context.Response.KeepAlive = false;
         context.Response.ContentLength64 = data.Length;
         
@@ -94,10 +115,28 @@ internal class HttpApi : IInitializable, IDisposable
         context.Response.Close();
     }
 
-    private static void AddKey(string key)
+    private static byte[]? AddKey(string key)
     {
         Plugin.Log.Info($"Adding key {key}...");
-        QueueManager.AddKey(key);
+        QueuedSong? queuedSong = QueueManager.AddKey(key);
+        
+        return queuedSong == null
+            ? null
+            : System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
+    }
+
+    private static byte[]? Query(string key)
+    {
+        Plugin.Log.Info($"Querying key {key}...");
+        
+        Song? song = SongDetailsManager.GetByKey(key);
+        if (song != null)
+        {
+            return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new QueuedSong(song.Value)));
+        }
+
+        Plugin.Log.Info("query came back null uh oh!");
+        return null;
     }
 
     public void Dispose()

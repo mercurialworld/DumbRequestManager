@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Globalization;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using DumbRequestManager.Utils;
+using Newtonsoft.Json;
 using SongDetailsCache.Structs;
 using UnityEngine;
 
@@ -21,22 +23,44 @@ public class CoverImageContainer
     }
 }
 
+[JsonObject(MemberSerialization.OptIn)]
 public readonly struct QueuedSong(Song song)
 {
-    /* oh screw this
-    private static string TimeFormatter(int x) => $"{Mathf.FloorToInt(x / 60f)}:{(x % 60):00}";
-    public string TimeFormatter(string x) => TimeFormatter(int.Parse(x));
-    */
-
+    public Song OriginalSong => song;
+    
     // ReSharper disable MemberCanBePrivate.Global
-    [UIValue("bsrKey")] public string BsrKey => song.key;
-    [UIValue("hash")] public string Hash => song.hash;
-    [UIValue("title")] public string Title => song.songName;
-    [UIValue("artist")] public string Artist => song.songAuthorName;
-    [UIValue("mapper")] public string Mapper => song.levelAuthorName;
-    [UIValue("duration")] public uint Duration => song.songDurationSeconds;
-    [UIValue("durationFormatted")] public string DurationFormatted => $"{Mathf.FloorToInt(Duration / 60f)}:{(Duration % 60):00}";
-    [UIValue("coverURL")] public string Cover => song.coverURL;
+    [JsonProperty] [UIValue("bsrKey")]
+    public string BsrKey => song.key;
+    
+    [JsonProperty] [UIValue("hash")]
+    public string Hash => song.hash;
+    
+    [JsonProperty] [UIValue("title")]
+    public string Title => song.songName;
+    
+    [JsonProperty] [UIValue("artist")]
+    public string Artist => song.songAuthorName;
+    
+    [JsonProperty] [UIValue("mapper")]
+    public string Mapper => song.levelAuthorName;
+    
+    [JsonProperty] [UIValue("duration")]
+    public uint Duration => song.songDurationSeconds;
+    
+    [JsonProperty]
+    public uint[] Votes => [song.upvotes, song.downvotes];
+
+    [JsonProperty]
+    public float Rating => song.rating;
+
+    [JsonProperty]
+    public uint UploadTime => song.uploadTimeUnix;
+    
+    [UIValue("durationFormatted")]
+    public string DurationFormatted => $"{Mathf.FloorToInt(Duration / 60f)}:{(Duration % 60):00}";
+    
+    [JsonProperty] [UIValue("coverURL")]
+    public string Cover => song.coverURL;
     
     private readonly CoverImageContainer _coverImageContainer = new(song);
     [UIValue("coverImage")]

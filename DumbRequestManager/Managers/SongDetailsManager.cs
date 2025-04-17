@@ -36,9 +36,19 @@ public class SongDetailsManager : IInitializable, IDisposable
             return null;
         }
 
-        if (CacheInstance.songs.FindByMapId(key, out Song song))
+        try
         {
-            return song;
+            if (CacheInstance.songs.FindByMapId(key, out Song song))
+            {
+                return song;
+            }
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.Info("Could not find key in SongDetailsCache");
+#if DEBUG
+            Plugin.Log.Error(e);
+#endif
         }
 
         // do beat saver stuff

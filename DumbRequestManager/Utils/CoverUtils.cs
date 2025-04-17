@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace DumbRequestManager.Utils;
 
-internal static class RemoteImage
+internal abstract class RemoteImage
 {
     private static readonly HttpClient ImageHttpClient = new();
 
@@ -37,24 +38,46 @@ internal static class RemoteImage
     }
 }
 
-internal class Cover
+internal static class Cover
 {
     private static readonly Dictionary<string, Sprite> CoverCache = new();
     
     public static async Task<Sprite> LoadCover(Song song)
     {
+#if DEBUG
+        Plugin.Log.Info($"Loading cover from {song.coverURL}");
+        Plugin.Log.Info($"{CoverCache.Count} covers have been cached");
+#endif
         if (CoverCache.TryGetValue(song.key, out Sprite cached))
         {
+#if DEBUG
+            Plugin.Log.Info("Cover was cached, using it");
+#endif
             return cached;
         }
+        
+#if DEBUG
+        Plugin.Log.Info("Cover not cached, fetching...");
+#endif
 
         Sprite? cover = await RemoteImage.Fetch(song.coverURL);
         if (cover == null)
         {
+#if DEBUG
+            Plugin.Log.Info("Cover was null, using SongCore's default cover");
+#endif
             return SongCore.Loader.defaultCoverImage;
         }
-        
-        CoverCache.Add(song.key, cover);
+
+        try
+        {
+            Plugin.Log.Info(CoverCache.TryAdd(song.key, cover) ? "Cover was cached" : "Cover was not cached???");
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.Error(e);
+        }
+
         return cover;
     }
 }
