@@ -6,7 +6,8 @@
             <vertical preferred-height="66" vertical-fit="PreferredSize" 
                       preferred-width="66" horizontal-fit="PreferredSize"
                       child-expand-width="true" child-control-width="true" child-align="MiddleLeft">
-                <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" id="queueTableComponent" align-to-center="false"
+                <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" align-to-center="false"
+                             id="queueTableComponent" name="QueueTableComponent"
                              show-scrollbar="true" select-cell="selectCell">
                     <background tags="neither" background="panel-top" bg-color="#000000C0"
                                 anchor-min-x="0.01" anchor-max-x="0.99"
@@ -63,7 +64,7 @@
             </vertical>
             <vertical preferred-height="10" vertical-fit="PreferredSize" child-expand-width="true">
                 <horizontal spacing="2" child-expand-width="true" child-control-width="true">
-                    <primary-button text="Play"
+                    <primary-button text="Play" on-click="playButtonPressed"
                                     horizontal-fit="PreferredSize" preferred-width="20"/>
                     <button text="Skip"
                             horizontal-fit="PreferredSize" preferred-width="20"/>

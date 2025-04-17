@@ -60,6 +60,10 @@
             <HintPath>$(BeatSaberDir)\Plugins\BSML.dll</HintPath>
             <Private>false</Private>
         </Reference>
+        <Reference Include="DataModels">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\DataModels.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
         <Reference Include="Hive.Versioning">
             <HintPath>$(BeatSaberDir)\Libs\Hive.Versioning.dll</HintPath>
             <Private>false</Private>
@@ -76,11 +80,16 @@
         <Reference Include="Main">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Main.dll</HintPath>
             <Private>false</Private>
+            <Publicize>true</Publicize>
         </Reference>
         <Reference Include="mscorlib"/>
         <Reference Include="netstandard"/>
         <Reference Include="Networking">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Networking.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="SegmentedControl">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\SegmentedControl.dll</HintPath>
             <Private>false</Private>
         </Reference>
         <Reference Include="SiraUtil">

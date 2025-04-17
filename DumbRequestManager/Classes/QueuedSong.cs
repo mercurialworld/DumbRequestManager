@@ -29,6 +29,8 @@ public readonly struct QueuedSong(Song song)
     */
 
     // ReSharper disable MemberCanBePrivate.Global
+    [UIValue("bsrKey")] public string BsrKey => song.key;
+    [UIValue("hash")] public string Hash => song.hash;
     [UIValue("title")] public string Title => song.songName;
     [UIValue("artist")] public string Artist => song.songAuthorName;
     [UIValue("mapper")] public string Mapper => song.levelAuthorName;

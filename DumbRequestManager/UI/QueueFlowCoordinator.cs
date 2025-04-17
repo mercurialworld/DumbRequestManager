@@ -32,7 +32,7 @@ internal class QueueFlowCoordinator : FlowCoordinator
     }
 
     // ReSharper disable once ParameterHidesMember
-    public override void BackButtonWasPressed(ViewController topViewController)
+    public override void BackButtonWasPressed(ViewController _)
     {
         _soloFreePlayFlowCoordinator.DismissFlowCoordinator(this);
     }

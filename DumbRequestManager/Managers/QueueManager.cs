@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using DumbRequestManager.Classes;
-using DumbRequestManager.UI;
 using JetBrains.Annotations;
 using SongDetailsCache.Structs;
 
@@ -24,7 +23,7 @@ public static class QueueManager
         QueuedSongs.Add(queuedSong);
 
 #if DEBUG
-        Plugin.Log.Info($"Added map {key} ({song?.songAuthorName} - {song?.songName} [{song?.levelAuthorName}]), queue has {QueuedSongs.Count} map(s)");
+        Plugin.Log.Info($"Added map {key} ({song.Value.songAuthorName} - {song.Value.songName} [{song.Value.levelAuthorName}]), queue has {QueuedSongs.Count} map(s)");
 #endif
     }
 }
