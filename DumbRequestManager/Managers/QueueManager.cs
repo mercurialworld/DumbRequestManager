@@ -19,8 +19,9 @@ public static class QueueManager
             Plugin.Log.Info("uh oh cheerio it's null");
             return;
         }
-        
-        QueuedSongs.Add(new QueuedSong(song.Value));
+
+        QueuedSong queuedSong = new(song.Value);
+        QueuedSongs.Add(queuedSong);
 
 #if DEBUG
         Plugin.Log.Info($"Added map {key} ({song?.songAuthorName} - {song?.songName} [{song?.levelAuthorName}]), queue has {QueuedSongs.Count} map(s)");

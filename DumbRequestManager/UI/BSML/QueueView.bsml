@@ -1,30 +1,59 @@
 ﻿<vertical xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
           xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
     <horizontal preferred-height="70" vertical-fit="PreferredSize">
-        <vertical preferred-width="70" horizontal-fit="PreferredSize"
+        <vertical preferred-width="70" horizontal-fit="PreferredSize" child-expand-width="true"
                   bg="round-rect-panel" bg-color="white">
-            <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" id="queueTableComponent"
-                         cell-size="15" show-scrollbar="true" select-cell="selectCell">
-                <vertical vertical-fit="PreferredSize" preferred-height="15"
-                          horizontal-fit="PreferredSize" preferred-width="70"
-                          padding="2" bg="round-rect-panel" bg-color="grey"
-                          child-align="MiddleLeft">
-                    <!--<vertical bg="round-rect-panel" bg-color="black">
-                        <image pref-width="15" preserve-aspect="true" id="cover"/> 
-                    </vertical>-->
-                    <!--<vertical>-->
-                        <horizontal>
-                            <text data="title" font-size="4" bold="true"/>
+            <vertical preferred-height="66" vertical-fit="PreferredSize" 
+                      preferred-width="66" horizontal-fit="PreferredSize"
+                      child-expand-width="true" child-control-width="true" child-align="MiddleLeft">
+                <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" id="queueTableComponent" align-to-center="false"
+                             show-scrollbar="true" select-cell="selectCell">
+                    <background tags="neither" background="panel-top" bg-color="#000000C0"
+                                anchor-min-x="0.01" anchor-max-x="0.99"
+                                anchor-min-y="0.025"/>
+                    <background tags="selected" background="title-gradient" bg-color="#FFFFFFFF" bg-color0="#CBADFF60" bg-color1="#CBADFF50"
+                                anchor-min-x="0.01" anchor-max-x="0.99"
+                                anchor-min-y="0.025"/>
+                    <background tags="hovered" background="title-gradient" bg-color="#FFFFFF40"
+                                anchor-min-x="0.01" anchor-max-x="0.99"
+                                anchor-min-y="0.025"/>
+                    <vertical vertical-fit="PreferredSize" preferred-height="11"
+                              horizontal-fit="PreferredSize" preferred-width="66"
+                              child-expand-width="true" child-control-width="true"
+                              padding="2"
+                              child-align="MiddleLeft" anchor-min-x="0.025">
+                        <horizontal child-align="UpperLeft" child-expand-width="true">
+                            <text data="title"
+                                  font-size="4" align="Left"/>
                         </horizontal>
-                        <horizontal>
-                            <text data="artist" font-size="3" color="#FFFFFFAA"/>
+                        <horizontal child-expand-width="false" child-align="LowerLeft">
+                            <text data="artist"
+                                  font-size="3" align="Left"
+                                  color="#FFFFFFAA"/>
+                            <horizontal child-expand-width="false" child-align="LowerLeft"
+                                        pad-left="1" spacing="0.5" anchor-max-y="0.92">
+                                <text text="mapped by"
+                                      font-size="2" align="Left"
+                                      color="#CBADFF80"/>
+                                <text data="mapper"
+                                      font-size="2" align="Left"
+                                      color="#CBADFFFF"/>
+                            </horizontal>
                         </horizontal>
-                        <horizontal>
-                            <text data="mapper" font-size="3" color="#DDFFCCCC"/>
+                    </vertical>
+                    
+                    <vertical vertical-fit="PreferredSize" preferred-height="11"
+                              horizontal-fit="MinSize" child-expand-width="false"
+                              padding="2" anchor-min-x="0.92"
+                              child-align="MiddleRight">
+                        <horizontal horizontal-fit="MinSize" child-expand-width="false"
+                                    child-align="MiddleRight">
+                            <text data="durationFormatted"
+                                  font-size="4" align="Right"/>
                         </horizontal>
-                    <!--</vertical>-->
-                </vertical>
-            </custom-list>
+                    </vertical>
+                </custom-list>
+            </vertical>
         </vertical>
         
         <vertical preferred-width="50" horizontal-fit="PreferredSize"
@@ -32,10 +61,12 @@
             <vertical preferred-height="50" vertical-fit="PreferredSize">
                 <text text="map details go here eventually :clueless:" word-wrapping="true"/>
             </vertical>
-            <vertical preferred-height="20" vertical-fit="PreferredSize" child-expand-width="true">
-                <horizontal spacing="2">
-                    <primary-button text="Play"/>
-                    <button text="Skip"/>
+            <vertical preferred-height="10" vertical-fit="PreferredSize" child-expand-width="true">
+                <horizontal spacing="2" child-expand-width="true" child-control-width="true">
+                    <primary-button text="Play"
+                                    horizontal-fit="PreferredSize" preferred-width="20"/>
+                    <button text="Skip"
+                            horizontal-fit="PreferredSize" preferred-width="20"/>
                 </horizontal>
             </vertical>
         </vertical>

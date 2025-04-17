@@ -3,7 +3,6 @@ using System.Linq;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
-using BeatSaverDownloader.Misc;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
 using HMUI;
@@ -15,11 +14,13 @@ namespace DumbRequestManager.UI;
 [HotReload(RelativePathToLayout = "BSML.QueueView.bsml")]
 internal class QueueViewController : BSMLAutomaticViewController
 {
-    [UIValue("queue")] internal static List<QueuedSong> Queue => QueueManager.QueuedSongs;
+    [UIValue("queue")] internal List<QueuedSong> Queue => QueueManager.QueuedSongs;
 
     [UIComponent("queueTableComponent")]
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    #pragma warning disable CS0649
     public CustomCellListTableData? queueTableComponent;
+    #pragma warning restore CS0649
     
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
@@ -31,22 +32,22 @@ internal class QueueViewController : BSMLAutomaticViewController
         }
     }
 
-    public void ReloadQueue()
+    [UIAction("#post-parse")]
+    public void PostParse()
     {
-        Plugin.Log.Info("Reloading queue view...");
-
-        queueTableComponent?.TableView.ClearHighlights();
-        queueTableComponent?.TableView.ClearSelection();
-        for (int i = 0; i < queueTableComponent?.TableView.numberOfCells; i++)
-        {
-            TableCell? cell = queueTableComponent.TableView.GetCellAtIndex(i);
-            queueTableComponent?.TableView.DequeueReusableCellForIdentifier(cell?.reuseIdentifier);
-        }
-        
-        queueTableComponent?.TableView.RefreshTable();
+        queueTableComponent?.TableView.ReloadData();
     }
 
     [UIAction("selectCell")]
+    public void SelectCell(TableView tableView, QueuedSong queuedSong)
+    {
+        int index = tableView._selectedCellIdxs.First();
+        Plugin.Log.Info($"Selected cell: {index}");
+        
+        Plugin.Log.Info($"Cells: {tableView._contentTransform.childCount}");
+    }
+
+    /*[UIAction("selectCell")]
     public void SelectCell(TableView tableView, QueuedSong queuedSong)
     {
         int index = tableView._selectedCellIdxs.First();
@@ -86,5 +87,5 @@ internal class QueueViewController : BSMLAutomaticViewController
                 imageView.__Refresh();
             }
         }
-    }
+    }*/
 }
