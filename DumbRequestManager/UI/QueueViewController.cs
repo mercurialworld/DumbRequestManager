@@ -165,6 +165,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         Queue.RemoveAt(index);
         _queueTableComponent.TableView.ClearSelection();
         _queueTableComponent.TableView.ReloadData();
+        
+        ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
     }
 
     [UIAction("playButtonPressed")]
@@ -197,6 +199,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         Queue.RemoveAt(index);
         _queueTableComponent.TableView.ClearSelection();
         _queueTableComponent.TableView.ReloadData();
+        
+        ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
         
         Beatmap? beatmap = await BeatSaverInstance.Beatmap(queuedSong.BsrKey);
         if (beatmap != null)

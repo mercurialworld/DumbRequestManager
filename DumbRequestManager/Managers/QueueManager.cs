@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 using DumbRequestManager.Classes;
+using DumbRequestManager.UI;
 using JetBrains.Annotations;
 using SongDetailsCache.Structs;
+using UnityEngine;
+using UnityEngine.UI;
+using Object = System.Object;
 
 namespace DumbRequestManager.Managers;
 
@@ -21,6 +25,8 @@ public static class QueueManager
 
         QueuedSong queuedSong = new(song.Value);
         QueuedSongs.Add(queuedSong);
+        
+        ChatRequestButton.Instance.UseAttentiveButton(true);
 
 #if DEBUG
         Plugin.Log.Info($"Added map {key} ({song.Value.songAuthorName} - {song.Value.songName} [{song.Value.levelAuthorName}]), queue has {QueuedSongs.Count} map(s)");
