@@ -15,7 +15,10 @@ using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
 using HMUI;
 using JetBrains.Annotations;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 using Zenject;
 
 namespace DumbRequestManager.UI;
@@ -28,6 +31,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     private LevelCollectionViewController _levelCollectionViewController = null!;
     private SelectLevelCategoryViewController _selectLevelCategoryViewController = null!;
     
+    private LoadingControl loadingSpinner = null!;
+    
     private static readonly BeatSaver BeatSaverInstance = new(nameof(DumbRequestManager), Assembly.GetExecutingAssembly().GetName().Version);
     
     [UIValue("queue")]
@@ -36,6 +41,12 @@ internal class QueueViewController : BSMLAutomaticViewController
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     [UIComponent("queueTableComponent")]
     public static CustomCellListTableData QueueTableComponent = null!;
+    
+    [UIComponent("waitModal")]
+    public ModalView waitModal = null!;
+    
+    [UIComponent("loadingSpinnerContainer")]
+    public VerticalLayoutGroup loadingSpinnerContainer = null!;
 
     [Inject]
     [UsedImplicitly]
@@ -96,6 +107,8 @@ internal class QueueViewController : BSMLAutomaticViewController
 
     public void OkGoBack(QueuedSong queuedSong)
     {
+        waitModal.Hide(false);
+        
         Plugin.Log.Info("Going back to the map list screen");
         GameObject.Find("QueueFlowCoordinator").GetComponent<QueueFlowCoordinator>().BackButtonWasPressed(this);
         try
@@ -113,12 +126,24 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UIAction("playButtonPressed")]
     public async Task PlayButtonPressed()
     {
+        if (loadingSpinner == null)
+        {
+            loadingSpinner = Instantiate(Resources.FindObjectsOfTypeAll<LoadingControl>().First(), loadingSpinnerContainer.transform);
+            loadingSpinner.ShowLoading("Downloading..."); // figure out text later
+            
+#if DEBUG
+            waitModal.Show(false);
+#endif
+        }
+        
         int index = QueueTableComponent.TableView._selectedCellIdxs.First();
         if (index == -1)
         {
             Plugin.Log.Info("Nothing selected");
             return;
         }
+        
+        waitModal.Show(false);
         
         Plugin.Log.Info($"Selected cell: {index}");
         QueuedSong queuedSong = Queue[index];

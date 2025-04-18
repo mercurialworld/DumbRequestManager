@@ -72,4 +72,14 @@
             </vertical>
         </vertical>
     </horizontal>
+    
+    <modal id="waitModal" move-to-center="true" clickerino-offerino-closerino="false">
+        <vertical id="loadingSpinnerContainer"
+                  background="round-rect-panel" bg-color="#888888FF"
+                  child-align="MiddleCenter"
+                  vertical-fit="PreferredSize" preferred-height="16"
+                  horizontal-fit="PreferredSize" preferred-width="16"
+                  local-scale="2 2 2">
+        </vertical>
+    </modal>
 </vertical>
