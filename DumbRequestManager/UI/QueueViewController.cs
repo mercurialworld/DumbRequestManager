@@ -123,6 +123,23 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.Log.Info("Should've selected level");
     }
 
+    [UIAction("skipButtonPressed")]
+    public void SkipButtonPressed()
+    {
+        int index = QueueTableComponent.TableView._selectedCellIdxs.First();
+        if (index == -1)
+        {
+            Plugin.Log.Info("Nothing selected");
+            return;
+        }
+        
+        Plugin.Log.Info($"Selected cell: {index}");
+        
+        Queue.RemoveAt(index);
+        QueueTableComponent.TableView.ClearSelection();
+        QueueTableComponent.TableView.ReloadData();
+    }
+
     [UIAction("playButtonPressed")]
     public async Task PlayButtonPressed()
     {

@@ -66,7 +66,7 @@
                 <horizontal spacing="2" child-expand-width="true" child-control-width="true">
                     <primary-button text="Play" on-click="playButtonPressed"
                                     horizontal-fit="PreferredSize" preferred-width="20"/>
-                    <button text="Skip"
+                    <button text="Skip" on-click="skipButtonPressed"
                             horizontal-fit="PreferredSize" preferred-width="20"/>
                 </horizontal>
             </vertical>
