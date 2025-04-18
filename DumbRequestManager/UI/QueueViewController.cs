@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
@@ -14,10 +15,9 @@ using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
 using HMUI;
+using IPA.Utilities.Async;
 using JetBrains.Annotations;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Zenject;
 
@@ -31,7 +31,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     private LevelCollectionViewController _levelCollectionViewController = null!;
     private SelectLevelCategoryViewController _selectLevelCategoryViewController = null!;
     
-    private LoadingControl loadingSpinner = null!;
+    private LoadingControl _loadingSpinner = null!;
     
     private static readonly BeatSaver BeatSaverInstance = new(nameof(DumbRequestManager), Assembly.GetExecutingAssembly().GetName().Version);
     
@@ -40,13 +40,16 @@ internal class QueueViewController : BSMLAutomaticViewController
     
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     [UIComponent("queueTableComponent")]
-    public static CustomCellListTableData QueueTableComponent = null!;
+    private static CustomCellListTableData _queueTableComponent = null!;
     
     [UIComponent("waitModal")]
     public ModalView waitModal = null!;
     
     [UIComponent("loadingSpinnerContainer")]
     public VerticalLayoutGroup loadingSpinnerContainer = null!;
+    
+    [UIComponent("detailsCoverImage")]
+    public ImageView detailsCoverImage = null!;
 
     [Inject]
     [UsedImplicitly]
@@ -61,18 +64,18 @@ internal class QueueViewController : BSMLAutomaticViewController
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
-        if (QueueTableComponent == null)
+        if (_queueTableComponent == null)
         {
             // i... don't know. this works.
-            QueueTableComponent = GameObject.Find("QueueTableComponent").GetComponent<CustomCellListTableData>();
+            _queueTableComponent = GameObject.Find("QueueTableComponent").GetComponent<CustomCellListTableData>();
         }
 
         if (firstActivation)
         {
-            QueueTableComponent.TableView.selectionType = TableViewSelectionType.Single;
+            _queueTableComponent.TableView.selectionType = TableViewSelectionType.Single;
         }
 
-        QueueTableComponent.TableView.ReloadDataKeepingPosition();
+        _queueTableComponent.TableView.ReloadDataKeepingPosition();
     }
 
     [UIAction("selectCell")]
@@ -83,6 +86,17 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.Log.Info($"Selected cell: {index}");
         Plugin.Log.Info($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
         Plugin.Log.Info($"Cells: {tableView._contentTransform.childCount}");
+
+        UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
+        {
+            if (queuedSong.CoverImage == null)
+            {
+                detailsCoverImage.sprite = SongCore.Loader.defaultCoverImage;
+                return;
+            }
+            
+            detailsCoverImage.sprite = await Utilities.LoadSpriteAsync(queuedSong.CoverImage);
+        });
     }
     
     public void GoToLevel(BeatmapLevel? beatmapLevel)
@@ -126,7 +140,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UIAction("skipButtonPressed")]
     public void SkipButtonPressed()
     {
-        int index = QueueTableComponent.TableView._selectedCellIdxs.First();
+        int index = _queueTableComponent.TableView._selectedCellIdxs.First();
         if (index == -1)
         {
             Plugin.Log.Info("Nothing selected");
@@ -136,24 +150,24 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.Log.Info($"Selected cell: {index}");
         
         Queue.RemoveAt(index);
-        QueueTableComponent.TableView.ClearSelection();
-        QueueTableComponent.TableView.ReloadData();
+        _queueTableComponent.TableView.ClearSelection();
+        _queueTableComponent.TableView.ReloadData();
     }
 
     [UIAction("playButtonPressed")]
     public async Task PlayButtonPressed()
     {
-        if (loadingSpinner == null)
+        if (_loadingSpinner == null)
         {
-            loadingSpinner = Instantiate(Resources.FindObjectsOfTypeAll<LoadingControl>().First(), loadingSpinnerContainer.transform);
-            loadingSpinner.ShowLoading("Downloading..."); // figure out text later
+            _loadingSpinner = Instantiate(Resources.FindObjectsOfTypeAll<LoadingControl>().First(), loadingSpinnerContainer.transform);
+            _loadingSpinner.ShowLoading("Downloading..."); // figure out text later
             
 #if DEBUG
             waitModal.Show(false);
 #endif
         }
         
-        int index = QueueTableComponent.TableView._selectedCellIdxs.First();
+        int index = _queueTableComponent.TableView._selectedCellIdxs.First();
         if (index == -1)
         {
             Plugin.Log.Info("Nothing selected");
@@ -168,8 +182,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.Log.Info($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
         
         Queue.RemoveAt(index);
-        QueueTableComponent.TableView.ClearSelection();
-        QueueTableComponent.TableView.ReloadData();
+        _queueTableComponent.TableView.ClearSelection();
+        _queueTableComponent.TableView.ReloadData();
         
         Beatmap? beatmap = await BeatSaverInstance.Beatmap(queuedSong.BsrKey);
         if (beatmap != null)

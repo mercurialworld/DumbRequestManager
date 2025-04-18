@@ -26,29 +26,32 @@ internal abstract class RemoteImage
         return await imageResponse.Content.ReadAsByteArrayAsync();
     }
 
-    internal static async Task<Sprite?> Fetch(string url)
+    internal static async Task<byte[]?> Fetch(string url)
     {
         byte[]? imageBytes = await FetchData(url);
-        if (imageBytes == null)
+        if (imageBytes != null)
         {
-            return null;
+            return imageBytes;
         }
         
-        return await Utilities.LoadSpriteAsync(imageBytes);
+        Plugin.Log.Info("imageBytes was null");
+        return null;
+
+        //return await Utilities.LoadSpriteAsync(imageBytes);
     }
 }
 
 internal static class Cover
 {
-    private static readonly Dictionary<string, Sprite> CoverCache = new();
+    private static readonly Dictionary<string, byte[]> CoverCache = new();
     
-    public static async Task<Sprite> LoadCover(Song song)
+    public static async Task<byte[]?> LoadCover(Song song)
     {
 #if DEBUG
         Plugin.Log.Info($"Loading cover from {song.coverURL}");
         Plugin.Log.Info($"{CoverCache.Count} covers have been cached");
 #endif
-        if (CoverCache.TryGetValue(song.key, out Sprite cached))
+        if (CoverCache.TryGetValue(song.key, out byte[] cached))
         {
 #if DEBUG
             Plugin.Log.Info("Cover was cached, using it");
@@ -60,18 +63,20 @@ internal static class Cover
         Plugin.Log.Info("Cover not cached, fetching...");
 #endif
 
-        Sprite? cover = await RemoteImage.Fetch(song.coverURL);
-        if (cover == null)
-        {
-#if DEBUG
-            Plugin.Log.Info("Cover was null, using SongCore's default cover");
-#endif
-            return SongCore.Loader.defaultCoverImage;
-        }
-
+        byte[]? cover = null;
         try
         {
+            cover = await RemoteImage.Fetch(song.coverURL);
+            if (cover == null)
+            {
+#if DEBUG
+                Plugin.Log.Info("Cover was null");
+#endif
+                return null;
+            }
+            
             Plugin.Log.Info(CoverCache.TryAdd(song.key, cover) ? "Cover was cached" : "Cover was not cached???");
+            return cover;
         }
         catch (Exception e)
         {

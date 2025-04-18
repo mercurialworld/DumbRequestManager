@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using DumbRequestManager.Utils;
@@ -10,11 +11,18 @@ namespace DumbRequestManager.Classes;
 
 public class CoverImageContainer
 {
-    public Sprite CoverImage = SongCore.Loader.defaultCoverImage;
+    public byte[]? CoverImage;
 
     public CoverImageContainer(Song song)
     {
-        _ = Get(song);
+        try
+        {
+            _ = Get(song);
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.Error(e);
+        }
     }
 
     private async Task Get(Song song)
@@ -64,6 +72,6 @@ public readonly struct QueuedSong(Song song)
     
     private readonly CoverImageContainer _coverImageContainer = new(song);
     [UIValue("coverImage")]
-    public Sprite CoverImage => _coverImageContainer.CoverImage;
+    public byte[]? CoverImage => _coverImageContainer.CoverImage;
     // ReSharper restore MemberCanBePrivate.Global
 }
