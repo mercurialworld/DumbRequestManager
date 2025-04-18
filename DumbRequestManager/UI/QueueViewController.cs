@@ -17,6 +17,7 @@ using DumbRequestManager.Managers;
 using HMUI;
 using IPA.Utilities.Async;
 using JetBrains.Annotations;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -50,6 +51,13 @@ internal class QueueViewController : BSMLAutomaticViewController
     
     [UIComponent("detailsCoverImage")]
     public ImageView detailsCoverImage = null!;
+    
+    [UIComponent("detailsTitle")]
+    public TextMeshProUGUI detailsTitle = null!;
+    [UIComponent("detailsArtist")]
+    public TextMeshProUGUI detailsArtist = null!;
+    [UIComponent("detailsMapper")]
+    public TextMeshProUGUI detailsMapper = null!;
 
     [Inject]
     [UsedImplicitly]
@@ -73,6 +81,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         if (firstActivation)
         {
             _queueTableComponent.TableView.selectionType = TableViewSelectionType.Single;
+            detailsCoverImage.material = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UINoGlowRoundEdge");
         }
 
         _queueTableComponent.TableView.ReloadDataKeepingPosition();
@@ -86,6 +95,10 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.Log.Info($"Selected cell: {index}");
         Plugin.Log.Info($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
         Plugin.Log.Info($"Cells: {tableView._contentTransform.childCount}");
+
+        detailsTitle.text = queuedSong.Title;
+        detailsArtist.text = queuedSong.Artist;
+        detailsMapper.text = queuedSong.Mapper;
 
         UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
         {
