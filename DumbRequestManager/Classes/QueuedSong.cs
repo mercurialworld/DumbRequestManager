@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using DumbRequestManager.Utils;
@@ -29,6 +29,27 @@ public class CoverImageContainer
     {
         CoverImage = await Cover.LoadCover(song);
     }
+}
+
+[JsonObject(MemberSerialization.OptIn)]
+public readonly struct QueuedSongMapMods(MapMods mapMods)
+{
+    [JsonProperty] public bool NoodleExtensions => mapMods.HasFlag(MapMods.NoodleExtensions);
+    [JsonProperty] public bool Chroma => mapMods.HasFlag(MapMods.Chroma);
+    [JsonProperty] public bool MappingExtensions => mapMods.HasFlag(MapMods.MappingExtensions);
+    [JsonProperty] public bool Cinema => mapMods.HasFlag(MapMods.Cinema);
+}
+
+[JsonObject(MemberSerialization.OptIn)]
+public readonly struct QueuedSongDiff(SongDifficulty difficulty)
+{
+    [JsonProperty] public string Difficulty => difficulty.difficulty.ToString();
+    [JsonProperty] public string Characteristic => difficulty.characteristic.ToString();
+    [JsonProperty] public float NoteJumpSpeed => difficulty.njs;
+    [JsonProperty] public float NotesPerSecond => difficulty.notes / (float)difficulty.song.songDurationSeconds;
+    [JsonProperty] public readonly QueuedSongMapMods MapMods = new(difficulty.mods);
+    [JsonProperty] public float ScoreSaberStars => difficulty.stars;
+    [JsonProperty] public float BeatLeaderStars => difficulty.starsBeatleader;
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -69,6 +90,8 @@ public readonly struct QueuedSong(Song song)
     
     [JsonProperty] [UIValue("coverURL")]
     public string Cover => song.coverURL;
+
+    [JsonProperty] public readonly QueuedSongDiff[] Diffs = song.difficulties.Select(x => new QueuedSongDiff(x)).ToArray();
     
     private readonly CoverImageContainer _coverImageContainer = new(song);
     [UIValue("coverImage")]
