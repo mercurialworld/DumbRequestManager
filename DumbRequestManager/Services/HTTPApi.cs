@@ -94,7 +94,7 @@ internal class HttpApi : IInitializable, IDisposable
                 break;
             
             case "addKey":
-                byte[]? keyResponse = await AddKey(path[2]);
+                byte[]? keyResponse = await AddKey(path.Last().Replace("/", string.Empty));
                 if (keyResponse != null)
                 {
                     statusCode = 200;

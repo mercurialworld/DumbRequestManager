@@ -36,6 +36,10 @@ internal class ChatRequestButton(
         
         _standardButton.gameObject.name = "DRM_StandardButton";
         _attentionButton.gameObject.name = "DRM_AttentionButton";
+        
+#if !DEBUG
+        _standardButton.interactable = false;
+#endif
 
         if (_attentionButton.transform.Find("BG").TryGetComponent(out ImageView imageView))
         {

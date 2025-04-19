@@ -25,11 +25,11 @@
                               child-align="MiddleLeft" anchor-min-x="0.025">
                         <horizontal child-align="UpperLeft" child-expand-width="true">
                             <text data="title"
-                                  font-size="4" align="Left"/>
+                                  font-size="4" align="Left" overflow-mode="Ellipsis"/>
                         </horizontal>
                         <horizontal child-expand-width="false" child-align="LowerLeft">
                             <text data="artist"
-                                  font-size="3" align="Left"
+                                  font-size="3" align="Left" overflow-mode="Ellipsis"
                                   color="#FFFFFFAA"/>
                             <horizontal child-expand-width="false" child-align="LowerLeft"
                                         pad-left="1" spacing="0.5" anchor-max-y="0.92">
@@ -37,7 +37,7 @@
                                       font-size="2" align="Left"
                                       color="#CBADFF80"/>
                                 <text data="mapper"
-                                      font-size="2" align="Left"
+                                      font-size="2" align="Left" overflow-mode="Ellipsis"
                                       color="#CBADFFFF"/>
                             </horizontal>
                         </horizontal>
@@ -71,100 +71,104 @@
                     <vertical preferred-height="12" vertical-fit="PreferredSize"
                               preferred-width="36" horizontal-fit="PreferredSize"
                               child-expand-width="false" padding="2" pad-top="1" pad-bottom="1">
-                        <text id="detailsTitle" text="Title"
-                              font-size="4" align="Left"/>
-                        <text id="detailsArtist"
-                              font-size="3" align="Left"
-                              color="#FFFFFFAA"/>
+                        <horizontal horizontal-fit="Unconstrained">
+                            <text id="detailsTitle" text="Title"
+                                  font-size="4" align="Left" overflow-mode="Ellipsis"/>
+                        </horizontal>
+                        <horizontal horizontal-fit="Unconstrained">
+                            <text id="detailsArtist"
+                                  font-size="3" align="Left" overflow-mode="Ellipsis"
+                                  color="#FFFFFFAA"/>
+                        </horizontal>
                         <horizontal child-expand-width="false" child-align="LowerLeft"
                                     spacing="0.5">
                             <text text="mapped by"
                                   font-size="2" align="Left"
                                   color="#CBADFF80"/>
-                            <text id="detailsMapper"
-                                  font-size="2" align="Left"
-                                  color="#CBADFFFF"/>
+                            <horizontal horizontal-fit="Unconstrained">
+                                <text id="detailsMapper"
+                                      font-size="2" align="Left" overflow-mode="Ellipsis"
+                                      color="#CBADFFFF"/>
+                            </horizontal>
                         </horizontal>
                     </vertical>
                 </horizontal>
-                <horizontal preferred-height="6" vertical-fit="PreferredSize"
-                            preferred-width="48" horizontal-fit="PreferredSize">
+                <horizontal preferred-height="3" vertical-fit="PreferredSize"
+                            preferred-width="48" horizontal-fit="PreferredSize"
+                            pad-left="2" pad-right="2">
                     <text id="detailsBsrKey" rich-text="true"
-                          font-size="4" font-align="Left"/>
+                          font-size="3" font-align="Left"/>
                     <text id="detailsUploadDate"
-                          font-size="4" font-align="Right"/>
+                          font-size="3" font-align="Right"/>
                 </horizontal>
                 <vertical preferred-height="24" vertical-fit="PreferredSize"
                           preferred-width="48" horizontal-fit="PreferredSize"
                           background="round-rect-panel" bg-color="grey">
-                    <scroll-view preferred-height="24" preferred-width="48" child-control-height="false"
-                                 padding="1">
-                        <vertical vertical-fit="Unconstrained" child-control-height="false"
-                                  preferred-width="36" horizontal-fit="PreferredSize">
+                    <scroll-view preferred-height="24" child-control-height="true" child-expand-height="false"
+                                 preferred-width="48" child-control-width="true" child-expand-width="false"
+                                 child-alignment="UpperLeft" padding="0" pad-top="-1" pad-bottom="-1">
+                        <vertical horizontal-fit="PreferredSize" preferred-width="38"
+                                  vertical-fit="Unconstrained"
+                                  child-alignment="UpperLeft">
                             <text id="detailsDescription"
-                                  font-size="3" align="Left" overflow-mode="Overflow"
+                                  font-size="3" align="Left"
                                   word-wrapping="true"/>
                         </vertical>
                     </scroll-view>
                 </vertical>
-                <horizontal preferred-height="6" vertical-fit="PreferredSize"
-                            preferred-width="48" horizontal-fit="PreferredSize">
+                <horizontal preferred-height="3" vertical-fit="PreferredSize"
+                            preferred-width="48" horizontal-fit="PreferredSize"
+                            pad-left="2" pad-right="2">
                     <horizontal child-align="MiddleLeft">
-                        <horizontal preferred-width="4" horizontal-fit="PreferredSize"
-                                    preferred-height="4" vertical-fit="PreferredSize">
+                        <horizontal preferred-width="3" horizontal-fit="PreferredSize"
+                                    preferred-height="3" vertical-fit="PreferredSize">
                             <image src="#NPSIcon" image-color="#CBADFF" preserve-aspect="true"
-                                   preferred-height="4" preferred-width="4"/>
+                                   preferred-height="3" preferred-width="3"/>
                         </horizontal>
-                        <text id="detailsNotesPerSecond" rich-text="true"
-                              font-size="4" font-align="Left"/>
+                        <text id="detailsNotesPerSecond" text="~nps"
+                              rich-text="true"
+                              font-size="3" font-align="Left"/>
                     </horizontal>
                     <horizontal child-align="MiddleRight">
-                        <text id="detailsNoteJumpSpeed"
-                              font-size="4" font-align="Right"/>
-                        <horizontal preferred-width="4" horizontal-fit="PreferredSize"
-                                    preferred-height="4" vertical-fit="PreferredSize">
+                        <text id="detailsNoteJumpSpeed" text="~njs"
+                              rich-text="true"
+                              font-size="3" font-align="Right"/>
+                        <horizontal preferred-width="3" horizontal-fit="PreferredSize"
+                                    preferred-height="3" vertical-fit="PreferredSize">
                             <image src="#FastNotesIcon" image-color="#CBADFF" preserve-aspect="true"
-                                   preferred-height="4" preferred-width="4"/>
+                                   preferred-height="3" preferred-width="3"/>
                         </horizontal>
                     </horizontal>
                 </horizontal>
                 <vertical preferred-width="48" horizontal-fit="PreferredSize"
-                            preferred-height="10" vertical-fit="PreferredSize">
+                          preferred-height="10" vertical-fit="PreferredSize"
+                          pad-left="2" pad-right="2">
                     <vertical preferred-width="46" horizontal-fit="PreferredSize"
                                 preferred-height="5" vertical-fit="PreferredSize"
                                 bg="round-rect-panel" bg-color="grey">
                         <custom-list id="selectCharacteristicComponent" contents="characteristicChoices" name="DRM_SelectCharacteristicComponent"
-                                     align-to-center="true" list-direction="Horizontal"
+                                     align-to-center="false" list-direction="Horizontal"
                                      select-cell="selectCharacteristic">
-                            <vertical preferred-height="4" vertical-fit="Unconstrained"
-                                      horizontal-fit="Unconstrained">
-                                <image tags="neither"
-                                       preferred-width="4" preferred-height="4" preserve-aspect="true"
-                                       src="~icon" img-color="#FFFFFFAA"/>
-                                <image tags="hovered"
-                                       preferred-width="4" preferred-height="4" preserve-aspect="true"
+                            <horizontal preferred-height="3" vertical-fit="Unconstrained"
+                                        horizontal-fit="Unconstrained"
+                                        child-align="MiddleCenter">
+                                <image preferred-width="3" preferred-height="3" preserve-aspect="true"
                                        src="~icon" img-color="#FFFFFFFF"/>
-                                <image tags="selected"
-                                       preferred-width="4" preferred-height="4" preserve-aspect="true"
-                                       src="~icon" img-color="#0080FFFF"/>
-                            </vertical>
+                            </horizontal>
                         </custom-list>
                     </vertical>
                     <vertical preferred-width="46" horizontal-fit="PreferredSize"
                                 preferred-height="5" vertical-fit="PreferredSize"
                                 bg="round-rect-panel" bg-color="grey">
                         <custom-list id="selectDifficultyComponent" contents="difficultyChoices"  name="DRM_SelectDifficultyComponent"
-                                     align-to-center="true" list-direction="Horizontal"
+                                     align-to-center="false" list-direction="Horizontal"
                                      select-cell="selectDifficulty">
-                            <vertical preferred-height="4" vertical-fit="Unconstrained"
-                                      horizontal-fit="Unconstrained">
-                                <text tags="neither" data="name"
-                                      color="#FFFFFFAA"/>
-                                <text tags="hovered" data="name"
-                                      color="#FFFFFFFF"/>
-                                <text tags="selected" data="name"
-                                      color="#0080FFFF"/>
-                            </vertical>
+                            <horizontal preferred-height="3" vertical-fit="Unconstrained" 
+                                        horizontal-fit="Unconstrained" 
+                                        child-align="MiddleCenter">
+                                <text data="name"
+                                      color="#FFFFFFFF" font-size="3"/>
+                            </horizontal>
                         </custom-list>
                     </vertical>
                 </vertical>

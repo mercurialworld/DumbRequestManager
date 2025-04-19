@@ -26,16 +26,18 @@ using Zenject;
 
 namespace DumbRequestManager.UI;
 
-public readonly struct CharacteristicUICellWrapper(MapCharacteristic characteristic, string icon)
+public readonly struct CharacteristicUICellWrapper(string name, string icon)
 {
     [UIValue("icon")] public string Icon => icon;
-    [UIValue("name")] public string Name => characteristic.ToString();
+    [UIValue("name")] public string Name => name;
 }
 
-public readonly struct DifficultyUICellWrapper(MapDifficulty difficulty)
+public readonly struct DifficultyUICellWrapper(NoncontextualizedDifficulty difficulty)
 {
-    [UIValue("name")] public string Name => difficulty.ToString();
-    [UIValue("value")] public MapDifficulty Value => difficulty;
+    [UIValue("name")] public string Name => difficulty.Difficulty;
+    [UIValue("value")] public int Value => 0;
+    public float NotesPerSecond => difficulty.NotesPerSecond;
+    public float NoteJumpSpeed => difficulty.NoteJumpSpeed;
 }
 
 [ViewDefinition("DumbRequestManager.UI.BSML.QueueView.bsml")]
@@ -76,21 +78,14 @@ internal class QueueViewController : BSMLAutomaticViewController
     public TextMeshProUGUI detailsUploadDate = null!;
     [UIComponent("detailsDescription")]
     public TextMeshProUGUI detailsDescription = null!;
+
+    [UIValue("nps")] public string displayedNotesPerSecond = string.Empty;
+    [UIValue("njs")] public string displayedNoteJumpSpeed = string.Empty;
     
-    private List<DifficultyUICellWrapper> _testDiffs = [
-        new(MapDifficulty.Easy),
-        new(MapDifficulty.Normal),
-        new(MapDifficulty.Hard),
-        new(MapDifficulty.Expert),
-        new(MapDifficulty.ExpertPlus)
-    ];
-    [UIValue("difficultyChoices")] public List<DifficultyUICellWrapper> DifficultyChoices => _testDiffs;
-    
-    private List<CharacteristicUICellWrapper> _testChars = [
-        new(MapCharacteristic.Standard, "#NPSIcon"),
-        new(MapCharacteristic.Lawless, "#NPSIcon")
-    ];
-    [UIValue("characteristicChoices")] public List<CharacteristicUICellWrapper> CharacteristicChoices => _testChars;
+    [UIValue("difficultyChoices")]
+    public List<DifficultyUICellWrapper> DifficultyChoices = [];
+    [UIValue("characteristicChoices")]
+    public List<CharacteristicUICellWrapper> CharacteristicChoices = [];
     
     [UIValue("selectCharacteristicComponent")]
     private static CustomCellListTableData _selectCharacteristicComponent = null!;
@@ -144,6 +139,8 @@ internal class QueueViewController : BSMLAutomaticViewController
 #if DEBUG
         Plugin.Log.Info($"Selected difficulty {difficulty.Name}");
 #endif
+        displayedNoteJumpSpeed = $"{difficulty.NoteJumpSpeed} <size=80%><opacity=#AA>NJS";
+        displayedNotesPerSecond = $"{difficulty.NotesPerSecond} <size=80%><opacity=#AA>NPS";
     }
 
     [UIAction("fetchDescription")]
@@ -176,6 +173,18 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         DateTimeOffset uploadOffset = DateTimeOffset.FromUnixTimeSeconds(queuedSong.UploadTime);
         detailsUploadDate.text = uploadOffset.LocalDateTime.ToString("d MMM yyyy");
+        
+        _selectCharacteristicComponent.TableView.ClearSelection();
+        _selectDifficultyComponent.TableView.ClearSelection();
+
+        CharacteristicChoices = queuedSong.Diffs.Select(x => new CharacteristicUICellWrapper(x.Characteristic, "#NPSIcon")).ToList();
+        DifficultyChoices = queuedSong.Diffs.Select(x => new DifficultyUICellWrapper(x)).ToList();
+        
+        _selectCharacteristicComponent.TableView.ReloadData();
+        _selectDifficultyComponent.TableView.ReloadData();
+        
+        _selectCharacteristicComponent.TableView.SelectCellWithIdx(0);
+        _selectDifficultyComponent.TableView.SelectCellWithIdx(_selectDifficultyComponent.NumberOfCells() - 1);
 
         Task.Run(async () =>
         {
