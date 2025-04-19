@@ -87,11 +87,86 @@
                         </horizontal>
                     </vertical>
                 </horizontal>
-                <vertical preferred-height="46" vertical-fit="PreferredSize"
-                          preferred-width="48" horizontal-fit="PreferredSize">
-                        <text text="map details go here eventually :clueless:"
-                              font-size="3"
-                              word-wrapping="true" overflow-mode="ScrollRect"/>
+                <horizontal preferred-height="6" vertical-fit="PreferredSize"
+                            preferred-width="48" horizontal-fit="PreferredSize">
+                    <text id="detailsBsrKey" rich-text="true"
+                          font-size="4" font-align="Left"/>
+                    <text id="detailsUploadDate"
+                          font-size="4" font-align="Right"/>
+                </horizontal>
+                <vertical preferred-height="24" vertical-fit="PreferredSize"
+                          preferred-width="48" horizontal-fit="PreferredSize"
+                          background="round-rect-panel" bg-color="grey">
+                    <scroll-view preferred-height="24" preferred-width="48" child-control-height="false"
+                                 padding="1">
+                        <vertical vertical-fit="Unconstrained" child-control-height="false"
+                                  preferred-width="36" horizontal-fit="PreferredSize">
+                            <text id="detailsDescription"
+                                  font-size="3" align="Left" overflow-mode="Overflow"
+                                  word-wrapping="true"/>
+                        </vertical>
+                    </scroll-view>
+                </vertical>
+                <horizontal preferred-height="6" vertical-fit="PreferredSize"
+                            preferred-width="48" horizontal-fit="PreferredSize">
+                    <horizontal child-align="MiddleLeft">
+                        <horizontal preferred-width="4" horizontal-fit="PreferredSize"
+                                    preferred-height="4" vertical-fit="PreferredSize">
+                            <image src="#NPSIcon" image-color="#CBADFF" preserve-aspect="true"
+                                   preferred-height="4" preferred-width="4"/>
+                        </horizontal>
+                        <text id="detailsNotesPerSecond" rich-text="true"
+                              font-size="4" font-align="Left"/>
+                    </horizontal>
+                    <horizontal child-align="MiddleRight">
+                        <text id="detailsNoteJumpSpeed"
+                              font-size="4" font-align="Right"/>
+                        <horizontal preferred-width="4" horizontal-fit="PreferredSize"
+                                    preferred-height="4" vertical-fit="PreferredSize">
+                            <image src="#FastNotesIcon" image-color="#CBADFF" preserve-aspect="true"
+                                   preferred-height="4" preferred-width="4"/>
+                        </horizontal>
+                    </horizontal>
+                </horizontal>
+                <vertical preferred-width="48" horizontal-fit="PreferredSize"
+                            preferred-height="10" vertical-fit="PreferredSize">
+                    <vertical preferred-width="46" horizontal-fit="PreferredSize"
+                                preferred-height="5" vertical-fit="PreferredSize"
+                                bg="round-rect-panel" bg-color="grey">
+                        <custom-list id="selectCharacteristicComponent" contents="characteristicChoices" name="DRM_SelectCharacteristicComponent"
+                                     align-to-center="true" list-direction="Horizontal"
+                                     select-cell="selectCharacteristic">
+                            <vertical preferred-height="4" vertical-fit="Unconstrained"
+                                      horizontal-fit="Unconstrained">
+                                <image tags="neither"
+                                       preferred-width="4" preferred-height="4" preserve-aspect="true"
+                                       src="~icon" img-color="#FFFFFFAA"/>
+                                <image tags="hovered"
+                                       preferred-width="4" preferred-height="4" preserve-aspect="true"
+                                       src="~icon" img-color="#FFFFFFFF"/>
+                                <image tags="selected"
+                                       preferred-width="4" preferred-height="4" preserve-aspect="true"
+                                       src="~icon" img-color="#0080FFFF"/>
+                            </vertical>
+                        </custom-list>
+                    </vertical>
+                    <vertical preferred-width="46" horizontal-fit="PreferredSize"
+                                preferred-height="5" vertical-fit="PreferredSize"
+                                bg="round-rect-panel" bg-color="grey">
+                        <custom-list id="selectDifficultyComponent" contents="difficultyChoices"  name="DRM_SelectDifficultyComponent"
+                                     align-to-center="true" list-direction="Horizontal"
+                                     select-cell="selectDifficulty">
+                            <vertical preferred-height="4" vertical-fit="Unconstrained"
+                                      horizontal-fit="Unconstrained">
+                                <text tags="neither" data="name"
+                                      color="#FFFFFFAA"/>
+                                <text tags="hovered" data="name"
+                                      color="#FFFFFFFF"/>
+                                <text tags="selected" data="name"
+                                      color="#0080FFFF"/>
+                            </vertical>
+                        </custom-list>
+                    </vertical>
                 </vertical>
             </vertical>
             <vertical preferred-height="10" vertical-fit="PreferredSize" child-expand-width="true">

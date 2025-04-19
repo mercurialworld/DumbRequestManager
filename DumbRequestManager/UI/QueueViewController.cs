@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
+using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using BeatSaverDownloader.Misc;
 using BeatSaverSharp;
@@ -17,12 +18,25 @@ using DumbRequestManager.Managers;
 using HMUI;
 using IPA.Utilities.Async;
 using JetBrains.Annotations;
+using SongDetailsCache.Structs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
 namespace DumbRequestManager.UI;
+
+public readonly struct CharacteristicUICellWrapper(MapCharacteristic characteristic, string icon)
+{
+    [UIValue("icon")] public string Icon => icon;
+    [UIValue("name")] public string Name => characteristic.ToString();
+}
+
+public readonly struct DifficultyUICellWrapper(MapDifficulty difficulty)
+{
+    [UIValue("name")] public string Name => difficulty.ToString();
+    [UIValue("value")] public MapDifficulty Value => difficulty;
+}
 
 [ViewDefinition("DumbRequestManager.UI.BSML.QueueView.bsml")]
 [HotReload(RelativePathToLayout = "BSML.QueueView.bsml")]
@@ -58,6 +72,32 @@ internal class QueueViewController : BSMLAutomaticViewController
     public TextMeshProUGUI detailsArtist = null!;
     [UIComponent("detailsMapper")]
     public TextMeshProUGUI detailsMapper = null!;
+    [UIComponent("detailsBsrKey")]
+    public TextMeshProUGUI detailsBsrKey = null!;
+    [UIComponent("detailsUploadDate")]
+    public TextMeshProUGUI detailsUploadDate = null!;
+    [UIComponent("detailsDescription")]
+    public TextMeshProUGUI detailsDescription = null!;
+    
+    private List<DifficultyUICellWrapper> _testDiffs = [
+        new(MapDifficulty.Easy),
+        new(MapDifficulty.Normal),
+        new(MapDifficulty.Hard),
+        new(MapDifficulty.Expert),
+        new(MapDifficulty.ExpertPlus)
+    ];
+    [UIValue("difficultyChoices")] public List<DifficultyUICellWrapper> DifficultyChoices => _testDiffs;
+    
+    private List<CharacteristicUICellWrapper> _testChars = [
+        new(MapCharacteristic.Standard, "#NPSIcon"),
+        new(MapCharacteristic.Lawless, "#NPSIcon")
+    ];
+    [UIValue("characteristicChoices")] public List<CharacteristicUICellWrapper> CharacteristicChoices => _testChars;
+    
+    [UIValue("selectCharacteristicComponent")]
+    private static CustomCellListTableData _selectCharacteristicComponent = null!;
+    [UIValue("selectDifficultyComponent")]
+    private static CustomCellListTableData _selectDifficultyComponent = null!;
 
     [Inject]
     [UsedImplicitly]
@@ -76,15 +116,49 @@ internal class QueueViewController : BSMLAutomaticViewController
         {
             // i... don't know. this works.
             _queueTableComponent = GameObject.Find("QueueTableComponent").GetComponent<CustomCellListTableData>();
+            _selectCharacteristicComponent = GameObject.Find("DRM_SelectCharacteristicComponent").GetComponent<CustomCellListTableData>();
+            _selectDifficultyComponent = GameObject.Find("DRM_SelectDifficultyComponent").GetComponent<CustomCellListTableData>();
         }
 
         if (firstActivation)
         {
             _queueTableComponent.TableView.selectionType = TableViewSelectionType.Single;
+            _selectCharacteristicComponent.TableView.selectionType = TableViewSelectionType.Single;
+            _selectDifficultyComponent.TableView.selectionType = TableViewSelectionType.Single;
+            
             detailsCoverImage.material = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UINoGlowRoundEdge");
         }
 
         _queueTableComponent.TableView.ReloadDataKeepingPosition();
+    }
+
+    [UIAction("selectCharacteristic")]
+    public void SelectCharacteristic(TableView tableView, CharacteristicUICellWrapper characteristic)
+    {
+#if DEBUG
+        Plugin.Log.Info($"Selected characteristic {characteristic.Name}");
+#endif
+    }
+    
+    [UIAction("selectDifficulty")]
+    public void SelectDifficulty(TableView tableView, DifficultyUICellWrapper difficulty)
+    {
+#if DEBUG
+        Plugin.Log.Info($"Selected difficulty {difficulty.Name}");
+#endif
+    }
+
+    [UIAction("fetchDescription")]
+    public async Task<string?> FetchDescription(string bsrKey)
+    {
+        Beatmap? beatmap = await BeatSaverInstance.Beatmap(bsrKey);
+        if (beatmap != null)
+        {
+            return beatmap.Description;
+        }
+        
+        Plugin.Log.Info("Beatmap fetch failed");
+        return null;
     }
 
     [UIAction("selectCell")]
@@ -99,7 +173,17 @@ internal class QueueViewController : BSMLAutomaticViewController
         detailsTitle.text = queuedSong.Title;
         detailsArtist.text = queuedSong.Artist;
         detailsMapper.text = queuedSong.Mapper;
+        
+        detailsBsrKey.text = $"<alpha=#AA>!bsr <alpha=#FF>{queuedSong.BsrKey}";
+        
+        DateTimeOffset uploadOffset = DateTimeOffset.FromUnixTimeSeconds(queuedSong.UploadTime);
+        detailsUploadDate.text = uploadOffset.LocalDateTime.ToString("d MMM yyyy");
 
+        Task.Run(async () =>
+        {
+            detailsDescription.text = await FetchDescription(queuedSong.BsrKey);
+        });
+        
         UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
         {
             if (queuedSong.CoverImage == null)
