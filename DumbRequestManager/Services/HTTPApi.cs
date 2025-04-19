@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 //using System.Reflection;
 using System.Threading.Tasks;
+using BeatSaverSharp.Models;
 //using BeatSaverSharp;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
@@ -75,7 +76,7 @@ internal class HttpApi : IInitializable, IDisposable
         switch (path[1][..^1])
         {
             case "query":
-                byte[]? queryResponse = Query(path[2]);
+                byte[]? queryResponse = await Query(path[2]);
                 if (queryResponse != null)
                 {
                     statusCode = 200;
@@ -89,7 +90,7 @@ internal class HttpApi : IInitializable, IDisposable
                 break;
             
             case "addKey":
-                byte[]? keyResponse = AddKey(path[2]);
+                byte[]? keyResponse = await AddKey(path[2]);
                 if (keyResponse != null)
                 {
                     statusCode = 200;
@@ -115,28 +116,46 @@ internal class HttpApi : IInitializable, IDisposable
         context.Response.Close();
     }
 
-    private static byte[]? AddKey(string key)
+    private static async Task<byte[]?> AddKey(string key)
     {
         Plugin.Log.Info($"Adding key {key}...");
-        QueuedSong? queuedSong = QueueManager.AddKey(key);
+        NoncontextualizedSong? queuedSong = await QueueManager.AddKey(key);
         
         return queuedSong == null
             ? null
             : System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
     }
 
-    private static byte[]? Query(string key)
+    private static async Task<byte[]?> Query(string key)
     {
         Plugin.Log.Info($"Querying key {key}...");
         
+        /*Object song = SongDetailsManager.GetByKey(key);
+        
+        NoncontextualizedSong queriedSong =
+            song is Song song1 ? new NoncontextualizedSong(song1) : new NoncontextualizedSong((Beatmap)song);*/
+
+        NoncontextualizedSong queriedSong;
+        
         Song? song = SongDetailsManager.GetByKey(key);
-        if (song != null)
+        if (song == null)
         {
-            return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new QueuedSong(song.Value)));
+            Beatmap? beatmap = await SongDetailsManager.GetDirectByKey(key); 
+            if (beatmap != null)
+            {
+                queriedSong = new NoncontextualizedSong(beatmap);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        else
+        {
+            queriedSong = new NoncontextualizedSong(song);
         }
 
-        Plugin.Log.Info("query came back null uh oh!");
-        return null;
+        return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queriedSong));
     }
 
     public void Dispose()

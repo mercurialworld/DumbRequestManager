@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.UI;
 using JetBrains.Annotations;
@@ -12,24 +14,36 @@ namespace DumbRequestManager.Managers;
 [UsedImplicitly]
 public static class QueueManager
 {
-    public static readonly List<QueuedSong> QueuedSongs = [];
+    public static readonly List<NoncontextualizedSong> QueuedSongs = [];
 
-    public static QueuedSong? AddKey(string key)
+    public static async Task<NoncontextualizedSong?> AddKey(string key)
     {
+        NoncontextualizedSong queuedSong;
+        
         Song? song = SongDetailsManager.GetByKey(key);
         if (song == null)
         {
-            Plugin.Log.Info("uh oh cheerio it's null");
-            return null;
+            Beatmap? beatmap = await SongDetailsManager.GetDirectByKey(key); 
+            if (beatmap != null)
+            {
+                queuedSong = new NoncontextualizedSong(beatmap);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        else
+        {
+            queuedSong = new NoncontextualizedSong(song);
         }
 
-        QueuedSong queuedSong = new(song.Value);
         QueuedSongs.Add(queuedSong);
         
         ChatRequestButton.Instance.UseAttentiveButton(true);
 
 #if DEBUG
-        Plugin.Log.Info($"Added map {key} ({song.Value.songAuthorName} - {song.Value.songName} [{song.Value.levelAuthorName}]), queue has {QueuedSongs.Count} map(s)");
+        Plugin.Log.Info($"Added map {key}, queue has {QueuedSongs.Count} map(s)");
 #endif
         return queuedSong;
     }

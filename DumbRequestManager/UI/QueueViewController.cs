@@ -48,10 +48,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     
     private LoadingControl _loadingSpinner = null!;
     
-    private static readonly BeatSaver BeatSaverInstance = new(nameof(DumbRequestManager), Assembly.GetExecutingAssembly().GetName().Version);
-    
     [UIValue("queue")]
-    private static List<QueuedSong> Queue => QueueManager.QueuedSongs;
+    private static List<NoncontextualizedSong> Queue => QueueManager.QueuedSongs;
     
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     [UIComponent("queueTableComponent")]
@@ -151,7 +149,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UIAction("fetchDescription")]
     public async Task<string?> FetchDescription(string bsrKey)
     {
-        Beatmap? beatmap = await BeatSaverInstance.Beatmap(bsrKey);
+        Beatmap? beatmap = await SongDetailsManager.BeatSaverInstance.Beatmap(bsrKey);
         if (beatmap != null)
         {
             return beatmap.Description;
@@ -162,7 +160,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     }
 
     [UIAction("selectCell")]
-    public void SelectCell(TableView tableView, QueuedSong queuedSong)
+    public void SelectCell(TableView tableView, NoncontextualizedSong queuedSong)
     {
         int index = tableView._selectedCellIdxs.First();
         
@@ -216,7 +214,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.Log.Info("Should be selected");
     }
 
-    public void OkGoBack(QueuedSong queuedSong)
+    public void OkGoBack(NoncontextualizedSong queuedSong)
     {
         waitModal.Hide(false);
         
@@ -276,7 +274,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         waitModal.Show(false);
         
         Plugin.Log.Info($"Selected cell: {index}");
-        QueuedSong queuedSong = Queue[index];
+        NoncontextualizedSong queuedSong = Queue[index];
         
         Plugin.Log.Info($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
         
@@ -286,7 +284,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
         
-        Beatmap? beatmap = await BeatSaverInstance.Beatmap(queuedSong.BsrKey);
+        Beatmap? beatmap = await SongDetailsManager.BeatSaverInstance.Beatmap(queuedSong.BsrKey);
         if (beatmap != null)
         {
             Plugin.Log.Info("Beatmap was not null");

@@ -45,13 +45,13 @@ internal static class Cover
 {
     private static readonly Dictionary<string, byte[]> CoverCache = new();
     
-    public static async Task<byte[]?> LoadCover(Song song)
+    public static async Task<byte[]?> LoadCover(string url)
     {
 #if DEBUG
-        Plugin.Log.Info($"Loading cover from {song.coverURL}");
+        Plugin.Log.Info($"Loading cover from {url}");
         Plugin.Log.Info($"{CoverCache.Count} covers have been cached");
 #endif
-        if (CoverCache.TryGetValue(song.key, out byte[] cached))
+        if (CoverCache.TryGetValue(url, out byte[] cached))
         {
 #if DEBUG
             Plugin.Log.Info("Cover was cached, using it");
@@ -66,7 +66,7 @@ internal static class Cover
         byte[]? cover = null;
         try
         {
-            cover = await RemoteImage.Fetch(song.coverURL);
+            cover = await RemoteImage.Fetch(url);
             if (cover == null)
             {
 #if DEBUG
@@ -75,7 +75,7 @@ internal static class Cover
                 return null;
             }
             
-            Plugin.Log.Info(CoverCache.TryAdd(song.key, cover) ? "Cover was cached" : "Cover was not cached???");
+            Plugin.Log.Info(CoverCache.TryAdd(url, cover) ? "Cover was cached" : "Cover was not cached???");
             return cover;
         }
         catch (Exception e)

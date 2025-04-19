@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
+using BeatSaverSharp;
+using BeatSaverSharp.Models;
 using JetBrains.Annotations;
 using SongDetailsCache;
 using SongDetailsCache.Structs;
@@ -12,6 +15,7 @@ namespace DumbRequestManager.Managers;
 public class SongDetailsManager : IInitializable, IDisposable
 {
     public static SongDetails? CacheInstance;
+    internal static readonly BeatSaver BeatSaverInstance = new(nameof(DumbRequestManager), Assembly.GetExecutingAssembly().GetName().Version);
 
     public void Initialize()
     {
@@ -27,11 +31,15 @@ public class SongDetailsManager : IInitializable, IDisposable
     {
     }
 
+    public static async Task<Beatmap?> GetDirectByKey(string key)
+    {
+        return await BeatSaverInstance.Beatmap(key);
+    }
+
     public static Song? GetByKey(string key)
     {
         if (CacheInstance == null)
         {
-            // hey parrot do beat saver stuff here too
             Plugin.Log.Info("SongDetails not initialized");
             return null;
         }
@@ -51,7 +59,6 @@ public class SongDetailsManager : IInitializable, IDisposable
 #endif
         }
 
-        // do beat saver stuff
         return null;
     }
     
