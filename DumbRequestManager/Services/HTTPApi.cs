@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Net;
 //using System.Reflection;
 using System.Threading.Tasks;
@@ -76,7 +77,10 @@ internal class HttpApi : IInitializable, IDisposable
         switch (path[1][..^1])
         {
             case "query":
-                byte[]? queryResponse = await Query(path[2]);
+                byte[]? queryResponse = path[2][..^1] == "nocache"
+                    ? await QuerySkipCache(path.Last().Replace("/", string.Empty))
+                    : await Query(path.Last().Replace("/", string.Empty));
+                
                 if (queryResponse != null)
                 {
                     statusCode = 200;
@@ -126,14 +130,23 @@ internal class HttpApi : IInitializable, IDisposable
             : System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
     }
 
+    private static async Task<byte[]?> QuerySkipCache(string key)
+    {
+        Plugin.Log.Info($"Querying key {key} (directly)...");
+        
+        Beatmap? beatmap = await SongDetailsManager.GetDirectByKey(key);
+        if (beatmap == null)
+        {
+            Plugin.Log.Info($"No beatmap found for key {key}");
+            return null;
+        }
+        
+        return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NoncontextualizedSong(beatmap)));
+    }
+
     private static async Task<byte[]?> Query(string key)
     {
         Plugin.Log.Info($"Querying key {key}...");
-        
-        /*Object song = SongDetailsManager.GetByKey(key);
-        
-        NoncontextualizedSong queriedSong =
-            song is Song song1 ? new NoncontextualizedSong(song1) : new NoncontextualizedSong((Beatmap)song);*/
 
         NoncontextualizedSong queriedSong;
         
