@@ -129,7 +129,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             
             _selectCharacteristicComponent.Data = CharacteristicChoices;
             _selectDifficultyComponent.Data = DifficultyChoices;
-
+            
             _selectCharacteristicComponent.TableView.didSelectCellWithIdxEvent += DidSelectCharacteristicCellWithIdxEvent;
             _selectDifficultyComponent.TableView.didSelectCellWithIdxEvent += DidSelectDifficultyCellWithIdxEvent;
             
@@ -139,8 +139,28 @@ internal class QueueViewController : BSMLAutomaticViewController
         _queueTableComponent.TableView.ReloadDataKeepingPosition();
     }
 
+    private static readonly Color SelectedColor = Color.white;
+    private static readonly Color StandardColor = new Color(1, 1, 1, 0.5f);
     private static void DidSelectCharacteristicCellWithIdxEvent(TableView tableView, int idx)
     {
+        int childIdx = -1;
+        for (int checkedIdx = 0; checkedIdx < tableView.contentTransform.transform.childCount; checkedIdx++)
+        {
+            Transform child = tableView.contentTransform.transform.GetChild(checkedIdx);
+            if(!child.gameObject.activeSelf)
+            {
+                // not active, no need to consider it yet
+                continue;
+            }
+
+            childIdx++;
+    
+            if (child.FindChildRecursively("BSMLImage").gameObject.TryGetComponent(out ImageView icon))
+            {
+                icon.color = childIdx == idx ? SelectedColor : StandardColor;
+            }
+        }
+        
         CharacteristicUICellWrapper characteristic = CharacteristicChoices[idx];
         DifficultyChoices = SelectedSong.Diffs.Where(x => x.Characteristic == characteristic.Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
 
@@ -157,6 +177,24 @@ internal class QueueViewController : BSMLAutomaticViewController
     
     private static void DidSelectDifficultyCellWithIdxEvent(TableView tableView, int idx)
     {
+        int childIdx = -1;
+        for (int checkedIdx = 0; checkedIdx < tableView.contentTransform.transform.childCount; checkedIdx++)
+        {
+            Transform child = tableView.contentTransform.transform.GetChild(checkedIdx);
+            if(!child.gameObject.activeSelf)
+            {
+                // not active, no need to consider it yet
+                continue;
+            }
+
+            childIdx++;
+    
+            if (child.FindChildRecursively("BSMLText").gameObject.TryGetComponent(out FormattableText text))
+            {
+                text.color = childIdx == idx ? SelectedColor : StandardColor;
+            }
+        }
+        
         DifficultyUICellWrapper difficulty = DifficultyChoices[idx];
         Plugin.DebugMessage($"Selected difficulty {difficulty.Name}");
         
@@ -219,13 +257,13 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.DebugMessage($"Got {DifficultyChoices.Count} unique difficulties");
         
         _selectCharacteristicComponent.Data = CharacteristicChoices;
-        _selectDifficultyComponent.Data = DifficultyChoices;
+        //_selectDifficultyComponent.Data = DifficultyChoices;
         
         _selectCharacteristicComponent.TableView.ReloadData();
-        _selectDifficultyComponent.TableView.ReloadData();
+        //_selectDifficultyComponent.TableView.ReloadData();
         
-        _selectCharacteristicComponent.TableView.SelectCellWithIdx(0);
-        _selectDifficultyComponent.TableView.SelectCellWithIdx(_selectDifficultyComponent.NumberOfCells() - 1, true);
+        _selectCharacteristicComponent.TableView.SelectCellWithIdx(0, true);
+        //_selectDifficultyComponent.TableView.SelectCellWithIdx(_selectDifficultyComponent.NumberOfCells() - 1, true);
 
         detailsDescription.color = new Color(1f, 1f, 1f, 0.5f);
         detailsDescription.text = "Loading description...";

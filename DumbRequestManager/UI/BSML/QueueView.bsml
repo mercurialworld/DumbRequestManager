@@ -168,7 +168,7 @@
                                         preferred-width="5" horizontal-fit="PreferredSize"
                                         child-align="MiddleCenter" child-control-width="true" child-expand-width="false">
                                 <image preferred-width="3" preferred-height="3" preserve-aspect="true"
-                                       src="~icon" img-color="#FFFFFFAA"/>
+                                       src="~icon" hover-hint="~name"/>
                             </horizontal>
                         </custom-list>
                     </vertical>
@@ -183,7 +183,7 @@
                                         child-expand-width="true" horizontal-fit="Unconstrained" 
                                         child-align="MiddleCenter">
                                 <text data="name" 
-                                      color="#FFFFFF" font-size="2" all-uppercase="true" align="Center"/>
+                                      font-size="2" all-uppercase="true" align="Center"/>
                             </horizontal>
                         </custom-list>
                     </vertical>
