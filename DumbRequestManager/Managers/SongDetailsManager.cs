@@ -51,7 +51,9 @@ public class SongDetailsManager : IInitializable, IDisposable
                 return song;
             }
         }
+#pragma warning disable CS0168
         catch (Exception e)
+#pragma warning restore CS0168
         {
             Plugin.Log.Info("Could not find key in SongDetailsCache");
 #if DEBUG
