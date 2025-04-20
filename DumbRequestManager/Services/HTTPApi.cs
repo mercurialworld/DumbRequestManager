@@ -5,10 +5,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
-//using System.Reflection;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
-//using BeatSaverSharp;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
 using JetBrains.Annotations;
@@ -20,17 +18,21 @@ using PluginConfig = DumbRequestManager.Configuration.PluginConfig;
 namespace DumbRequestManager.Services;
 
 [UsedImplicitly]
-internal class HttpApi : IInitializable, IDisposable
+internal class HttpApi : IInitializable
 {
     private static PluginConfig Config => PluginConfig.Instance;
+
     private static HttpListener? _httpListener;
     //private static readonly BeatSaver BeatSaverInstance = new(nameof(DumbRequestManager), Assembly.GetExecutingAssembly().GetName().Version);
-
-    private static bool _keepListening = true;
     
     [SuppressMessage("ReSharper", "FunctionNeverReturns")]
     public void Initialize()
     {
+        if (_httpListener != null)
+        {
+            return;
+        }
+        
         Plugin.Log.Info("Initializing HttpApi...");
         _httpListener = new HttpListener
         {
@@ -41,7 +43,7 @@ internal class HttpApi : IInitializable, IDisposable
         Plugin.Log.Info("HttpApi started");
         _ = Task.Run(async () =>
         {
-            while (_keepListening)
+            while (true)
             {
                 try
                 {
@@ -213,13 +215,5 @@ internal class HttpApi : IInitializable, IDisposable
         }
 
         return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queriedSong));
-    }
-
-    public void Dispose()
-    {
-        _keepListening = false;
-        
-        Plugin.Log.Info("Disposing HttpApi...");
-        _httpListener?.Stop();
     }
 }

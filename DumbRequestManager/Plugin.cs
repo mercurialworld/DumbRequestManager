@@ -9,7 +9,7 @@ using IPAConfig = IPA.Config.Config;
 
 namespace DumbRequestManager;
 
-[Plugin(RuntimeOptions.DynamicInit)]
+[Plugin(RuntimeOptions.SingleStartInit)]
 [NoEnableDisable]
 [UsedImplicitly]
 internal class Plugin
