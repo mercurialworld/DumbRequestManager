@@ -12,6 +12,7 @@
     <SongCoreVersion>3.14.15</SongCoreVersion>
     <SongDetailsVersion>1.4.0</SongDetailsVersion>
     <BeatSaverDLVersion>6.0.7</BeatSaverDLVersion>
+    <BeatSaverSharpVersion>3.4.5</BeatSaverSharpVersion>
 
     <BSMLFolder>LATEST</BSMLFolder>
   </PropertyGroup>
@@ -36,6 +37,7 @@
     <DependsOn Include="SongCore" Version="^$(SongCoreVersion)"/>
     <DependsOn Include="SongDetailsCache" Version="^$(SongDetailsVersion)"/>
     <DependsOn Include="BeatSaverDownloader" Version="^$(BeatSaverDLVersion)"/>
+    <DependsOn Include="BeatSaverSharp" Version="^$(BeatSaverSharpVersion)"/>
   </ItemGroup>
   
   <PropertyGroup>
