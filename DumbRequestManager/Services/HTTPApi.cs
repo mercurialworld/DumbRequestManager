@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -110,7 +111,17 @@ internal class HttpApi : IInitializable, IDisposable
             
             case "queue":
                 statusCode = 200;
-                data = GetEncodedQueue;
+                
+                if (path.Length > 2)
+                {
+                    data = path[2][..^1] == "where"
+                        ? GetPositionsInQueue(path.Last().Replace("/", string.Empty))
+                        : GetEncodedQueue;
+                }
+                else
+                {
+                    data = GetEncodedQueue;
+                }
                 break;
         }
         
@@ -124,6 +135,31 @@ internal class HttpApi : IInitializable, IDisposable
         
         outputStream.Close();
         context.Response.Close();
+    }
+
+    [JsonObject(MemberSerialization.OptIn)]
+    private struct QueueSpotItem(int spot, NoncontextualizedSong queueItem)
+    {
+        [JsonProperty] private int Spot => spot;
+        [JsonProperty] private NoncontextualizedSong QueueItem => queueItem;
+    }
+    
+    private static byte[] GetPositionsInQueue(string user)
+    {
+        int index = 0;
+        List<QueueSpotItem> relevantQueueItems = [];
+        
+        QueueManager.QueuedSongs.ForEach(x =>
+        {
+            index++;
+
+            if (x.User == user)
+            {
+                relevantQueueItems.Add(new QueueSpotItem(index, x));
+            }
+        });
+        
+        return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(relevantQueueItems));
     }
 
     private static byte[] GetEncodedQueue => System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(QueueManager.QueuedSongs));
