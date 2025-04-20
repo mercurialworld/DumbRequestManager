@@ -3,6 +3,9 @@ A map request manager for Beat Saber that abstracts out functions to an HTTP GET
 
 Essentially meaning, any streaming bot you use (e.g. Streamer.bot, Firebot, MixItUp, etc.) now has request queue functionality -- so long as it supports making HTTP requests (at the minimum).
 
+> [!IMPORTANT]
+> This is not a mod that is instantly ready to go, unlike most other request queue managers. It *will* require manual setup on your part. Filters, limits, so on and so forth will be something you add in the bot of your choice.
+
 ## Dependencies
 Currently only tested on Beat Saber versions 1.39.1 or newer. Versions of the mod for older game versions are not planned at this time.
 > [!NOTE]
