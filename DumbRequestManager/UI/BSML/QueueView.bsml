@@ -118,25 +118,29 @@
                 </vertical>
                 <horizontal preferred-height="3" vertical-fit="PreferredSize"
                             preferred-width="48" horizontal-fit="PreferredSize"
-                            pad-left="2" pad-right="2">
-                    <horizontal child-align="MiddleLeft">
-                        <horizontal preferred-width="3" horizontal-fit="PreferredSize"
-                                    preferred-height="3" vertical-fit="PreferredSize">
+                            pad-left="4" pad-right="4">
+                    <horizontal preferred-width="24" horizontal-fit="PreferredSize"
+                                child-align="MiddleLeft" child-expand-width="false">
+                        <horizontal child-expand-width="false">
                             <image src="#NPSIcon" image-color="#CBADFF" preserve-aspect="true"
-                                   preferred-height="3" preferred-width="3"/>
+                                   preferred-height="3" preferred-width="4"/>
                         </horizontal>
-                        <text id="detailsNotesPerSecond" text="~nps"
-                              rich-text="true"
-                              font-size="3" font-align="Left"/>
+                        <horizontal child-expand-width="true">
+                            <text id="detailsNotesPerSecond" text="-"
+                                  rich-text="true"
+                                  font-size="3" font-align="Left"/>
+                        </horizontal>
                     </horizontal>
-                    <horizontal child-align="MiddleRight">
-                        <text id="detailsNoteJumpSpeed" text="~njs"
-                              rich-text="true"
-                              font-size="3" font-align="Right"/>
-                        <horizontal preferred-width="3" horizontal-fit="PreferredSize"
-                                    preferred-height="3" vertical-fit="PreferredSize">
+                    <horizontal preferred-width="24" horizontal-fit="PreferredSize"
+                                child-align="MiddleRight" child-expand-width="false">
+                        <horizontal child-expand-width="true">
+                            <text id="detailsNoteJumpSpeed" text="-"
+                                  rich-text="true"
+                                  font-size="3" font-align="Right"/>
+                        </horizontal>
+                        <horizontal child-expand-width="false">
                             <image src="#FastNotesIcon" image-color="#CBADFF" preserve-aspect="true"
-                                   preferred-height="3" preferred-width="3"/>
+                                   preferred-height="3" preferred-width="4"/>
                         </horizontal>
                     </horizontal>
                 </horizontal>

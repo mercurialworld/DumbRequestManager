@@ -21,6 +21,7 @@ using JetBrains.Annotations;
 using SongDetailsCache.Structs;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Zenject;
 
@@ -79,8 +80,10 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UIComponent("detailsDescription")]
     public TextMeshProUGUI detailsDescription = null!;
 
-    [UIValue("nps")] public string displayedNotesPerSecond = string.Empty;
-    [UIValue("njs")] public string displayedNoteJumpSpeed = string.Empty;
+    [UIComponent("detailsNotesPerSecond")]
+    public TextMeshProUGUI detailsNps = null!;
+    [UIComponent("detailsNoteJumpSpeed")]
+    public TextMeshProUGUI detailsNjs = null!;
     
     [UIValue("difficultyChoices")]
     public List<DifficultyUICellWrapper> DifficultyChoices = [];
@@ -126,7 +129,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     }
 
     [UIAction("selectCharacteristic")]
-    public void SelectCharacteristic(TableView tableView, CharacteristicUICellWrapper characteristic)
+    public void SelectCharacteristicWrapper(TableView tableView, CharacteristicUICellWrapper characteristic)
     {
 #if DEBUG
         Plugin.Log.Info($"Selected characteristic {characteristic.Name}");
@@ -134,14 +137,20 @@ internal class QueueViewController : BSMLAutomaticViewController
     }
     
     [UIAction("selectDifficulty")]
-    public void SelectDifficulty(TableView tableView, DifficultyUICellWrapper difficulty)
+    public void SelectDifficultyWrapper(TableView tableView, DifficultyUICellWrapper difficulty)
     {
 #if DEBUG
         Plugin.Log.Info($"Selected difficulty {difficulty.Name}");
 #endif
-        displayedNoteJumpSpeed = $"{difficulty.NoteJumpSpeed} <size=80%><opacity=#AA>NJS";
-        displayedNotesPerSecond = $"{difficulty.NotesPerSecond} <size=80%><opacity=#AA>NPS";
+        SelectDifficulty(difficulty);
     }
+    public void SelectDifficulty(DifficultyUICellWrapper difficulty)
+    {
+        // tried variables, failed miserably
+        detailsNjs.SetText($"{difficulty.NoteJumpSpeed:0.##} <size=80%><alpha=#AA>NJS");
+        detailsNps.SetText($"{difficulty.NotesPerSecond:0.00} <size=80%><alpha=#AA>NPS");
+    }
+    
 
     [UIAction("fetchDescription")]
     public async Task<string?> FetchDescription(string bsrKey)
@@ -176,18 +185,46 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         _selectCharacteristicComponent.TableView.ClearSelection();
         _selectDifficultyComponent.TableView.ClearSelection();
-
-        CharacteristicChoices = queuedSong.Diffs.Select(x => new CharacteristicUICellWrapper(x.Characteristic, "#NPSIcon")).ToList();
-        DifficultyChoices = queuedSong.Diffs.Select(x => new DifficultyUICellWrapper(x)).ToList();
+        Plugin.Log.Info("Cleared characteristics/difficulties");
+        
+        List<string> characteristics = [];
+        foreach (NoncontextualizedDifficulty diff in queuedSong.Diffs)
+        {
+            if (characteristics.Contains(diff.Characteristic))
+            {
+                continue;
+            }
+            characteristics.Add(diff.Characteristic);
+        }
+        Plugin.Log.Info($"Got {characteristics.Count} unique characteristics");
+        CharacteristicChoices = characteristics.Select(x => new CharacteristicUICellWrapper(x, $"#{x}BeatmapCharacteristicIcon")).ToList();
+        Plugin.Log.Info("Updated characteristic choices");
+        DifficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic.Contains("Standard")).Select(x => new DifficultyUICellWrapper(x)).ToList();
+        Plugin.Log.Info($"Got {DifficultyChoices.Count} unique difficulties");
         
         _selectCharacteristicComponent.TableView.ReloadData();
         _selectDifficultyComponent.TableView.ReloadData();
+        Plugin.Log.Info("Reloaded characteristics/difficulties UI");
         
         _selectCharacteristicComponent.TableView.SelectCellWithIdx(0);
+        Plugin.Log.Info("Should have selected characteristic");
         _selectDifficultyComponent.TableView.SelectCellWithIdx(_selectDifficultyComponent.NumberOfCells() - 1);
+        Plugin.Log.Info("Should have selected difficulty");
+        
+        // temporary
+        if (DifficultyChoices.Count > 0)
+        {
+            Plugin.Log.Info("Temporary update stuff called");
+            SelectDifficulty(DifficultyChoices.Last());
+        }
+        else
+        {
+            Plugin.Log.Info("...no difficulties all of a sudden? huh???");
+        }
 
         Task.Run(async () =>
         {
+            Plugin.Log.Info("Description updated");
             detailsDescription.text = await FetchDescription(queuedSong.BsrKey);
         });
         
@@ -200,6 +237,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             }
             
             detailsCoverImage.sprite = await Utilities.LoadSpriteAsync(queuedSong.CoverImage);
+            Plugin.Log.Info("Cover display updated");
         });
     }
     
