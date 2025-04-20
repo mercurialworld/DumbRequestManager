@@ -72,7 +72,7 @@ internal class HttpApi : IInitializable, IDisposable
         byte[] data = failedData;
         int statusCode = 501;
         
-        switch (path[1][..^1])
+        switch (path[1].Replace("/", string.Empty))
         {
             case "query":
                 byte[]? queryResponse = path[2][..^1] == "nocache"
@@ -104,6 +104,11 @@ internal class HttpApi : IInitializable, IDisposable
                     data = "{\"message\": \"Invalid request\"}"u8.ToArray();
                 }
                 break;
+            
+            case "queue":
+                statusCode = 200;
+                data = GetEncodedQueue;
+                break;
         }
         
         context.Response.ContentType = "application/json";
@@ -117,6 +122,8 @@ internal class HttpApi : IInitializable, IDisposable
         outputStream.Close();
         context.Response.Close();
     }
+
+    private static byte[] GetEncodedQueue => System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(QueueManager.QueuedSongs));
 
     private static async Task<byte[]?> AddKey(string key)
     {

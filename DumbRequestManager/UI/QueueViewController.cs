@@ -194,7 +194,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.DebugMessage($"Got {characteristics.Count} unique characteristics");
         CharacteristicChoices = characteristics.Select(x => new CharacteristicUICellWrapper(x, Utils.Normalize.GetCharacteristicIcon(x))).ToList();
         Plugin.DebugMessage("Updated characteristic choices");
-        DifficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic.Contains("Standard")).Select(x => new DifficultyUICellWrapper(x)).ToList();
+        DifficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic == CharacteristicChoices[0].Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
         Plugin.DebugMessage($"Got {DifficultyChoices.Count} unique difficulties");
         
         // literally wtf, shouldn't BSML be handling all of this????
@@ -221,10 +221,13 @@ internal class QueueViewController : BSMLAutomaticViewController
             Plugin.DebugMessage("...no difficulties all of a sudden? huh???");
         }
 
+        detailsDescription.color = new Color(1f, 1f, 1f, 0.5f);
+        detailsDescription.text = "Loading description...";
         Task.Run(async () =>
         {
             Plugin.DebugMessage("Description updated");
             detailsDescription.text = await FetchDescription(queuedSong.BsrKey);
+            detailsDescription.color = Color.white;
         });
         
         UnityMainThreadTaskScheduler.Factory.StartNew(async () =>

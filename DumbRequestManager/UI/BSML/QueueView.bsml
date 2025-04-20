@@ -173,8 +173,8 @@
                                         preferred-height="3" vertical-fit="Unconstrained" 
                                         child-expand-width="true" horizontal-fit="Unconstrained" 
                                         child-align="MiddleCenter">
-                                <text data="name"
-                                      color="#FFFFFFAA" font-size="2" all-uppercase="true" align="Center"/>
+                                <text data="name" 
+                                      color="#FFFFFF" font-size="2" all-uppercase="true" align="Center"/>
                             </horizontal>
                         </custom-list>
                     </vertical>
