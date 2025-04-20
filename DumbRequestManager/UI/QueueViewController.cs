@@ -72,6 +72,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     public TextMeshProUGUI detailsArtist = null!;
     [UIComponent("detailsMapper")]
     public TextMeshProUGUI detailsMapper = null!;
+    [UIComponent("detailsRequester")]
+    public TextMeshProUGUI detailsRequester = null!;
     [UIComponent("detailsBsrKey")]
     public TextMeshProUGUI detailsBsrKey = null!;
     [UIComponent("detailsUploadDate")]
@@ -172,6 +174,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         detailsTitle.text = queuedSong.Title;
         detailsArtist.text = queuedSong.Artist;
         detailsMapper.text = queuedSong.Mapper;
+        detailsRequester.text = queuedSong.User ?? "someone";
         
         detailsBsrKey.text = $"<alpha=#AA>!bsr <alpha=#FF>{queuedSong.BsrKey}";
         

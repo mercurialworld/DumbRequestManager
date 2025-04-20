@@ -91,6 +91,17 @@
                                       color="#CBADFFFF"/>
                             </horizontal>
                         </horizontal>
+                        <horizontal child-expand-width="false" child-align="LowerLeft"
+                                    spacing="0.5">
+                            <text text="requested by"
+                                  font-size="2" align="Left"
+                                  color="#CBFFAD80"/>
+                            <horizontal horizontal-fit="Unconstrained">
+                                <text id="detailsRequester"
+                                      font-size="2" align="Left" overflow-mode="Ellipsis"
+                                      color="#CBFFADFF"/>
+                            </horizontal>
+                        </horizontal>
                     </vertical>
                 </horizontal>
                 <horizontal preferred-height="3" vertical-fit="PreferredSize"

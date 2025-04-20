@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -66,6 +67,8 @@ internal class HttpApi : IInitializable, IDisposable
             return;
         }
         
+        NameValueCollection urlQuery = System.Web.HttpUtility.ParseQueryString(context.Request.Url.Query);
+        
         Plugin.DebugMessage($"path: {string.Join(", ", path)}");
 
         byte[] failedData = "{\"message\": \"Not implemented\"}"u8.ToArray();
@@ -92,7 +95,7 @@ internal class HttpApi : IInitializable, IDisposable
                 break;
             
             case "addKey":
-                byte[]? keyResponse = await AddKey(path.Last().Replace("/", string.Empty));
+                byte[]? keyResponse = await AddKey(path.Last().Replace("/", string.Empty), urlQuery.Get("user"));
                 if (keyResponse != null)
                 {
                     statusCode = 200;
@@ -125,10 +128,10 @@ internal class HttpApi : IInitializable, IDisposable
 
     private static byte[] GetEncodedQueue => System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(QueueManager.QueuedSongs));
 
-    private static async Task<byte[]?> AddKey(string key)
+    private static async Task<byte[]?> AddKey(string key, string? user = null)
     {
         Plugin.Log.Info($"Adding key {key}...");
-        NoncontextualizedSong? queuedSong = await QueueManager.AddKey(key);
+        NoncontextualizedSong? queuedSong = await QueueManager.AddKey(key, user);
         
         return queuedSong == null
             ? null

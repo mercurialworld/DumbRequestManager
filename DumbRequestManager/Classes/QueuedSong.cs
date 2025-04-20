@@ -99,6 +99,9 @@ public class NoncontextualizedSong
 
     [JsonProperty] [UIValue("hash")]
     public string Hash { get; set; } = string.Empty;
+    
+    [JsonProperty] [UIValue("user")]
+    public string? User { get; set; }
 
     [JsonProperty] [UIValue("title")]
     public string Title { get; set; } = string.Empty;

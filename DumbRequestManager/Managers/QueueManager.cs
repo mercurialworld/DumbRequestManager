@@ -16,7 +16,7 @@ public static class QueueManager
 {
     public static readonly List<NoncontextualizedSong> QueuedSongs = [];
 
-    public static async Task<NoncontextualizedSong?> AddKey(string key)
+    public static async Task<NoncontextualizedSong?> AddKey(string key, string? user = null)
     {
         NoncontextualizedSong queuedSong;
         
@@ -36,6 +36,11 @@ public static class QueueManager
         else
         {
             queuedSong = new NoncontextualizedSong(song);
+        }
+
+        if (user != null)
+        {
+            queuedSong.User = user;
         }
 
         QueuedSongs.Add(queuedSong);
