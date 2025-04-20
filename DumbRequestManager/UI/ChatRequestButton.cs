@@ -26,6 +26,8 @@ internal class ChatRequestButton(
     [UIComponent("attentionButton")] private Button _attentionButton = null!;
     // ReSharper restore FieldCanBeMadeReadOnly.Local
     
+    private static readonly Color IdleColor = new Color(1, 1, 1, 0.5f);
+    
     public void Initialize()
     {
         Instance = this;
@@ -35,7 +37,9 @@ internal class ChatRequestButton(
             levelSelectionNavigationController.rectTransform.gameObject, this);
         
         _standardButton.gameObject.name = "DRM_StandardButton";
+        _standardButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = IdleColor;
         _attentionButton.gameObject.name = "DRM_AttentionButton";
+        _attentionButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = Color.white;
         
 #if !DEBUG
         _standardButton.interactable = false;
@@ -53,11 +57,13 @@ internal class ChatRequestButton(
     public void Dispose()
     {
     }
-
+    
     public void UseAttentiveButton(bool value)
     {
         _standardButton.gameObject.SetActive(!value);
         _attentionButton.gameObject.SetActive(value);
+        
+        _standardButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = value ? Color.white : IdleColor;
     }
 
     [UIAction("openQueue")]

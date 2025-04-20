@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
+using BeatSaberMarkupLanguage.Attributes;
 using DumbRequestManager.Configuration;
 using JetBrains.Annotations;
 using Zenject;
@@ -11,6 +11,10 @@ internal class SettingsMenuManager : IInitializable, IDisposable
 {
     private static PluginConfig Config => PluginConfig.Instance;
 
+    [UsedImplicitly]
+    [UIValue("whereIsItListening")]
+    private static string WhereIsItListening => $"Listening on http://{Config.HttpAddress}:{Config.HttpPort}";
+    
     public void Initialize()
     {
 #if V1_39_1

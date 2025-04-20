@@ -14,7 +14,7 @@ namespace DumbRequestManager.Managers;
 [UsedImplicitly]
 public class SongDetailsManager : IInitializable, IDisposable
 {
-    public static SongDetails? CacheInstance;
+    private static SongDetails? _cacheInstance;
     internal static readonly BeatSaver BeatSaverInstance = new(nameof(DumbRequestManager), Assembly.GetExecutingAssembly().GetName().Version);
 
     public void Initialize()
@@ -22,7 +22,7 @@ public class SongDetailsManager : IInitializable, IDisposable
         _ = Task.Run(async () =>
         {
             Plugin.Log.Info("Initializing SongDetailsCache...");
-            CacheInstance = await SongDetails.Init();
+            _cacheInstance = await SongDetails.Init();
             Plugin.Log.Info("Initialized SongDetailsCache");
         });
     }
@@ -38,7 +38,7 @@ public class SongDetailsManager : IInitializable, IDisposable
 
     public static Song? GetByKey(string key)
     {
-        if (CacheInstance == null)
+        if (_cacheInstance == null)
         {
             Plugin.Log.Info("SongDetails not initialized");
             return null;
@@ -46,7 +46,7 @@ public class SongDetailsManager : IInitializable, IDisposable
 
         try
         {
-            if (CacheInstance.songs.FindByMapId(key, out Song song))
+            if (_cacheInstance.songs.FindByMapId(key, out Song song))
             {
                 return song;
             }

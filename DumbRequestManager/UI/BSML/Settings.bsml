@@ -1,3 +1,4 @@
 ﻿<settings-container xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
                      xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+    <text text="~whereIsItListening"/>
 </settings-container>

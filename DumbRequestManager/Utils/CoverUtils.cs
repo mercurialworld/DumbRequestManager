@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using BeatSaberMarkupLanguage;
-using SongDetailsCache.Structs;
-using UnityEngine;
 
 namespace DumbRequestManager.Utils;
 

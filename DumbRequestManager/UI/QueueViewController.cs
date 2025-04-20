@@ -2,26 +2,21 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using BeatSaverDownloader.Misc;
-using BeatSaverSharp;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
 using HMUI;
 using IPA.Utilities.Async;
 using JetBrains.Annotations;
-using SongDetailsCache.Structs;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Zenject;
 
@@ -83,15 +78,15 @@ internal class QueueViewController : BSMLAutomaticViewController
 
     // ReSharper disable FieldCanBeMadeReadOnly.Global
     [UIComponent("detailsNotesPerSecond")]
-    public static TextMeshProUGUI DetailsNps = null!;
+    private static TextMeshProUGUI _detailsNps = null!;
     [UIComponent("detailsNoteJumpSpeed")]
-    public static TextMeshProUGUI DetailsNjs = null!;
+    private static TextMeshProUGUI _detailsNjs = null!;
     // ReSharper restore FieldCanBeMadeReadOnly.Global
     
     [UIValue("difficultyChoices")]
-    public static List<DifficultyUICellWrapper> DifficultyChoices = [];
+    private static List<DifficultyUICellWrapper> _difficultyChoices = [];
     [UIValue("characteristicChoices")]
-    public static List<CharacteristicUICellWrapper> CharacteristicChoices = [];
+    private static List<CharacteristicUICellWrapper> _characteristicChoices = [];
     
     [UIValue("selectCharacteristicComponent")]
     private static CustomCellListTableData _selectCharacteristicComponent = null!;
@@ -117,8 +112,8 @@ internal class QueueViewController : BSMLAutomaticViewController
             _queueTableComponent = GameObject.Find("QueueTableComponent").GetComponent<CustomCellListTableData>();
             _selectCharacteristicComponent = GameObject.Find("DRM_SelectCharacteristicComponent").GetComponent<CustomCellListTableData>();
             _selectDifficultyComponent = GameObject.Find("DRM_SelectDifficultyComponent").GetComponent<CustomCellListTableData>();
-            DetailsNps = GameObject.Find("DRM_DetailsNotesPerSecond").GetComponent<TextMeshProUGUI>();
-            DetailsNjs = GameObject.Find("DRM_DetailsNoteJumpSpeed").GetComponent<TextMeshProUGUI>();
+            _detailsNps = GameObject.Find("DRM_DetailsNotesPerSecond").GetComponent<TextMeshProUGUI>();
+            _detailsNjs = GameObject.Find("DRM_DetailsNoteJumpSpeed").GetComponent<TextMeshProUGUI>();
         }
 
         if (firstActivation)
@@ -127,8 +122,8 @@ internal class QueueViewController : BSMLAutomaticViewController
             _selectCharacteristicComponent.TableView.selectionType = TableViewSelectionType.Single;
             _selectDifficultyComponent.TableView.selectionType = TableViewSelectionType.Single;
             
-            _selectCharacteristicComponent.Data = CharacteristicChoices;
-            _selectDifficultyComponent.Data = DifficultyChoices;
+            _selectCharacteristicComponent.Data = _characteristicChoices;
+            _selectDifficultyComponent.Data = _difficultyChoices;
             
             _selectCharacteristicComponent.TableView.didSelectCellWithIdxEvent += DidSelectCharacteristicCellWithIdxEvent;
             _selectDifficultyComponent.TableView.didSelectCellWithIdxEvent += DidSelectDifficultyCellWithIdxEvent;
@@ -161,12 +156,12 @@ internal class QueueViewController : BSMLAutomaticViewController
             }
         }
         
-        CharacteristicUICellWrapper characteristic = CharacteristicChoices[idx];
-        DifficultyChoices = SelectedSong.Diffs.Where(x => x.Characteristic == characteristic.Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
+        CharacteristicUICellWrapper characteristic = _characteristicChoices[idx];
+        _difficultyChoices = _selectedSong.Diffs.Where(x => x.Characteristic == characteristic.Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
 
-        Plugin.DebugMessage($"Got {DifficultyChoices.Count} unique difficulties");
+        Plugin.DebugMessage($"Got {_difficultyChoices.Count} unique difficulties");
         
-        _selectDifficultyComponent.Data = DifficultyChoices;
+        _selectDifficultyComponent.Data = _difficultyChoices;
 
         _selectDifficultyComponent.TableView.ReloadData();
         Plugin.DebugMessage("Reloaded characteristics/difficulties UI");
@@ -195,16 +190,16 @@ internal class QueueViewController : BSMLAutomaticViewController
             }
         }
         
-        DifficultyUICellWrapper difficulty = DifficultyChoices[idx];
+        DifficultyUICellWrapper difficulty = _difficultyChoices[idx];
         Plugin.DebugMessage($"Selected difficulty {difficulty.Name}");
         
         // tried variables, failed miserably
-        DetailsNjs.SetText($"{difficulty.NoteJumpSpeed:0.##} <size=80%><alpha=#AA>NJS");
-        DetailsNps.SetText($"{difficulty.NotesPerSecond:0.00} <size=80%><alpha=#AA>NPS");
+        _detailsNjs.SetText($"{difficulty.NoteJumpSpeed:0.##} <size=80%><alpha=#AA>NJS");
+        _detailsNps.SetText($"{difficulty.NotesPerSecond:0.00} <size=80%><alpha=#AA>NPS");
     }
 
     [UIAction("fetchDescription")]
-    public async Task<string?> FetchDescription(string bsrKey)
+    private static async Task<string?> FetchDescription(string bsrKey)
     {
         Beatmap? beatmap = await SongDetailsManager.BeatSaverInstance.Beatmap(bsrKey);
         if (beatmap != null)
@@ -216,11 +211,11 @@ internal class QueueViewController : BSMLAutomaticViewController
         return null;
     }
 
-    public static NoncontextualizedSong SelectedSong = null!;
+    private static NoncontextualizedSong _selectedSong = null!;
     [UIAction("selectCell")]
     public void SelectCell(TableView tableView, NoncontextualizedSong queuedSong)
     {
-        SelectedSong = queuedSong;
+        _selectedSong = queuedSong;
         int index = tableView._selectedCellIdxs.First();
         
         Plugin.DebugMessage($"Selected cell: {index}");
@@ -251,12 +246,12 @@ internal class QueueViewController : BSMLAutomaticViewController
             characteristics.Add(diff.Characteristic);
         }
         Plugin.DebugMessage($"Got {characteristics.Count} unique characteristics");
-        CharacteristicChoices = characteristics.Select(x => new CharacteristicUICellWrapper(x, Utils.Normalize.GetCharacteristicIcon(x))).ToList();
+        _characteristicChoices = characteristics.Select(x => new CharacteristicUICellWrapper(x, Utils.Normalize.GetCharacteristicIcon(x))).ToList();
         Plugin.DebugMessage("Updated characteristic choices");
-        DifficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic == CharacteristicChoices[0].Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
-        Plugin.DebugMessage($"Got {DifficultyChoices.Count} unique difficulties");
+        _difficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic == _characteristicChoices[0].Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
+        Plugin.DebugMessage($"Got {_difficultyChoices.Count} unique difficulties");
         
-        _selectCharacteristicComponent.Data = CharacteristicChoices;
+        _selectCharacteristicComponent.Data = _characteristicChoices;
         //_selectDifficultyComponent.Data = DifficultyChoices;
         
         _selectCharacteristicComponent.TableView.ReloadData();
