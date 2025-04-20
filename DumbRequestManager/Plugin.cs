@@ -30,4 +30,11 @@ internal class Plugin
         
         Log.Info("Plugin loaded");
     }
+
+    public static void DebugMessage(string message)
+    {
+#if DEBUG
+        Log.Info(message);
+#endif
+    }
 }

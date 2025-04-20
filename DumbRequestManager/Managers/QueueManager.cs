@@ -41,10 +41,8 @@ public static class QueueManager
         QueuedSongs.Add(queuedSong);
         
         ChatRequestButton.Instance.UseAttentiveButton(true);
-
-#if DEBUG
+        
         Plugin.Log.Info($"Added map {key}, queue has {QueuedSongs.Count} map(s)");
-#endif
         return queuedSong;
     }
 }

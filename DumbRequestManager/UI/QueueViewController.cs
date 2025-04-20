@@ -130,17 +130,13 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UIAction("selectCharacteristic")]
     public void SelectCharacteristicWrapper(TableView tableView, CharacteristicUICellWrapper characteristic)
     {
-#if DEBUG
-        Plugin.Log.Info($"Selected characteristic {characteristic.Name}");
-#endif
+        Plugin.DebugMessage($"Selected characteristic {characteristic.Name}");
     }
     
     [UIAction("selectDifficulty")]
     public void SelectDifficultyWrapper(TableView tableView, DifficultyUICellWrapper difficulty)
     {
-#if DEBUG
-        Plugin.Log.Info($"Selected difficulty {difficulty.Name}");
-#endif
+        Plugin.DebugMessage($"Selected difficulty {difficulty.Name}");
         SelectDifficulty(difficulty);
     }
     public void SelectDifficulty(DifficultyUICellWrapper difficulty)
@@ -169,9 +165,9 @@ internal class QueueViewController : BSMLAutomaticViewController
     {
         int index = tableView._selectedCellIdxs.First();
         
-        Plugin.Log.Info($"Selected cell: {index}");
-        Plugin.Log.Info($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
-        Plugin.Log.Info($"Cells: {tableView._contentTransform.childCount}");
+        Plugin.DebugMessage($"Selected cell: {index}");
+        Plugin.DebugMessage($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
+        Plugin.DebugMessage($"Cells: {tableView._contentTransform.childCount}");
 
         detailsTitle.text = queuedSong.Title;
         detailsArtist.text = queuedSong.Artist;
@@ -184,7 +180,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         _selectCharacteristicComponent.TableView.ClearSelection();
         _selectDifficultyComponent.TableView.ClearSelection();
-        Plugin.Log.Info("Cleared characteristics/difficulties");
+        Plugin.DebugMessage("Cleared characteristics/difficulties");
         
         List<string> characteristics = [];
         foreach (NoncontextualizedDifficulty diff in queuedSong.Diffs)
@@ -195,11 +191,11 @@ internal class QueueViewController : BSMLAutomaticViewController
             }
             characteristics.Add(diff.Characteristic);
         }
-        Plugin.Log.Info($"Got {characteristics.Count} unique characteristics");
+        Plugin.DebugMessage($"Got {characteristics.Count} unique characteristics");
         CharacteristicChoices = characteristics.Select(x => new CharacteristicUICellWrapper(x, Utils.Normalize.GetCharacteristicIcon(x))).ToList();
-        Plugin.Log.Info("Updated characteristic choices");
+        Plugin.DebugMessage("Updated characteristic choices");
         DifficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic.Contains("Standard")).Select(x => new DifficultyUICellWrapper(x)).ToList();
-        Plugin.Log.Info($"Got {DifficultyChoices.Count} unique difficulties");
+        Plugin.DebugMessage($"Got {DifficultyChoices.Count} unique difficulties");
         
         // literally wtf, shouldn't BSML be handling all of this????
         _selectCharacteristicComponent.Data = CharacteristicChoices;
@@ -207,27 +203,27 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         _selectCharacteristicComponent.TableView.ReloadData();
         _selectDifficultyComponent.TableView.ReloadData();
-        Plugin.Log.Info("Reloaded characteristics/difficulties UI");
+        Plugin.DebugMessage("Reloaded characteristics/difficulties UI");
         
         _selectCharacteristicComponent.TableView.SelectCellWithIdx(0);
-        Plugin.Log.Info("Should have selected characteristic");
+        Plugin.DebugMessage("Should have selected characteristic");
         _selectDifficultyComponent.TableView.SelectCellWithIdx(_selectDifficultyComponent.NumberOfCells() - 1);
-        Plugin.Log.Info("Should have selected difficulty");
+        Plugin.DebugMessage("Should have selected difficulty");
         
         // temporary
         if (DifficultyChoices.Count > 0)
         {
-            Plugin.Log.Info("Temporary update stuff called");
+            Plugin.DebugMessage("Temporary update stuff called");
             SelectDifficulty(DifficultyChoices.Last());
         }
         else
         {
-            Plugin.Log.Info("...no difficulties all of a sudden? huh???");
+            Plugin.DebugMessage("...no difficulties all of a sudden? huh???");
         }
 
         Task.Run(async () =>
         {
-            Plugin.Log.Info("Description updated");
+            Plugin.DebugMessage("Description updated");
             detailsDescription.text = await FetchDescription(queuedSong.BsrKey);
         });
         
@@ -240,17 +236,17 @@ internal class QueueViewController : BSMLAutomaticViewController
             }
             
             detailsCoverImage.sprite = await Utilities.LoadSpriteAsync(queuedSong.CoverImage);
-            Plugin.Log.Info("Cover display updated");
+            Plugin.DebugMessage("Cover display updated");
         });
     }
     
     public void GoToLevel(BeatmapLevel? beatmapLevel)
     {
-        Plugin.Log.Info("GoToLevel called");
+        Plugin.DebugMessage("GoToLevel called");
 
         if (beatmapLevel == null)
         {
-            Plugin.Log.Info("beatmapLevel is null");
+            Plugin.DebugMessage("beatmapLevel is null");
             return;
         }
         
@@ -259,16 +255,16 @@ internal class QueueViewController : BSMLAutomaticViewController
         _selectLevelCategoryViewController.LevelFilterCategoryIconSegmentedControlDidSelectCell(
             _selectLevelCategoryViewController._levelFilterCategoryIconSegmentedControl, 1);
         
-        Plugin.Log.Info($"Selecting {beatmapLevel.songName} in the map list...");
+        Plugin.DebugMessage($"Selecting {beatmapLevel.songName} in the map list...");
         _levelCollectionViewController._levelCollectionTableView.SelectLevel(beatmapLevel);
-        Plugin.Log.Info("Should be selected");
+        Plugin.DebugMessage("Should be selected");
     }
 
     public void OkGoBack(NoncontextualizedSong queuedSong)
     {
         waitModal.Hide(false);
         
-        Plugin.Log.Info("Going back to the map list screen");
+        Plugin.DebugMessage("Going back to the map list screen");
         GameObject.Find("QueueFlowCoordinator").GetComponent<QueueFlowCoordinator>().BackButtonWasPressed(this);
         try
         {
@@ -279,7 +275,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             Plugin.Log.Error(e);
         }
 
-        Plugin.Log.Info("Should've selected level");
+        Plugin.DebugMessage("Should've selected level");
     }
 
     [UIAction("skipButtonPressed")]
@@ -288,11 +284,11 @@ internal class QueueViewController : BSMLAutomaticViewController
         int index = _queueTableComponent.TableView._selectedCellIdxs.First();
         if (index == -1)
         {
-            Plugin.Log.Info("Nothing selected");
+            Plugin.DebugMessage("Nothing selected");
             return;
         }
         
-        Plugin.Log.Info($"Selected cell: {index}");
+        Plugin.DebugMessage($"Selected cell: {index}");
         
         Queue.RemoveAt(index);
         _queueTableComponent.TableView.ClearSelection();
@@ -317,16 +313,16 @@ internal class QueueViewController : BSMLAutomaticViewController
         int index = _queueTableComponent.TableView._selectedCellIdxs.First();
         if (index == -1)
         {
-            Plugin.Log.Info("Nothing selected");
+            Plugin.DebugMessage("Nothing selected");
             return;
         }
         
         waitModal.Show(false);
         
-        Plugin.Log.Info($"Selected cell: {index}");
+        Plugin.DebugMessage($"Selected cell: {index}");
         NoncontextualizedSong queuedSong = Queue[index];
         
-        Plugin.Log.Info($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
+        Plugin.DebugMessage($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
         
         Queue.RemoveAt(index);
         _queueTableComponent.TableView.ClearSelection();
@@ -337,7 +333,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         Beatmap? beatmap = await SongDetailsManager.BeatSaverInstance.Beatmap(queuedSong.BsrKey);
         if (beatmap != null)
         {
-            Plugin.Log.Info("Beatmap was not null");
+            Plugin.DebugMessage("Beatmap was not null");
             
             if (!SongCore.Collections.songWithHashPresent(queuedSong.Hash))
             {

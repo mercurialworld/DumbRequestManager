@@ -66,9 +66,7 @@ internal class HttpApi : IInitializable, IDisposable
             return;
         }
         
-#if DEBUG
-        Plugin.Log.Info($"path: {string.Join(", ", path)}");
-#endif
+        Plugin.DebugMessage($"path: {string.Join(", ", path)}");
 
         byte[] failedData = "{\"message\": \"Not implemented\"}"u8.ToArray();
         byte[] data = failedData;

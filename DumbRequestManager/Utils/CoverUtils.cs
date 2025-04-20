@@ -22,7 +22,7 @@ internal abstract class RemoteImage
             return null;
         }
         
-        Plugin.Log.Info("Fetched cover");
+        Plugin.DebugMessage("Fetched cover");
         return await imageResponse.Content.ReadAsByteArrayAsync();
     }
 
@@ -34,7 +34,7 @@ internal abstract class RemoteImage
             return imageBytes;
         }
         
-        Plugin.Log.Info("imageBytes was null");
+        Plugin.DebugMessage("imageBytes was null");
         return null;
 
         //return await Utilities.LoadSpriteAsync(imageBytes);
@@ -47,21 +47,16 @@ internal static class Cover
     
     public static async Task<byte[]?> LoadCover(string url)
     {
-#if DEBUG
-        Plugin.Log.Info($"Loading cover from {url}");
-        Plugin.Log.Info($"{CoverCache.Count} covers have been cached");
-#endif
+        Plugin.DebugMessage($"Loading cover from {url}");
+        Plugin.DebugMessage($"{CoverCache.Count} covers have been cached");
+        
         if (CoverCache.TryGetValue(url, out byte[] cached))
         {
-#if DEBUG
-            Plugin.Log.Info("Cover was cached, using it");
-#endif
+            Plugin.DebugMessage("Cover was cached, using it");
             return cached;
         }
         
-#if DEBUG
-        Plugin.Log.Info("Cover not cached, fetching...");
-#endif
+        Plugin.DebugMessage("Cover not cached, fetching...");
 
         byte[]? cover = null;
         try
@@ -69,13 +64,11 @@ internal static class Cover
             cover = await RemoteImage.Fetch(url);
             if (cover == null)
             {
-#if DEBUG
-                Plugin.Log.Info("Cover was null");
-#endif
+                Plugin.DebugMessage("Cover was null");
                 return null;
             }
             
-            Plugin.Log.Info(CoverCache.TryAdd(url, cover) ? "Cover was cached" : "Cover was not cached???");
+            Plugin.DebugMessage(CoverCache.TryAdd(url, cover) ? "Cover was cached" : "Cover was not cached???");
             return cover;
         }
         catch (Exception e)
