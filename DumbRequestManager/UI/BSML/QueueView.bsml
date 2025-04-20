@@ -137,7 +137,7 @@
                                    preferred-height="3" preferred-width="4"/>
                         </horizontal>
                         <horizontal child-expand-width="true">
-                            <text id="detailsNotesPerSecond" text="-"
+                            <text id="detailsNotesPerSecond" name="DRM_DetailsNotesPerSecond" text="-"
                                   rich-text="true"
                                   font-size="3" font-align="Left"/>
                         </horizontal>
@@ -145,7 +145,7 @@
                     <horizontal preferred-width="24" horizontal-fit="PreferredSize"
                                 child-align="MiddleRight" child-expand-width="false">
                         <horizontal child-expand-width="true">
-                            <text id="detailsNoteJumpSpeed" text="-"
+                            <text id="detailsNoteJumpSpeed" name="DRM_DetailsNoteJumpSpeed" text="-"
                                   rich-text="true"
                                   font-size="3" font-align="Right"/>
                         </horizontal>
@@ -163,8 +163,7 @@
                                 bg="round-rect-panel" bg-color="grey">
                         <custom-list id="selectCharacteristicComponent" contents="characteristicChoices" name="DRM_SelectCharacteristicComponent"
                                      align-to-center="true" list-direction="Horizontal"
-                                     preferred-width="46" preferred-height="3" cell-size="5"
-                                     select-cell="selectCharacteristic">
+                                     preferred-width="46" preferred-height="3" cell-size="5">
                             <horizontal preferred-height="3" vertical-fit="PreferredSize"
                                         preferred-width="5" horizontal-fit="PreferredSize"
                                         child-align="MiddleCenter" child-control-width="true" child-expand-width="false">
@@ -178,8 +177,7 @@
                                 bg="round-rect-panel" bg-color="grey">
                         <custom-list id="selectDifficultyComponent" contents="difficultyChoices" name="DRM_SelectDifficultyComponent"
                                      align-to-center="true" list-direction="Horizontal"
-                                     preferred-width="46" preferred-height="3"
-                                     select-cell="selectDifficulty">
+                                     preferred-width="46" preferred-height="3">
                             <horizontal
                                         preferred-height="3" vertical-fit="Unconstrained" 
                                         child-expand-width="true" horizontal-fit="Unconstrained" 

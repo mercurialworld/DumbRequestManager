@@ -81,15 +81,17 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UIComponent("detailsDescription")]
     public TextMeshProUGUI detailsDescription = null!;
 
+    // ReSharper disable FieldCanBeMadeReadOnly.Global
     [UIComponent("detailsNotesPerSecond")]
-    public TextMeshProUGUI detailsNps = null!;
+    public static TextMeshProUGUI DetailsNps = null!;
     [UIComponent("detailsNoteJumpSpeed")]
-    public TextMeshProUGUI detailsNjs = null!;
+    public static TextMeshProUGUI DetailsNjs = null!;
+    // ReSharper restore FieldCanBeMadeReadOnly.Global
     
     [UIValue("difficultyChoices")]
-    public List<DifficultyUICellWrapper> DifficultyChoices = [];
+    public static List<DifficultyUICellWrapper> DifficultyChoices = [];
     [UIValue("characteristicChoices")]
-    public List<CharacteristicUICellWrapper> CharacteristicChoices = [];
+    public static List<CharacteristicUICellWrapper> CharacteristicChoices = [];
     
     [UIValue("selectCharacteristicComponent")]
     private static CustomCellListTableData _selectCharacteristicComponent = null!;
@@ -115,6 +117,8 @@ internal class QueueViewController : BSMLAutomaticViewController
             _queueTableComponent = GameObject.Find("QueueTableComponent").GetComponent<CustomCellListTableData>();
             _selectCharacteristicComponent = GameObject.Find("DRM_SelectCharacteristicComponent").GetComponent<CustomCellListTableData>();
             _selectDifficultyComponent = GameObject.Find("DRM_SelectDifficultyComponent").GetComponent<CustomCellListTableData>();
+            DetailsNps = GameObject.Find("DRM_DetailsNotesPerSecond").GetComponent<TextMeshProUGUI>();
+            DetailsNjs = GameObject.Find("DRM_DetailsNoteJumpSpeed").GetComponent<TextMeshProUGUI>();
         }
 
         if (firstActivation)
@@ -123,31 +127,43 @@ internal class QueueViewController : BSMLAutomaticViewController
             _selectCharacteristicComponent.TableView.selectionType = TableViewSelectionType.Single;
             _selectDifficultyComponent.TableView.selectionType = TableViewSelectionType.Single;
             
+            _selectCharacteristicComponent.Data = CharacteristicChoices;
+            _selectDifficultyComponent.Data = DifficultyChoices;
+
+            _selectCharacteristicComponent.TableView.didSelectCellWithIdxEvent += DidSelectCharacteristicCellWithIdxEvent;
+            _selectDifficultyComponent.TableView.didSelectCellWithIdxEvent += DidSelectDifficultyCellWithIdxEvent;
+            
             detailsCoverImage.material = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UINoGlowRoundEdge");
         }
 
         _queueTableComponent.TableView.ReloadDataKeepingPosition();
     }
 
-    [UIAction("selectCharacteristic")]
-    public void SelectCharacteristicWrapper(TableView tableView, CharacteristicUICellWrapper characteristic)
+    private static void DidSelectCharacteristicCellWithIdxEvent(TableView tableView, int idx)
     {
-        Plugin.DebugMessage($"Selected characteristic {characteristic.Name}");
+        CharacteristicUICellWrapper characteristic = CharacteristicChoices[idx];
+        DifficultyChoices = SelectedSong.Diffs.Where(x => x.Characteristic == characteristic.Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
+
+        Plugin.DebugMessage($"Got {DifficultyChoices.Count} unique difficulties");
+        
+        _selectDifficultyComponent.Data = DifficultyChoices;
+
+        _selectDifficultyComponent.TableView.ReloadData();
+        Plugin.DebugMessage("Reloaded characteristics/difficulties UI");
+
+        _selectDifficultyComponent.TableView.SelectCellWithIdx(_selectDifficultyComponent.NumberOfCells() - 1, true);
+        Plugin.DebugMessage("Should have selected difficulty");
     }
     
-    [UIAction("selectDifficulty")]
-    public void SelectDifficultyWrapper(TableView tableView, DifficultyUICellWrapper difficulty)
+    private static void DidSelectDifficultyCellWithIdxEvent(TableView tableView, int idx)
     {
+        DifficultyUICellWrapper difficulty = DifficultyChoices[idx];
         Plugin.DebugMessage($"Selected difficulty {difficulty.Name}");
-        SelectDifficulty(difficulty);
-    }
-    public void SelectDifficulty(DifficultyUICellWrapper difficulty)
-    {
+        
         // tried variables, failed miserably
-        detailsNjs.SetText($"{difficulty.NoteJumpSpeed:0.##} <size=80%><alpha=#AA>NJS");
-        detailsNps.SetText($"{difficulty.NotesPerSecond:0.00} <size=80%><alpha=#AA>NPS");
+        DetailsNjs.SetText($"{difficulty.NoteJumpSpeed:0.##} <size=80%><alpha=#AA>NJS");
+        DetailsNps.SetText($"{difficulty.NotesPerSecond:0.00} <size=80%><alpha=#AA>NPS");
     }
-    
 
     [UIAction("fetchDescription")]
     public async Task<string?> FetchDescription(string bsrKey)
@@ -162,9 +178,11 @@ internal class QueueViewController : BSMLAutomaticViewController
         return null;
     }
 
+    public static NoncontextualizedSong SelectedSong = null!;
     [UIAction("selectCell")]
     public void SelectCell(TableView tableView, NoncontextualizedSong queuedSong)
     {
+        SelectedSong = queuedSong;
         int index = tableView._selectedCellIdxs.First();
         
         Plugin.DebugMessage($"Selected cell: {index}");
@@ -200,29 +218,14 @@ internal class QueueViewController : BSMLAutomaticViewController
         DifficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic == CharacteristicChoices[0].Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
         Plugin.DebugMessage($"Got {DifficultyChoices.Count} unique difficulties");
         
-        // literally wtf, shouldn't BSML be handling all of this????
         _selectCharacteristicComponent.Data = CharacteristicChoices;
         _selectDifficultyComponent.Data = DifficultyChoices;
         
         _selectCharacteristicComponent.TableView.ReloadData();
         _selectDifficultyComponent.TableView.ReloadData();
-        Plugin.DebugMessage("Reloaded characteristics/difficulties UI");
         
         _selectCharacteristicComponent.TableView.SelectCellWithIdx(0);
-        Plugin.DebugMessage("Should have selected characteristic");
-        _selectDifficultyComponent.TableView.SelectCellWithIdx(_selectDifficultyComponent.NumberOfCells() - 1);
-        Plugin.DebugMessage("Should have selected difficulty");
-        
-        // temporary
-        if (DifficultyChoices.Count > 0)
-        {
-            Plugin.DebugMessage("Temporary update stuff called");
-            SelectDifficulty(DifficultyChoices.Last());
-        }
-        else
-        {
-            Plugin.DebugMessage("...no difficulties all of a sudden? huh???");
-        }
+        _selectDifficultyComponent.TableView.SelectCellWithIdx(_selectDifficultyComponent.NumberOfCells() - 1, true);
 
         detailsDescription.color = new Color(1f, 1f, 1f, 0.5f);
         detailsDescription.text = "Loading description...";
