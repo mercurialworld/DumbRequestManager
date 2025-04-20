@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
+using DumbRequestManager.UI;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using SongDetailsCache.Structs;
@@ -112,13 +113,22 @@ internal class HttpApi : IInitializable
                 break;
             
             case "queue":
-                statusCode = 200;
-                
                 if (path.Length > 2)
                 {
-                    data = path[2][..^1] == "where"
-                        ? GetPositionsInQueue(path.Last().Replace("/", string.Empty))
-                        : GetEncodedQueue;
+                    switch (path[2].Replace("/", string.Empty))
+                    {
+                        case "where":
+                            statusCode = 200;
+                            data = GetPositionsInQueue(path.Last().Replace("/", string.Empty));
+                            break;
+                        
+                        case "clear":
+                            statusCode = 200;
+                            QueueManager.QueuedSongs.Clear();
+                            ChatRequestButton.Instance.UseAttentiveButton(false);
+                            data = "{\"message\": \"Queue cleared\"}"u8.ToArray();
+                            break;
+                    }
                 }
                 else
                 {
