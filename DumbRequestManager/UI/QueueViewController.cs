@@ -35,8 +35,7 @@ public readonly struct CharacteristicUICellWrapper(string name, string icon)
 
 public readonly struct DifficultyUICellWrapper(NoncontextualizedDifficulty difficulty)
 {
-    [UIValue("name")] public string Name => difficulty.Difficulty;
-    [UIValue("value")] public int Value => 0;
+    [UIValue("name")] public string Name => Utils.Normalize.GetDifficultyName(difficulty.Difficulty);
     public float NotesPerSecond => difficulty.NotesPerSecond;
     public float NoteJumpSpeed => difficulty.NoteJumpSpeed;
 }
@@ -197,10 +196,14 @@ internal class QueueViewController : BSMLAutomaticViewController
             characteristics.Add(diff.Characteristic);
         }
         Plugin.Log.Info($"Got {characteristics.Count} unique characteristics");
-        CharacteristicChoices = characteristics.Select(x => new CharacteristicUICellWrapper(x, $"#{x}BeatmapCharacteristicIcon")).ToList();
+        CharacteristicChoices = characteristics.Select(x => new CharacteristicUICellWrapper(x, Utils.Normalize.GetCharacteristicIcon(x))).ToList();
         Plugin.Log.Info("Updated characteristic choices");
         DifficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic.Contains("Standard")).Select(x => new DifficultyUICellWrapper(x)).ToList();
         Plugin.Log.Info($"Got {DifficultyChoices.Count} unique difficulties");
+        
+        // literally wtf, shouldn't BSML be handling all of this????
+        _selectCharacteristicComponent.Data = CharacteristicChoices;
+        _selectDifficultyComponent.Data = DifficultyChoices;
         
         _selectCharacteristicComponent.TableView.ReloadData();
         _selectDifficultyComponent.TableView.ReloadData();

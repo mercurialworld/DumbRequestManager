@@ -102,12 +102,12 @@
                           font-size="3" font-align="Right"/>
                 </horizontal>
                 <vertical preferred-height="24" vertical-fit="PreferredSize"
-                          preferred-width="48" horizontal-fit="PreferredSize"
+                          preferred-width="46" horizontal-fit="PreferredSize"
                           background="round-rect-panel" bg-color="grey">
                     <scroll-view preferred-height="24" child-control-height="true" child-expand-height="false"
-                                 preferred-width="48" child-control-width="true" child-expand-width="false"
+                                 preferred-width="46" child-control-width="true" child-expand-width="false"
                                  child-alignment="UpperLeft" padding="0" pad-top="-1" pad-bottom="-1">
-                        <vertical horizontal-fit="PreferredSize" preferred-width="38"
+                        <vertical horizontal-fit="PreferredSize" preferred-width="36"
                                   vertical-fit="Unconstrained"
                                   child-alignment="UpperLeft">
                             <text id="detailsDescription"
@@ -151,27 +151,30 @@
                                 preferred-height="5" vertical-fit="PreferredSize"
                                 bg="round-rect-panel" bg-color="grey">
                         <custom-list id="selectCharacteristicComponent" contents="characteristicChoices" name="DRM_SelectCharacteristicComponent"
-                                     align-to-center="false" list-direction="Horizontal"
+                                     align-to-center="true" list-direction="Horizontal"
+                                     preferred-width="46" preferred-height="3" cell-size="5"
                                      select-cell="selectCharacteristic">
-                            <horizontal preferred-height="3" vertical-fit="Unconstrained"
-                                        horizontal-fit="Unconstrained"
-                                        child-align="MiddleCenter">
+                            <horizontal preferred-height="3" vertical-fit="PreferredSize"
+                                        preferred-width="5" horizontal-fit="PreferredSize"
+                                        child-align="MiddleCenter" child-control-width="true" child-expand-width="false">
                                 <image preferred-width="3" preferred-height="3" preserve-aspect="true"
-                                       src="~icon" img-color="#FFFFFFFF"/>
+                                       src="~icon" img-color="#FFFFFFAA"/>
                             </horizontal>
                         </custom-list>
                     </vertical>
                     <vertical preferred-width="46" horizontal-fit="PreferredSize"
                                 preferred-height="5" vertical-fit="PreferredSize"
                                 bg="round-rect-panel" bg-color="grey">
-                        <custom-list id="selectDifficultyComponent" contents="difficultyChoices"  name="DRM_SelectDifficultyComponent"
-                                     align-to-center="false" list-direction="Horizontal"
+                        <custom-list id="selectDifficultyComponent" contents="difficultyChoices" name="DRM_SelectDifficultyComponent"
+                                     align-to-center="true" list-direction="Horizontal"
+                                     preferred-width="46" preferred-height="3"
                                      select-cell="selectDifficulty">
-                            <horizontal preferred-height="3" vertical-fit="Unconstrained" 
-                                        horizontal-fit="Unconstrained" 
+                            <horizontal
+                                        preferred-height="3" vertical-fit="Unconstrained" 
+                                        child-expand-width="true" horizontal-fit="Unconstrained" 
                                         child-align="MiddleCenter">
                                 <text data="name"
-                                      color="#FFFFFFFF" font-size="3"/>
+                                      color="#FFFFFFAA" font-size="2" all-uppercase="true" align="Center"/>
                             </horizontal>
                         </custom-list>
                     </vertical>
