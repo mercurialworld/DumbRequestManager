@@ -34,7 +34,7 @@ internal class HttpApi : IInitializable, IDisposable
         Plugin.Log.Info("Initializing HttpApi...");
         _httpListener = new HttpListener
         {
-            Prefixes = { $"http://localhost:{Config.HttpPort}/" }
+            Prefixes = { $"http://{Config.HttpAddress}:{Config.HttpPort}/" }
         };
         
         _httpListener.Start();

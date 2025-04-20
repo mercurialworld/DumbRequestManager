@@ -13,5 +13,6 @@ internal class PluginConfig
 {
     public static PluginConfig Instance { get; set; } = null!;
     
+    public virtual string HttpAddress { get; set; } = "localhost";
     public virtual int HttpPort { get; set; } = 13337;
 }
