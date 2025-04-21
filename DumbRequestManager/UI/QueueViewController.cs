@@ -294,10 +294,15 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         _levelFilteringNavigationController.UpdateCustomSongs();
         
+        _levelFilteringNavigationController._levelSearchViewController.ResetFilter(false);
         _selectLevelCategoryViewController.LevelFilterCategoryIconSegmentedControlDidSelectCell(
-            _selectLevelCategoryViewController._levelFilterCategoryIconSegmentedControl, 1);
+                _selectLevelCategoryViewController._levelFilterCategoryIconSegmentedControl, 3);
+        _levelFilteringNavigationController.HandleSelectLevelCategoryViewControllerDidSelectLevelCategory(
+            _selectLevelCategoryViewController, SelectLevelCategoryViewController.LevelCategory.All);
+        //_levelFilteringNavigationController.UpdateSecondChildControllerContent(SelectLevelCategoryViewController.LevelCategory.All);
         
         Plugin.DebugMessage($"Selecting {beatmapLevel.songName} in the map list...");
+        _levelCollectionViewController._levelCollectionTableView.ReloadCellsData();
         _levelCollectionViewController._levelCollectionTableView.SelectLevel(beatmapLevel);
         Plugin.DebugMessage("Should be selected");
     }
