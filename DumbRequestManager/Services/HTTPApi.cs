@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
@@ -132,8 +133,14 @@ internal class HttpApi : IInitializable
                 }
                 else
                 {
+                    statusCode = 200;
                     data = GetEncodedQueue;
                 }
+                break;
+            
+            case "history":
+                statusCode = 200;
+                data = GetSessionHistory(int.Parse(urlQuery.Get("limit") ?? "0"));
                 break;
         }
         
@@ -147,6 +154,38 @@ internal class HttpApi : IInitializable
         
         outputStream.Close();
         context.Response.Close();
+    }
+    
+    private class TimestampComparer : IComparer
+    {
+        private readonly CaseInsensitiveComparer _comparer = new();
+        public int Compare(object? x, object? y)
+        {
+            return _comparer.Compare(y, x);
+        }
+    }
+    private static readonly TimestampComparer TimestampComparerInstance = new();
+
+    [JsonObject(MemberSerialization.OptIn)]
+    private struct HistorySpotItem(long timestamp, NoncontextualizedSong historyItem)
+    {
+        [JsonProperty] private int Timestamp => (int)timestamp;
+        [JsonProperty] private NoncontextualizedSong HistoryItem => historyItem;
+    }
+
+    private static byte[] GetSessionHistory(int limit = 0)
+    {
+        long[] keys = SessionHistoryManager.SessionHistory.Keys.ToArray();
+        Array.Sort(keys, TimestampComparerInstance);
+        if (limit > 0)
+        {
+            limit = Math.Min(keys.Length, limit);
+            keys = keys[0..limit];
+        }
+
+        HistorySpotItem[] historyItems = keys.Select(timestamp => new HistorySpotItem(timestamp, SessionHistoryManager.SessionHistory[timestamp])).ToArray();
+        
+        return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(historyItems));
     }
 
     [JsonObject(MemberSerialization.OptIn)]

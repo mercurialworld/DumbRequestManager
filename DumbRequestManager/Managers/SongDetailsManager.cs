@@ -36,6 +36,11 @@ public class SongDetailsManager : IInitializable, IDisposable
         return await BeatSaverInstance.Beatmap(key);
     }
 
+    public static async Task<Beatmap?> GetDirectByHash(string hash)
+    {
+        return await BeatSaverInstance.BeatmapByHash(hash);
+    }
+
     public static Song? GetByKey(string key)
     {
         if (_cacheInstance == null)
@@ -56,6 +61,34 @@ public class SongDetailsManager : IInitializable, IDisposable
 #pragma warning restore CS0168
         {
             Plugin.Log.Info("Could not find key in SongDetailsCache");
+#if DEBUG
+            Plugin.Log.Error(e);
+#endif
+        }
+
+        return null;
+    }
+
+    public static Song? GetByMapHash(string hash)
+    {
+        if (_cacheInstance == null)
+        {
+            Plugin.Log.Info("SongDetails not initialized");
+            return null;
+        }
+
+        try
+        {
+            if (_cacheInstance.songs.FindByHash(hash, out Song song))
+            {
+                return song;
+            }
+        }
+#pragma warning disable CS0168
+        catch (Exception e)
+#pragma warning restore CS0168
+        {
+            Plugin.Log.Info("Could not find hash in SongDetailsCache");
 #if DEBUG
             Plugin.Log.Error(e);
 #endif

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaverSharp.Models;
+using DumbRequestManager.Managers;
 using DumbRequestManager.Utils;
 using Newtonsoft.Json;
 using SongDetailsCache.Structs;
@@ -140,11 +141,11 @@ public class NoncontextualizedSong
 
     private CoverImageContainer _coverImageContainer = null!;
     [UIValue("coverImage")]
-    public byte[]? CoverImage => _coverImageContainer.CoverImage;
+    public byte[]? CoverImage => _coverImageContainer.CoverImage ?? null;
     // ReSharper restore MemberCanBePrivate.Global
 
     // sigh
-    public NoncontextualizedSong(Song? guh)
+    public NoncontextualizedSong(Song? guh, bool skipCoverImage = false)
     {
         if (guh == null)
         {
@@ -164,9 +165,12 @@ public class NoncontextualizedSong
         UploadTime = song.uploadTimeUnix;
         Cover = song.coverURL;
         Diffs = song.difficulties.Select(x => new NoncontextualizedDifficulty(x)).ToArray();
-        _coverImageContainer = new CoverImageContainer(song);
+        if (!skipCoverImage)
+        {
+            _coverImageContainer = new CoverImageContainer(song);
+        }
     }
-    public NoncontextualizedSong(Beatmap song)
+    public NoncontextualizedSong(Beatmap song, bool skipCoverImage = false)
     {
         BsrKey = song.ID;
         Hash = song.LatestVersion.Hash;
@@ -181,6 +185,9 @@ public class NoncontextualizedSong
         Cover = song.LatestVersion.CoverURL;
         Automapped = song.Automapper;
         Diffs = song.LatestVersion.Difficulties.Select(x => new NoncontextualizedDifficulty(x)).ToArray();
-        _coverImageContainer = new CoverImageContainer(song);
+        if (!skipCoverImage)
+        {
+            _coverImageContainer = new CoverImageContainer(song);
+        }
     }
 }

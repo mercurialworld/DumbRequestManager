@@ -32,14 +32,15 @@ By default, a simple HTTP server is started on `http://localhost:13337`. Port an
 
 As this is really only a web server, you can test any of these endpoints in any web browser of your choice, while the game is running of course. 
 
-| Endpoint  | Sub-command | Description/Example                                                                                                                                                                                                  | Returns                                         |
-|-----------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| `/query`  |             | Queries SongDetailsCache (and then BeatSaver if map data hasn't been cached yet) for map information.<br/>`/query/25f`                                                                                               | [Map Data](#map-data-type)                      |
-|           | `/nocache`  | Queries BeatSaver directly, skipping SongDetailsCache.<br/>`/query/nocache/25f`                                                                                                                                      | [Map Data](#map-data-type)                      |
-| `/addKey` |             | Adds a map to the queue.<br/>User identifiers can be tacked on with a `user` query parameter. Internally this is set as a string, anything can be used so long as it's unique.<br/>`/addKey/25f?user=TheBlackParrot` | [Map Data](#map-data-type)                      |
-| `/queue`  |             | Get maps currently in the queue.<br/>`/queue`                                                                                                                                                                        | (Array) [Map Data](#map-data-type)              |
-|           | `/where`    | Get user positions in the queue, along with map data from the maps the targeted user has in queue.<br/>`/queue/where/TheBlackParrot`                                                                                 | (Array) [Queue Position Data](#queue-data-type) |
-|           | `/clear`    | Clears the queue.<br/>`/queue/clear`                                                                                                                                                                                 | [Message](#message-data-type)                   |
+| Endpoint   | Sub-command | Description/Example                                                                                                                                                                                                  | Returns                                            |
+|------------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
+| `/query`   |             | Queries SongDetailsCache (and then BeatSaver if map data hasn't been cached yet) for map information.<br/>`/query/25f`                                                                                               | [Map Data](#map-data-type)                         |
+|            | `/nocache`  | Queries BeatSaver directly, skipping SongDetailsCache.<br/>`/query/nocache/25f`                                                                                                                                      | [Map Data](#map-data-type)                         |
+| `/addKey`  |             | Adds a map to the queue.<br/>User identifiers can be tacked on with a `user` query parameter. Internally this is set as a string, anything can be used so long as it's unique.<br/>`/addKey/25f?user=TheBlackParrot` | [Map Data](#map-data-type)                         |
+| `/queue`   |             | Get maps currently in the queue.<br/>`/queue`                                                                                                                                                                        | (Array) [Map Data](#map-data-type)                 |
+|            | `/where`    | Get user positions in the queue, along with map data from the maps the targeted user has in queue.<br/>`/queue/where/TheBlackParrot`                                                                                 | (Array) [Queue Position Data](#queue-data-type)    |
+|            | `/clear`    | Clears the queue.<br/>`/queue/clear`                                                                                                                                                                                 | [Message](#message-data-type)                      |
+| `/history` |             | Gets the current play session history<br/>Response limits can be tacked on with a `limit` query parameter.<br/>`/history`                                                                                            | (Array) [Session History Data](#history-data-type) |
 
 ## Return schemas
 <a name="map-data-type"></a>
@@ -115,6 +116,15 @@ As this is really only a web server, you can test any of these endpoints in any 
 {
   "Spot": 1,
   "QueueItem": [map data]
+}
+```
+
+<a name="history-data-type"></a>
+## Session history item
+```json
+{
+  "Timestamp": [unix timestamp],
+  "HistoryItem": [map data]
 }
 ```
 
