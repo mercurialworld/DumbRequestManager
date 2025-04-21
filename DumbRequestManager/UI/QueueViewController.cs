@@ -129,6 +129,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             _selectDifficultyComponent.TableView.didSelectCellWithIdxEvent += DidSelectDifficultyCellWithIdxEvent;
             
             detailsCoverImage.material = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UINoGlowRoundEdge");
+            detailsDescription.lineSpacing = -25f;
         }
 
         _queueTableComponent.TableView.ReloadDataKeepingPosition();

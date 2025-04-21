@@ -117,7 +117,7 @@
                           background="round-rect-panel" bg-color="grey">
                     <scroll-view preferred-height="24" child-control-height="true" child-expand-height="false"
                                  preferred-width="46" child-control-width="true" child-expand-width="false"
-                                 child-alignment="UpperLeft" padding="0" pad-top="-1" pad-bottom="-1">
+                                 child-alignment="UpperLeft" padding="0">
                         <vertical horizontal-fit="PreferredSize" preferred-width="36"
                                   vertical-fit="Unconstrained"
                                   child-alignment="UpperLeft">
