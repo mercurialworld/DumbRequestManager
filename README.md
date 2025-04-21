@@ -61,6 +61,7 @@ As this is really only a web server, you can test any of these endpoints in any 
   "Rating": 0.919891059,
   "UploadTime": 1627825945,
   "Cover": "https://cdn.beatsaver.com/a2ee3d6e6c82b89b10b9395bebf47cf05f316b10.jpg",
+  "Automapped": false,
   "Diffs": [
     {
       "Difficulty": "Hard",

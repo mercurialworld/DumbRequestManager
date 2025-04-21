@@ -132,6 +132,9 @@ public class NoncontextualizedSong
     
     [JsonProperty] [UIValue("coverURL")]
     public string Cover { get; set; } = string.Empty;
+    
+    [JsonProperty]
+    public bool Automapped { get; set; }
 
     [JsonProperty] public NoncontextualizedDifficulty[] Diffs { get; set; } = [];
 
@@ -176,6 +179,7 @@ public class NoncontextualizedSong
         Rating = song.Stats.Score;
         UploadTime = (uint)song.Uploaded.Subtract(DateTime.UnixEpoch).TotalSeconds;
         Cover = song.LatestVersion.CoverURL;
+        Automapped = song.Automapper;
         Diffs = song.LatestVersion.Difficulties.Select(x => new NoncontextualizedDifficulty(x)).ToArray();
         _coverImageContainer = new CoverImageContainer(song);
     }
