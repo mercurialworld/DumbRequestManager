@@ -40,7 +40,7 @@ As this is really only a web server, you can test any of these endpoints in any 
 | `/queue`   |             | Get maps currently in the queue.<br/>`/queue`                                                                                                                                                                        | (Array) [Map Data](#map-data-type)                 |
 |            | `/where`    | Get user positions in the queue, along with map data from the maps the targeted user has in queue.<br/>`/queue/where/TheBlackParrot`                                                                                 | (Array) [Queue Position Data](#queue-data-type)    |
 |            | `/clear`    | Clears the queue.<br/>`/queue/clear`                                                                                                                                                                                 | [Message](#message-data-type)                      |
-| `/history` |             | Gets the current play session history, sorted most recent to least recent.<br/>Response limits can be tacked on with a `limit` query parameter.<br/>`/history`                                                       | (Array) [Session History Data](#history-data-type) |
+| `/history` |             | Gets the current play session history, sorted most recent to least recent.<br/>Response limits can be tacked on with a `limit` query parameter.<br/>`/history?limit=1`                                               | (Array) [Session History Data](#history-data-type) |
 
 ## Return schemas
 <a name="map-data-type"></a>
