@@ -1,6 +1,6 @@
 ﻿<vertical xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
           xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
-    <horizontal preferred-height="80" vertical-fit="PreferredSize">
+    <horizontal preferred-height="80" vertical-fit="PreferredSize" spacing="1">
         <vertical preferred-width="70" horizontal-fit="PreferredSize" child-expand-width="true"
                   bg="round-rect-panel" bg-color="white">
             <vertical preferred-height="76" vertical-fit="PreferredSize" 
@@ -56,8 +56,17 @@
                 </custom-list>
             </vertical>
         </vertical>
+
+        <vertical id="nothingSelectedPanel"
+                  preferred-width="60" horizontal-fit="PreferredSize"
+                  bg="round-rect-panel" bg-color="white"
+                  child-align="MiddleCenter">
+            <text text="Nothing selected"
+                  color="#000000C0" align="Center" font-size="6"/>
+        </vertical>
         
-        <vertical preferred-width="60" horizontal-fit="PreferredSize"
+        <vertical id="somethingSelectedPanel"
+                  preferred-width="60" horizontal-fit="PreferredSize"
                   bg="round-rect-panel" bg-color="white">
             <vertical preferred-width="58" horizontal-fit="PreferredSize"
                       preferred-height="70" vertical-fit="PreferredSize">
@@ -108,9 +117,9 @@
                             preferred-width="58" horizontal-fit="PreferredSize"
                             pad-left="2" pad-right="2">
                     <text id="detailsBsrKey" rich-text="true"
-                          font-size="4" font-align="Left"/>
+                          font-size="4" font-align="MidlineLeft"/>
                     <text id="detailsUploadDate"
-                          font-size="4" font-align="Right"/>
+                          font-size="4" font-align="MidlineRight"/>
                 </horizontal>
                 <vertical preferred-height="30" vertical-fit="PreferredSize"
                           preferred-width="56" horizontal-fit="PreferredSize"
@@ -139,7 +148,7 @@
                         <horizontal child-expand-width="true">
                             <text id="detailsNotesPerSecond" name="DRM_DetailsNotesPerSecond" text="-"
                                   rich-text="true"
-                                  font-size="4" font-align="Left"/>
+                                  font-size="4" font-align="MidlineLeft"/>
                         </horizontal>
                     </horizontal>
                     <horizontal preferred-width="29" horizontal-fit="PreferredSize"
@@ -147,7 +156,7 @@
                         <horizontal child-expand-width="true">
                             <text id="detailsNoteJumpSpeed" name="DRM_DetailsNoteJumpSpeed" text="-"
                                   rich-text="true"
-                                  font-size="4" font-align="Right"/>
+                                  font-size="4" font-align="MidlineRight"/>
                         </horizontal>
                         <horizontal child-expand-width="false">
                             <image src="#FastNotesIcon" image-color="#CBADFF" preserve-aspect="true"

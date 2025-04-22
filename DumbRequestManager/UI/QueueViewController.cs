@@ -45,6 +45,11 @@ internal class QueueViewController : BSMLAutomaticViewController
     
     private LoadingControl _loadingSpinner = null!;
     
+    [UIComponent("nothingSelectedPanel")]
+    private VerticalLayoutGroup _nothingSelectedPanel = null!;
+    [UIComponent("somethingSelectedPanel")]
+    private VerticalLayoutGroup _somethingSelectedPanel = null!;
+    
     [UIValue("queue")]
     private static List<NoncontextualizedSong> Queue => QueueManager.QueuedSongs;
     
@@ -131,8 +136,20 @@ internal class QueueViewController : BSMLAutomaticViewController
             detailsCoverImage.material = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UINoGlowRoundEdge");
             detailsDescription.lineSpacing = -25f;
         }
+        else
+        {
+            _queueTableComponent.TableView.ClearSelection();
+        }
+        
+        ToggleSelectionPanel(false);
 
         _queueTableComponent.TableView.ReloadDataKeepingPosition();
+    }
+
+    private void ToggleSelectionPanel(bool value)
+    {
+        _somethingSelectedPanel.gameObject.SetActive(value);
+        _nothingSelectedPanel.gameObject.SetActive(!value);
     }
 
     private static readonly Color SelectedColor = Color.white;
@@ -216,6 +233,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UIAction("selectCell")]
     public void SelectCell(TableView tableView, NoncontextualizedSong queuedSong)
     {
+        ToggleSelectionPanel(true);
+        
         _selectedSong = queuedSong;
         int index = tableView._selectedCellIdxs.First();
         
@@ -263,6 +282,7 @@ internal class QueueViewController : BSMLAutomaticViewController
 
         detailsDescription.color = new Color(1f, 1f, 1f, 0.5f);
         detailsDescription.text = "Loading description...";
+        
         Task.Run(async () =>
         {
             Plugin.DebugMessage("Description updated");
