@@ -12,6 +12,7 @@ using BeatSaverDownloader.Misc;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
+using DumbRequestManager.Services;
 using HMUI;
 using IPA.Utilities.Async;
 using JetBrains.Annotations;
@@ -358,6 +359,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         Plugin.DebugMessage($"Selected cell: {index}");
         
+        SocketApi.Broadcast("pressedSkip", Queue[index]);
+        
         Queue.RemoveAt(index);
         _queueTableComponent.TableView.ClearSelection();
         _queueTableComponent.TableView.ReloadData();
@@ -423,5 +426,7 @@ internal class QueueViewController : BSMLAutomaticViewController
                 OkGoBack(queuedSong);
             }
         }
+        
+        SocketApi.Broadcast("pressedPlay", queuedSong);
     }
 }

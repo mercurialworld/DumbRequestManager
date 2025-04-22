@@ -1,4 +1,13 @@
-﻿<settings-container xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
                      xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
-    <text text="~whereIsItListening"/>
-</settings-container>
+    <vertical>
+        <vertical preferred-height="10" vertical-fit="PreferredSize" child-align="MiddleCenter">
+            <text text="HTTP API listening on" underlined="true" align="Center"/>
+            <text text="~whereIsItListening" color="#CBADFF" align="Center" font-size="5"/>
+        </vertical>
+        <vertical preferred-height="10" vertical-fit="PreferredSize" child-align="MiddleCenter">
+            <text text="WebSocket firehose listening on" underlined="true" align="Center"/>
+            <text text="~whereIsItAlsoListening" color="#CBADFF" align="Center" font-size="5"/>
+        </vertical>
+    </vertical>
+</bg>

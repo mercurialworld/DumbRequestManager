@@ -13,7 +13,11 @@ internal class SettingsMenuManager : IInitializable, IDisposable
 
     [UsedImplicitly]
     [UIValue("whereIsItListening")]
-    private static string WhereIsItListening => $"Listening on http://{Config.HttpAddress}:{Config.HttpPort}";
+    private static string WhereIsItListening => $"http://{Config.HttpAddress}:{Config.HttpPort}";
+    
+    [UsedImplicitly]
+    [UIValue("whereIsItAlsoListening")]
+    private static string WhereIsItAlsoListening => $"ws://{Config.WebSocketAddress}:{Config.WebSocketPort}";
     
     public void Initialize()
     {
