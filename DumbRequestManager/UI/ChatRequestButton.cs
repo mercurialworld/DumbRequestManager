@@ -13,7 +13,7 @@ namespace DumbRequestManager.UI;
 
 [UsedImplicitly]
 internal class ChatRequestButton(
-    LevelSelectionNavigationController levelSelectionNavigationController,
+    LevelFilteringNavigationController levelFilteringNavigationController,
     BSMLParser bsmlParser,
     SoloFreePlayFlowCoordinator soloFreePlayFlowCoordinator,
     QueueFlowCoordinator queueFlowCoordinator)
@@ -34,7 +34,7 @@ internal class ChatRequestButton(
         
         bsmlParser.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(),
             "DumbRequestManager.UI.BSML.ChatRequestButton.bsml"),
-            levelSelectionNavigationController.rectTransform.gameObject, this);
+            levelFilteringNavigationController.rectTransform.gameObject, this);
         
         _standardButton.gameObject.name = "DRM_StandardButton";
         _standardButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = IdleColor;
