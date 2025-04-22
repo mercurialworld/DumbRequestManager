@@ -11,6 +11,7 @@ internal class AppInstaller : Installer
     public override void InstallBindings()
     {
         Container.BindInterfacesTo<HttpApi>().AsSingle();
+        Container.BindInterfacesTo<SocketApi>().AsSingle();
         
         Container.BindInterfacesTo<SongDetailsManager>().AsSingle();
     }

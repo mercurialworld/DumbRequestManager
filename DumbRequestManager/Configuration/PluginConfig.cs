@@ -15,4 +15,7 @@ internal class PluginConfig
     
     public virtual string HttpAddress { get; set; } = "localhost";
     public virtual int HttpPort { get; set; } = 13337;
+    
+    public virtual string WebSocketAddress { get; set; } = "localhost";
+    public virtual int WebSocketPort { get; set; } = 13338;
 }

@@ -155,6 +155,10 @@
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UIModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
+        <Reference Include="websocket-sharp">
+            <HintPath>$(BeatSaberDir)\Libs\websocket-sharp.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
         <Reference Include="Zenject">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject.dll</HintPath>
             <Private>false</Private>
