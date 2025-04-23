@@ -1,16 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using IPA.Utilities;
 
 namespace DumbRequestManager.Utils;
 
 internal abstract class RemoteImage
 {
     private static readonly HttpClient ImageHttpClient = new();
+    internal static readonly string CachePath = Path.Combine(UnityGame.UserDataPath, "DumbRequestManager", "Cache");
 
     private static async Task<byte[]?> FetchData(string url)
     {
+        Uri uri = new(url);
+        string filename = Path.Combine(CachePath, uri.Segments.Last().Replace("/", string.Empty));
+        
+        if (IsCoverCached(url))
+        {
+            Plugin.DebugMessage("Cover was hard cached");
+            return await File.ReadAllBytesAsync(filename);
+        }
+        
         HttpResponseMessage imageResponse = await ImageHttpClient.GetAsync(url);
         
         if (!imageResponse.IsSuccessStatusCode)
@@ -20,7 +33,27 @@ internal abstract class RemoteImage
         }
         
         Plugin.DebugMessage("Fetched cover");
-        return await imageResponse.Content.ReadAsByteArrayAsync();
+        byte[] bytes = await imageResponse.Content.ReadAsByteArrayAsync();
+
+        await File.WriteAllBytesAsync(filename, bytes);
+        
+        return bytes;
+    }
+
+    private static bool IsCoverCached(string url)
+    {
+        if (!Directory.Exists(CachePath))
+        {
+            Plugin.DebugMessage("Creating hard cache directory");
+            Directory.CreateDirectory(CachePath);
+            return false;
+        }
+        
+        Uri uri = new(url);
+        string filename = Path.Combine(CachePath, uri.Segments.Last().Replace("/", string.Empty));
+        Plugin.DebugMessage($"Wants hard cached cover {filename}");
+
+        return File.Exists(filename);
     }
 
     internal static async Task<byte[]?> Fetch(string url)
@@ -33,8 +66,6 @@ internal abstract class RemoteImage
         
         Plugin.DebugMessage("imageBytes was null");
         return null;
-
-        //return await Utilities.LoadSpriteAsync(imageBytes);
     }
 }
 
