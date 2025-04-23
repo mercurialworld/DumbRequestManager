@@ -15,11 +15,12 @@ Currently only tested on Beat Saber versions 1.39.1 or newer. Versions of the mo
 
 ### Mods
 - BeatSaberMarkupLanguage
+- BeatSaverDownloader
+- BeatSaverSharp
 - SiraUtil
 - SongCore
 - SongDetailsCache
-- BeatSaverSharp
-- BeatSaverDownloader
+- websocket-sharp
 ----
 
 # HTTP API
