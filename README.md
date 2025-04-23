@@ -22,7 +22,7 @@ Currently only tested on Beat Saber versions 1.39.1 or newer. Versions of the mo
 - BeatSaverDownloader
 ----
 
-# API
+# HTTP API
 By default, a simple HTTP server is started on `http://localhost:13337`. Port and IP can be changed in the mod's JSON configuration file. A game restart (a hard restart) is required for changes to take effect.
 > [!CAUTION]
 > It is **NOT RECOMMENDED** to let this listen on a public IP address. Unless you know what you're doing, stick to `localhost`/`127.x.x.x` IP ranges or any LAN IP range (`10.x.x.x`; `172.16.x.x - 172.31.x.x`; or `192.168.x.x`).
@@ -110,6 +110,25 @@ As this is really only a web server, you can test any of these endpoints in any 
 }
 ```
 
+# WebSocket API
+By default, a WebSocket server is started on `http://localhost:13338`, acting as a firehose (meaning it just spits out information, no input is taken into account). Port and IP can be changed in the mod's JSON configuration file. A game restart (a hard restart) is required for changes to take effect.
+
+> [!CAUTION]
+> It is **NOT RECOMMENDED** to let this listen on a public IP address. Unless you know what you're doing, stick to `localhost`/`127.x.x.x` IP ranges or any LAN IP range (`10.x.x.x`; `172.16.x.x - 172.31.x.x`; or `192.168.x.x`).
+
+**This is only used for button-press events to avoid feature creep with other mods adding WebSocket support for other data.** You do not need to use this if you don't want to or can't use it.
+
+## Events
+Both events (`pressedPlay` and `pressedSkip`) follow the same data structure:
+```json
+{
+  "Timestamp": 1745374880148,
+  "EventType": "pressedSkip",
+  "Data": [map data]
+}
+```
+
+# Data structures/schema
 <a name="queue-data-type"></a>
 ## Queue position data
 ```json
