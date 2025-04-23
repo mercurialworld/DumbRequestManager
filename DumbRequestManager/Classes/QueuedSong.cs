@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
@@ -46,12 +47,35 @@ public class CoverImageContainer
 }
 
 [JsonObject(MemberSerialization.OptIn)]
-public readonly struct QueuedSongMapMods(MapMods mapMods)
+public readonly struct QueuedSongMapMods
 {
-    [JsonProperty] public bool NoodleExtensions => mapMods.HasFlag(MapMods.NoodleExtensions);
-    [JsonProperty] public bool Chroma => mapMods.HasFlag(MapMods.Chroma);
-    [JsonProperty] public bool MappingExtensions => mapMods.HasFlag(MapMods.MappingExtensions);
-    [JsonProperty] public bool Cinema => mapMods.HasFlag(MapMods.Cinema);
+    // Vivify isn't cached in SDC yet
+    [JsonProperty] public readonly bool Chroma;
+    [JsonProperty] public readonly bool Cinema;
+    [JsonProperty] public readonly bool MappingExtensions;
+    [JsonProperty] public readonly bool NoodleExtensions;
+    [JsonProperty] public readonly bool Vivify;
+
+    public QueuedSongMapMods(MapMods mapMods, bool hasVivify = false)
+    {
+        Chroma = mapMods.HasFlag(MapMods.Chroma);
+        Cinema = mapMods.HasFlag(MapMods.Cinema);
+        MappingExtensions = mapMods.HasFlag(MapMods.MappingExtensions);
+        NoodleExtensions = mapMods.HasFlag(MapMods.NoodleExtensions);
+        Vivify = hasVivify;
+    }
+
+    public QueuedSongMapMods(ReadOnlyCollection<BeatmapDifficulty> difficulties, bool hasVivify = false)
+    {
+        foreach (BeatmapDifficulty diff in difficulties)
+        {
+            if (diff.Chroma) { Chroma = true; }
+            if (diff.Cinema) { Cinema = true; }
+            if (diff.MappingExtensions) { MappingExtensions = true; }
+            if (diff.NoodleExtensions) { NoodleExtensions = true; }
+        }
+        if (hasVivify) { Vivify = true; } // temp
+    }
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -136,6 +160,16 @@ public class NoncontextualizedSong
     
     [JsonProperty]
     public bool Automapped { get; set; }
+    
+    [JsonProperty] public bool ScoreSaberRanked { get; set; }
+    [JsonProperty] public bool BeatLeaderRanked { get; set; }
+    [JsonProperty] public bool Curated { get; set; }
+    
+    [JsonProperty] public bool UsesChroma { get; set; }
+    [JsonProperty] public bool UsesCinema { get; set; }
+    [JsonProperty] public bool UsesMappingExtensions { get; set; }
+    [JsonProperty] public bool UsesNoodleExtensions { get; set; }
+    [JsonProperty] public bool UsesVivify { get; set; }
 
     [JsonProperty] public NoncontextualizedDifficulty[] Diffs { get; set; } = [];
 
@@ -164,6 +198,14 @@ public class NoncontextualizedSong
         Rating = song.rating;
         UploadTime = song.uploadTimeUnix;
         Cover = song.coverURL;
+        BeatLeaderRanked = (song.rankedStates & RankedStates.BeatleaderRanked) != 0;
+        ScoreSaberRanked = (song.rankedStates & RankedStates.ScoresaberRanked) != 0;
+        Curated = (song.uploadFlags & UploadFlags.Curated) != 0;
+        UsesChroma = song.difficulties.Any(x => x.mods.HasFlag(MapMods.Chroma));
+        UsesCinema = song.difficulties.Any(x => x.mods.HasFlag(MapMods.Cinema));
+        UsesMappingExtensions = song.difficulties.Any(x => x.mods.HasFlag(MapMods.MappingExtensions));
+        UsesNoodleExtensions = song.difficulties.Any(x => x.mods.HasFlag(MapMods.NoodleExtensions));
+        // (SDC doesn't cache automapped maps, always false)
         Diffs = song.difficulties.Select(x => new NoncontextualizedDifficulty(x)).ToArray();
         if (!skipCoverImage)
         {
@@ -184,6 +226,13 @@ public class NoncontextualizedSong
         UploadTime = (uint)song.Uploaded.Subtract(DateTime.UnixEpoch).TotalSeconds;
         Cover = song.LatestVersion.CoverURL;
         Automapped = song.Automapper;
+        BeatLeaderRanked = false; // BeatSaverSharp doesn't have BL rank tags yet
+        ScoreSaberRanked = song.Ranked;
+        Curated = song.BeatmapCurator != null;
+        UsesChroma = song.LatestVersion.Difficulties.Any(x => x.Chroma);
+        UsesCinema = song.LatestVersion.Difficulties.Any(x => x.Cinema);
+        UsesMappingExtensions = song.LatestVersion.Difficulties.Any(x => x.MappingExtensions);
+        UsesNoodleExtensions = song.LatestVersion.Difficulties.Any(x => x.NoodleExtensions);
         Diffs = song.LatestVersion.Difficulties.Select(x => new NoncontextualizedDifficulty(x)).ToArray();
         if (!skipCoverImage)
         {

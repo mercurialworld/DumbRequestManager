@@ -46,15 +46,36 @@ internal class QueueViewController : BSMLAutomaticViewController
     
     private LoadingControl _loadingSpinner = null!;
     
-    [UIComponent("nothingSelectedPanel")]
-    private VerticalLayoutGroup _nothingSelectedPanel = null!;
-    [UIComponent("somethingSelectedPanel")]
-    private VerticalLayoutGroup _somethingSelectedPanel = null!;
-    
     [UIValue("queue")]
     private static List<NoncontextualizedSong> Queue => QueueManager.QueuedSongs;
     
-    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    // ReSharper disable FieldCanBeMadeReadOnly.Local
+    [UIComponent("nothingSelectedPanel")]
+    private VerticalLayoutGroup _nothingSelectedPanel = null!;
+    [UIComponent("nothingSelectedFarPanel")]
+    private VerticalLayoutGroup _nothingSelectedFarPanel = null!;
+    [UIComponent("somethingSelectedPanel")]
+    private VerticalLayoutGroup _somethingSelectedPanel = null!;
+    [UIComponent("somethingSelectedFarPanel")]
+    private VerticalLayoutGroup _somethingSelectedFarPanel = null!;
+    
+    [UIComponent("tagsChromaTag")]
+    private HorizontalLayoutGroup _tagsChromaTag = null!;
+    [UIComponent("tagsCinemaTag")]
+    private HorizontalLayoutGroup _tagsCinemaTag = null!;
+    [UIComponent("tagsMappingExtensionsTag")]
+    private HorizontalLayoutGroup _tagsMappingExtensionsTag = null!;
+    [UIComponent("tagsNoodleTag")]
+    private HorizontalLayoutGroup _tagsNoodleTag = null!;
+    [UIComponent("tagsVivifyTag")]
+    private HorizontalLayoutGroup _tagsVivifyTag = null!;
+    [UIComponent("tagsBeatLeaderRanked")]
+    private HorizontalLayoutGroup _tagsBeatLeaderRankedTag = null!;
+    [UIComponent("tagsScoreSaberRanked")]
+    private HorizontalLayoutGroup _tagsScoreSaberRankedTag = null!;
+    [UIComponent("tagsCurated")]
+    private HorizontalLayoutGroup _tagsCuratedTag = null!;
+    
     [UIComponent("queueTableComponent")]
     private static CustomCellListTableData _queueTableComponent = null!;
     
@@ -81,13 +102,12 @@ internal class QueueViewController : BSMLAutomaticViewController
     public TextMeshProUGUI detailsUploadDate = null!;
     [UIComponent("detailsDescription")]
     public TextMeshProUGUI detailsDescription = null!;
-
-    // ReSharper disable FieldCanBeMadeReadOnly.Global
+    
     [UIComponent("detailsNotesPerSecond")]
     private static TextMeshProUGUI _detailsNps = null!;
     [UIComponent("detailsNoteJumpSpeed")]
     private static TextMeshProUGUI _detailsNjs = null!;
-    // ReSharper restore FieldCanBeMadeReadOnly.Global
+    // ReSharper restore FieldCanBeMadeReadOnly.Local
     
     [UIValue("difficultyChoices")]
     private static List<DifficultyUICellWrapper> _difficultyChoices = [];
@@ -134,8 +154,18 @@ internal class QueueViewController : BSMLAutomaticViewController
             _selectCharacteristicComponent.TableView.didSelectCellWithIdxEvent += DidSelectCharacteristicCellWithIdxEvent;
             _selectDifficultyComponent.TableView.didSelectCellWithIdxEvent += DidSelectDifficultyCellWithIdxEvent;
             
-            detailsCoverImage.material = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UINoGlowRoundEdge");
+            Material uiNoGlowRoundEdge = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UINoGlowRoundEdge");
+            detailsCoverImage.material = uiNoGlowRoundEdge;
             detailsDescription.lineSpacing = -25f;
+
+            _tagsChromaTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
+            _tagsCinemaTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
+            _tagsMappingExtensionsTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
+            _tagsNoodleTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
+            _tagsVivifyTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
+            _tagsScoreSaberRankedTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
+            _tagsBeatLeaderRankedTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
+            _tagsCuratedTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
         }
         else
         {
@@ -147,10 +177,51 @@ internal class QueueViewController : BSMLAutomaticViewController
         _queueTableComponent.TableView.ReloadDataKeepingPosition();
     }
 
+    private static readonly Color InactiveColor = new Color(1, 1, 1, 0.25f);
+    private void SetMapModsTags(NoncontextualizedSong song)
+    {
+        _tagsChromaTag.GetComponent<ImageView>().color = song.UsesChroma ? Color.white : Color.black;
+        _tagsChromaTag.GetComponentInChildren<TextMeshProUGUI>().color = song.UsesChroma ? Color.black : InactiveColor;
+        
+        _tagsCinemaTag.GetComponent<ImageView>().color = song.UsesCinema ? Color.white : Color.black;
+        _tagsCinemaTag.GetComponentInChildren<TextMeshProUGUI>().color = song.UsesCinema ? Color.black : InactiveColor;
+        
+        _tagsMappingExtensionsTag.GetComponent<ImageView>().color = song.UsesMappingExtensions ? Color.white : Color.black;
+        _tagsMappingExtensionsTag.GetComponentInChildren<TextMeshProUGUI>().color = song.UsesMappingExtensions ? Color.black : InactiveColor;
+        
+        _tagsNoodleTag.GetComponent<ImageView>().color = song.UsesNoodleExtensions ? Color.white : Color.black;
+        _tagsNoodleTag.GetComponentInChildren<TextMeshProUGUI>().color = song.UsesNoodleExtensions ? Color.black : InactiveColor;
+        
+        _tagsVivifyTag.GetComponent<ImageView>().color = song.UsesVivify ? Color.white : Color.black;
+        _tagsVivifyTag.GetComponentInChildren<TextMeshProUGUI>().color = song.UsesVivify ? Color.black : InactiveColor;
+    }
+
+    private static readonly Color BeatLeaderColor = new Color(1.0f, 0.0f, 0.4f, 1.0f);
+    private static readonly Color ScoreSaberColor = new Color(1.0f, 0.867f, 0.102f, 1.0f);
+    private static readonly Color CuratedColor = new Color(0f, 0.734f, 0.547f, 1.0f);
+    private void SetMapRankedTags(NoncontextualizedSong song)
+    {
+        _tagsBeatLeaderRankedTag.GetComponent<ImageView>().color = song.BeatLeaderRanked ? BeatLeaderColor : Color.black;
+        _tagsBeatLeaderRankedTag.GetComponentInChildren<TextMeshProUGUI>().color = song.BeatLeaderRanked ? Color.white : InactiveColor;
+        
+        _tagsScoreSaberRankedTag.GetComponent<ImageView>().color = song.ScoreSaberRanked ? ScoreSaberColor : Color.black;
+        _tagsScoreSaberRankedTag.GetComponentInChildren<TextMeshProUGUI>().color = song.ScoreSaberRanked ? Color.black : InactiveColor;
+        
+        _tagsCuratedTag.GetComponent<ImageView>().color = song.Curated ? CuratedColor : Color.black;
+        _tagsCuratedTag.GetComponentInChildren<TextMeshProUGUI>().color = song.Curated ? Color.white : InactiveColor;
+    }
+    
+    // SDC doesn't cache Vivify yet, so i'm grabbing that data when we fetch the description
+    // ...erm BeatSaverSharp doesn't, either. wuh oh
+    //private void SetMapModsVivifyTag(bool hasVivify) => _tagsVivifyTag.gameObject.SetActive(hasVivify);
+
     private void ToggleSelectionPanel(bool value)
     {
         _somethingSelectedPanel.gameObject.SetActive(value);
+        _somethingSelectedFarPanel.gameObject.SetActive(value);
+        
         _nothingSelectedPanel.gameObject.SetActive(!value);
+        _nothingSelectedFarPanel.gameObject.SetActive(!value);
     }
 
     private static readonly Color SelectedColor = Color.white;
@@ -217,19 +288,6 @@ internal class QueueViewController : BSMLAutomaticViewController
         _detailsNps.SetText($"{difficulty.NotesPerSecond:0.00} <size=80%><alpha=#AA>NPS");
     }
 
-    [UIAction("fetchDescription")]
-    private static async Task<string?> FetchDescription(string bsrKey)
-    {
-        Beatmap? beatmap = await SongDetailsManager.BeatSaverInstance.Beatmap(bsrKey);
-        if (beatmap != null)
-        {
-            return beatmap.Description;
-        }
-        
-        Plugin.Log.Info("Beatmap fetch failed");
-        return null;
-    }
-
     private static NoncontextualizedSong _selectedSong = null!;
     [UIAction("selectCell")]
     public void SelectCell(TableView tableView, NoncontextualizedSong queuedSong)
@@ -284,11 +342,19 @@ internal class QueueViewController : BSMLAutomaticViewController
         detailsDescription.color = new Color(1f, 1f, 1f, 0.5f);
         detailsDescription.text = "Loading description...";
         
+        SetMapRankedTags(queuedSong);
+        SetMapModsTags(queuedSong);
+
         Task.Run(async () =>
         {
-            Plugin.DebugMessage("Description updated");
-            detailsDescription.text = await FetchDescription(queuedSong.BsrKey);
-            detailsDescription.color = Color.white;
+            Beatmap? beatmap = await SongDetailsManager.BeatSaverInstance.Beatmap(queuedSong.BsrKey);
+
+            if (beatmap != null)
+            {
+                Plugin.DebugMessage("Description updated");
+                detailsDescription.text = beatmap.Description;
+                detailsDescription.color = Color.white;
+            }
         });
         
         UnityMainThreadTaskScheduler.Factory.StartNew(async () =>

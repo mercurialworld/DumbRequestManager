@@ -69,7 +69,7 @@
                   preferred-width="60" horizontal-fit="PreferredSize"
                   bg="round-rect-panel" bg-color="white">
             <vertical preferred-width="58" horizontal-fit="PreferredSize"
-                      preferred-height="70" vertical-fit="PreferredSize">
+                      preferred-height="80" vertical-fit="PreferredSize" pad-bottom="2">
                 <horizontal preferred-height="14" vertical-fit="PreferredSize"
                             preferred-width="58" horizontal-fit="PreferredSize"
                             bg="round-rect-panel" bg-color="grey">
@@ -121,10 +121,10 @@
                     <text id="detailsUploadDate"
                           font-size="4" font-align="MidlineRight"/>
                 </horizontal>
-                <vertical preferred-height="30" vertical-fit="PreferredSize"
+                <vertical preferred-height="38" vertical-fit="PreferredSize"
                           preferred-width="56" horizontal-fit="PreferredSize"
                           background="round-rect-panel" bg-color="grey">
-                    <scroll-view preferred-height="30" child-control-height="true" child-expand-height="false"
+                    <scroll-view preferred-height="38" child-control-height="true" child-expand-height="false"
                                  preferred-width="56" child-control-width="true" child-expand-width="false"
                                  child-alignment="UpperLeft" padding="0">
                         <vertical horizontal-fit="PreferredSize" preferred-width="44"
@@ -197,13 +197,96 @@
                     </vertical>
                 </vertical>
             </vertical>
-            <vertical preferred-height="10" vertical-fit="PreferredSize" child-expand-width="true">
-                <horizontal spacing="2" child-expand-width="true" child-control-width="true">
-                    <button text="Skip" on-click="skipButtonPressed"
-                            horizontal-fit="PreferredSize" preferred-width="25"/>
-                    <primary-button text="Play" on-click="playButtonPressed"
-                                    horizontal-fit="PreferredSize" preferred-width="25"/>
+        </vertical>
+
+        <vertical id="nothingSelectedFarPanel"
+                  bg-color="white" background="round-rect-panel"
+                  preferred-width="20" horizontal-fit="PreferredSize">
+        </vertical>
+        
+        <vertical id="somethingSelectedFarPanel"
+                  bg-color="white" background="round-rect-panel"
+                  preferred-width="20" horizontal-fit="PreferredSize"
+                  spacing="1">
+            <vertical preferred-width="16" horizontal-fit="PreferredSize" 
+                      preferred-height="20" min-height="20" vertical-fit="PreferredSize"
+                      spacing="1" child-align="UpperCenter">
+                <horizontal id="tagsChromaTag"
+                            preferred-width="16" horizontal-fit="PreferredSize"
+                            preferred-height="4" vertical-fit="PreferredSize"
+                            background="round-rect-panel" bg-color="black">
+                    <text text="Chroma"
+                          align="Midline" all-uppercase="true"
+                          color="#FFFFFF40" font-size="3"/>
                 </horizontal>
+                <horizontal id="tagsCinemaTag"
+                            preferred-width="16" horizontal-fit="PreferredSize"
+                            preferred-height="4" vertical-fit="PreferredSize"
+                            background="round-rect-panel" bg-color="black">
+                    <text text="Cinema"
+                          align="Midline" all-uppercase="true"
+                          color="#FFFFFF40" font-size="3"/>
+                </horizontal>
+                <horizontal id="tagsMappingExtensionsTag"
+                            preferred-width="16" horizontal-fit="PreferredSize"
+                            preferred-height="4" vertical-fit="PreferredSize"
+                            background="round-rect-panel" bg-color="black">
+                    <text text="Mapping Ext."
+                          align="Midline" all-uppercase="true"
+                          color="#FFFFFF40" font-size="3"/>
+                </horizontal>
+                <horizontal id="tagsNoodleTag"
+                            preferred-width="16" horizontal-fit="PreferredSize"
+                            preferred-height="4" vertical-fit="PreferredSize"
+                            background="round-rect-panel" bg-color="black">
+                    <text text="Noodle"
+                          align="Midline" all-uppercase="true"
+                          color="#FFFFFF40" font-size="3"/>
+                </horizontal>
+                <horizontal id="tagsVivifyTag"
+                            preferred-width="16" horizontal-fit="PreferredSize"
+                            preferred-height="4" vertical-fit="PreferredSize"
+                            background="round-rect-panel" bg-color="black">
+                    <text text="Vivify"
+                          align="Midline" all-uppercase="true"
+                          color="#FFFFFF40" font-size="3"/>
+                </horizontal>
+            </vertical>
+
+            <vertical preferred-width="16" horizontal-fit="PreferredSize"
+                      preferred-height="12" min-height="12" vertical-fit="PreferredSize"
+                      spacing="1" child-align="UpperCenter">
+                <horizontal id="tagsCurated"
+                            preferred-width="16" horizontal-fit="PreferredSize"
+                            preferred-height="4" vertical-fit="PreferredSize"
+                            background="round-rect-panel" bg-color="black">
+                    <text text="Curated"
+                          align="Midline" all-uppercase="true"
+                          color="#FFFFFF40" font-size="3"/>
+                </horizontal>
+                <horizontal id="tagsBeatLeaderRanked"
+                            preferred-width="16" horizontal-fit="PreferredSize"
+                            preferred-height="4" vertical-fit="PreferredSize"
+                            background="round-rect-panel" bg-color="black">
+                    <text text="BL Ranked"
+                          align="Midline" all-uppercase="true"
+                          color="#FFFFFF40" font-size="3"/>
+                </horizontal>
+                <horizontal id="tagsScoreSaberRanked"
+                            preferred-width="16" horizontal-fit="PreferredSize"
+                            preferred-height="4" vertical-fit="PreferredSize"
+                            background="round-rect-panel" bg-color="black">
+                    <text text="SS Ranked"
+                          align="Midline" all-uppercase="true"
+                          color="#FFFFFF40" font-size="3"/>
+                </horizontal>
+            </vertical>
+            
+            <vertical preferred-height="16" vertical-fit="PreferredSize" child-expand-width="true">
+                <button text="Skip" on-click="skipButtonPressed"
+                        horizontal-fit="PreferredSize" preferred-width="16"/>
+                <primary-button text="Play" on-click="playButtonPressed"
+                                horizontal-fit="PreferredSize" preferred-width="16"/>
             </vertical>
         </vertical>
     </horizontal>
