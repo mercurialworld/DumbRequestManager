@@ -1,7 +1,9 @@
-﻿using DumbRequestManager.Configuration;
+﻿using System.IO;
+using DumbRequestManager.Configuration;
 using DumbRequestManager.Installers;
 using IPA;
 using IPA.Config.Stores;
+using IPA.Utilities;
 using JetBrains.Annotations;
 using SiraUtil.Zenject;
 using IPALogger = IPA.Logging.Logger;
@@ -15,6 +17,7 @@ namespace DumbRequestManager;
 internal class Plugin
 {
     internal static IPALogger Log { get; private set; } = null!;
+    internal static readonly string UserDataDir = Path.Combine(UnityGame.UserDataPath, "DumbRequestManager");
 
     [Init]
     public Plugin(IPALogger ipaLogger, IPAConfig ipaConfig, Zenjector zenjector)

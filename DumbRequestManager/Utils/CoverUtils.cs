@@ -11,7 +11,7 @@ namespace DumbRequestManager.Utils;
 internal abstract class RemoteImage
 {
     private static readonly HttpClient ImageHttpClient = new();
-    internal static readonly string CachePath = Path.Combine(UnityGame.UserDataPath, "DumbRequestManager", "Cache");
+    private static readonly string CachePath = Path.Combine(Plugin.UserDataDir, "Cache");
 
     private static async Task<byte[]?> FetchData(string url)
     {

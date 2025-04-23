@@ -1,4 +1,5 @@
-﻿using HMUI;
+﻿using DumbRequestManager.Managers;
+using HMUI;
 using JetBrains.Annotations;
 using Zenject;
 
@@ -15,6 +16,9 @@ internal class QueueFlowCoordinator : FlowCoordinator
     {
         _soloFreePlayFlowCoordinator = soloFreePlayFlowCoordinator;
         _queueViewController = queueViewController;
+        
+        // calling it here
+        _ = QueueManager.Load();
     }
 
     public override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
