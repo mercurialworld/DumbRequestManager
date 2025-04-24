@@ -70,14 +70,14 @@
                   bg="round-rect-panel" bg-color="white">
             <vertical preferred-width="58" horizontal-fit="PreferredSize"
                       preferred-height="80" vertical-fit="PreferredSize" pad-bottom="2">
-                <horizontal preferred-height="14" vertical-fit="PreferredSize"
+                <horizontal preferred-height="15" vertical-fit="PreferredSize"
                             preferred-width="58" horizontal-fit="PreferredSize"
                             bg="round-rect-panel" bg-color="grey">
-                    <horizontal preferred-height="14" vertical-fit="PreferredSize"
-                                preferred-width="14" horizontal-fit="PreferredSize">
+                    <horizontal preferred-height="15" vertical-fit="PreferredSize"
+                                preferred-width="14" horizontal-fit="PreferredSize" pad-left="1">
                         <image id="detailsCoverImage" preferred-height="14" preferred-width="14" preserve-aspect="true"/>
                     </horizontal>
-                    <vertical preferred-height="14" vertical-fit="PreferredSize"
+                    <vertical preferred-height="15" vertical-fit="PreferredSize"
                               preferred-width="44" horizontal-fit="PreferredSize"
                               child-expand-width="false" padding="2" pad-top="1" pad-bottom="1">
                         <horizontal horizontal-fit="Unconstrained">
@@ -114,17 +114,65 @@
                     </vertical>
                 </horizontal>
                 <horizontal preferred-height="4" vertical-fit="PreferredSize"
-                            preferred-width="58" horizontal-fit="PreferredSize"
+                            preferred-width="58" horizontal-fit="PreferredSize" child-align="UpperCenter"
                             pad-left="2" pad-right="2">
                     <text id="detailsBsrKey" rich-text="true"
-                          font-size="4" font-align="MidlineLeft"/>
+                          font-size="4" font-align="CaplineLeft"/>
                     <text id="detailsUploadDate"
-                          font-size="4" font-align="MidlineRight"/>
+                          font-size="4" font-align="CaplineRight"/>
                 </horizontal>
-                <vertical preferred-height="38" vertical-fit="PreferredSize"
+                <horizontal preferred-height="4" vertical-fit="PreferredSize"
+                            preferred-width="58" horizontal-fit="PreferredSize" child-align="MiddleCenter"
+                            pad-left="2" pad-right="2">
+                    <horizontal preferred-width="58" horizontal-fit="PreferredSize">
+                        <horizontal preferred-height="4" vertical-fit="PreferredSize"
+                                    preferred-width="19" horizontal-fit="PreferredSize" child-expand-width="false"
+                                    child-align="MiddleRight" spacing="1">
+                            <horizontal preferred-height="4" vertical-fit="PreferredSize"
+                                        child-expand-width="true">
+                                <text id="detailsUpvotes" text="-"
+                                      rich-text="true"
+                                      font-size="4" font-align="CaplineRight"/>
+                            </horizontal>
+                            <horizontal preferred-height="4" vertical-fit="PreferredSize"
+                                        child-expand-width="false">
+                                <image src="#ArrowIcon" image-color="#44AA77" preserve-aspect="true"
+                                       local-scale="1 -1 1"
+                                       preferred-height="3" preferred-width="4"/>
+                            </horizontal>
+                        </horizontal>
+                        <!-- wtf, 0? -->
+                        <horizontal preferred-height="4" vertical-fit="PreferredSize"
+                                    preferred-width="0" horizontal-fit="PreferredSize" child-expand-width="false"
+                                    child-align="MiddleCenter">
+                            <horizontal preferred-height="4" vertical-fit="PreferredSize"
+                                        child-expand-width="true">
+                                <text id="detailsVotePercentage" text="-"
+                                      rich-text="true"
+                                      font-size="4" font-align="Capline"/>
+                            </horizontal>
+                        </horizontal>
+                        <horizontal preferred-height="4" vertical-fit="PreferredSize"
+                                    preferred-width="19" horizontal-fit="PreferredSize" child-expand-width="false"
+                                    child-align="MiddleLeft" spacing="1">
+                            <horizontal preferred-height="4" vertical-fit="PreferredSize"
+                                        child-expand-width="false">
+                                <image src="#ArrowIcon" image-color="#FF6644" preserve-aspect="true"
+                                       preferred-height="3" preferred-width="4"/>
+                            </horizontal>
+                            <horizontal preferred-height="4" vertical-fit="PreferredSize"
+                                        child-expand-width="true">
+                                <text id="detailsDownvotes" text="-"
+                                      rich-text="true"
+                                      font-size="4" font-align="CaplineLeft"/>
+                            </horizontal>
+                        </horizontal>
+                    </horizontal>
+                </horizontal>
+                <vertical preferred-height="30" vertical-fit="PreferredSize"
                           preferred-width="56" horizontal-fit="PreferredSize"
                           background="round-rect-panel" bg-color="grey">
-                    <scroll-view preferred-height="38" child-control-height="true" child-expand-height="false"
+                    <scroll-view preferred-height="30" child-control-height="true" child-expand-height="false"
                                  preferred-width="56" child-control-width="true" child-expand-width="false"
                                  child-alignment="UpperLeft" padding="0">
                         <vertical horizontal-fit="PreferredSize" preferred-width="44"
@@ -148,7 +196,7 @@
                         <horizontal child-expand-width="true">
                             <text id="detailsNotesPerSecond" name="DRM_DetailsNotesPerSecond" text="-"
                                   rich-text="true"
-                                  font-size="4" font-align="MidlineLeft"/>
+                                  font-size="4" font-align="CaplineLeft"/>
                         </horizontal>
                     </horizontal>
                     <horizontal preferred-width="29" horizontal-fit="PreferredSize"
@@ -156,7 +204,7 @@
                         <horizontal child-expand-width="true">
                             <text id="detailsNoteJumpSpeed" name="DRM_DetailsNoteJumpSpeed" text="-"
                                   rich-text="true"
-                                  font-size="4" font-align="MidlineRight"/>
+                                  font-size="4" font-align="CaplineRight"/>
                         </horizontal>
                         <horizontal child-expand-width="false">
                             <image src="#FastNotesIcon" image-color="#CBADFF" preserve-aspect="true"
@@ -216,7 +264,7 @@
                             preferred-height="4" vertical-fit="PreferredSize"
                             background="round-rect-panel" bg-color="black">
                     <text text="Chroma"
-                          align="Midline" all-uppercase="true"
+                          align="Capline" all-uppercase="true"
                           color="#FFFFFF40" font-size="3"/>
                 </horizontal>
                 <horizontal id="tagsCinemaTag"
@@ -224,7 +272,7 @@
                             preferred-height="4" vertical-fit="PreferredSize"
                             background="round-rect-panel" bg-color="black">
                     <text text="Cinema"
-                          align="Midline" all-uppercase="true"
+                          align="Capline" all-uppercase="true"
                           color="#FFFFFF40" font-size="3"/>
                 </horizontal>
                 <horizontal id="tagsMappingExtensionsTag"
@@ -232,7 +280,7 @@
                             preferred-height="4" vertical-fit="PreferredSize"
                             background="round-rect-panel" bg-color="black">
                     <text text="Mapping Ext."
-                          align="Midline" all-uppercase="true"
+                          align="Capline" all-uppercase="true"
                           color="#FFFFFF40" font-size="3"/>
                 </horizontal>
                 <horizontal id="tagsNoodleTag"
@@ -240,7 +288,7 @@
                             preferred-height="4" vertical-fit="PreferredSize"
                             background="round-rect-panel" bg-color="black">
                     <text text="Noodle"
-                          align="Midline" all-uppercase="true"
+                          align="Capline" all-uppercase="true"
                           color="#FFFFFF40" font-size="3"/>
                 </horizontal>
                 <horizontal id="tagsVivifyTag"
@@ -248,7 +296,7 @@
                             preferred-height="4" vertical-fit="PreferredSize"
                             background="round-rect-panel" bg-color="black">
                     <text text="Vivify"
-                          align="Midline" all-uppercase="true"
+                          align="Capline" all-uppercase="true"
                           color="#FFFFFF40" font-size="3"/>
                 </horizontal>
             </vertical>
@@ -261,7 +309,7 @@
                             preferred-height="4" vertical-fit="PreferredSize"
                             background="round-rect-panel" bg-color="black">
                     <text text="Curated"
-                          align="Midline" all-uppercase="true"
+                          align="Capline" all-uppercase="true"
                           color="#FFFFFF40" font-size="3"/>
                 </horizontal>
                 <horizontal id="tagsBeatLeaderRanked"
@@ -269,7 +317,7 @@
                             preferred-height="4" vertical-fit="PreferredSize"
                             background="round-rect-panel" bg-color="black">
                     <text text="BL Ranked"
-                          align="Midline" all-uppercase="true"
+                          align="Capline" all-uppercase="true"
                           color="#FFFFFF40" font-size="3"/>
                 </horizontal>
                 <horizontal id="tagsScoreSaberRanked"
@@ -277,7 +325,7 @@
                             preferred-height="4" vertical-fit="PreferredSize"
                             background="round-rect-panel" bg-color="black">
                     <text text="SS Ranked"
-                          align="Midline" all-uppercase="true"
+                          align="Capline" all-uppercase="true"
                           color="#FFFFFF40" font-size="3"/>
                 </horizontal>
             </vertical>

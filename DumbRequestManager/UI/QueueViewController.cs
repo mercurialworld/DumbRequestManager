@@ -100,6 +100,12 @@ internal class QueueViewController : BSMLAutomaticViewController
     public TextMeshProUGUI detailsBsrKey = null!;
     [UIComponent("detailsUploadDate")]
     public TextMeshProUGUI detailsUploadDate = null!;
+    [UIComponent("detailsUpvotes")]
+    public TextMeshProUGUI detailsUpvotes = null!;
+    [UIComponent("detailsVotePercentage")]
+    public TextMeshProUGUI detailsVotePercentage = null!;
+    [UIComponent("detailsDownvotes")]
+    public TextMeshProUGUI detailsDownvotes = null!;
     [UIComponent("detailsDescription")]
     public TextMeshProUGUI detailsDescription = null!;
     
@@ -310,6 +316,10 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         DateTimeOffset uploadOffset = DateTimeOffset.FromUnixTimeSeconds(queuedSong.UploadTime);
         detailsUploadDate.text = uploadOffset.LocalDateTime.ToString("d MMM yyyy");
+
+        detailsUpvotes.text = queuedSong.Votes[0].ToString("N0");
+        detailsDownvotes.text = queuedSong.Votes[1].ToString("N0");
+        detailsVotePercentage.text = $"{(queuedSong.Rating * 100):N0}<size=80%><alpha=#AA>%";
         
         _selectCharacteristicComponent.TableView.ClearSelection();
         _selectDifficultyComponent.TableView.ClearSelection();

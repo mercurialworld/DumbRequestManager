@@ -14,7 +14,7 @@ internal abstract class Normalize
                 return "#90DegreesIcon";
             case "ThreeSixtyDegree":
                 return "#360DegreesIcon";
-            case "Custom": // wtf
+            case "Custom" or "Legacy": // wtf
                 return "#LegacyIcon";
             case "Lightshow":
                 // coming back to this later maybe
