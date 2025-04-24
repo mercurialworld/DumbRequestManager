@@ -356,18 +356,17 @@
         </vertical>
     </modal>
     
-    <modal id="confirmBanModal"
+    <modal id="confirmBanModal" size-delta="80 25"
            show-event="showBanModal" hide-event="hideBanModal"
            move-to-center="true" clickerino-offerino-closerino="true">
         <vertical preferred-width="70" horizontal-fit="PreferredSize"
                   vertical-fit="Unconstrained" child-control-height="true"
-                  pad="3" spacing="2" child-align="MiddleCenter"
-                  background="round-rect-panel" bg-color="#FFFFFF">
+                  pad="3" spacing="2" child-align="MiddleCenter">
             <text id="banConfirmationText"
                   text="" word-wrapping="true" rich-text="true"
                   font-align="Center" font-size="4"/>
             <horizontal>
-                <button text="Cancel"/>
+                <button text="Cancel" on-click="hideBanModal"/>
                 <primary-button text="Ban" on-click="banSelectedMap"/>
             </horizontal>
         </vertical>

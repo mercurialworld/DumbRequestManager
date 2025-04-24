@@ -210,6 +210,14 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         SocketApi.Broadcast("pressedBan", queuedSong);
         SkipButtonPressed();
+        
+        confirmBanModal.Hide(true);
+    }
+
+    [UIAction("hideBanModal")]
+    private void HideBanModal()
+    {
+        confirmBanModal.Hide(true);
     }
 
     private static readonly Color InactiveColor = new Color(1, 1, 1, 0.25f);
