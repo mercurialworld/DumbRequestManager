@@ -259,7 +259,7 @@
             <vertical preferred-height="16" vertical-fit="PreferredSize" child-expand-width="true">
                 <primary-button text="Ban" on-click="showBanModal"
                         horizontal-fit="PreferredSize" preferred-width="16"/>
-                <button text="Link" on-click="linkButtonPressed"
+                <button text="Link" on-click="linkSelectedMap"
                                 horizontal-fit="PreferredSize" preferred-width="16"/>
             </vertical>
             

@@ -220,6 +220,15 @@ internal class QueueViewController : BSMLAutomaticViewController
         confirmBanModal.Hide(true);
     }
 
+    [UIAction("linkSelectedMap")]
+    private void LinkSelectedMap()
+    {
+        int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
+        NoncontextualizedSong queuedSong = Queue[idx];
+        
+        SocketApi.Broadcast("pressedLink", queuedSong);
+    }
+
     private static readonly Color InactiveColor = new Color(1, 1, 1, 0.25f);
     private void SetMapModsTags(NoncontextualizedSong song)
     {
