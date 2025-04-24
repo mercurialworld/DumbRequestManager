@@ -470,6 +470,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         _queueTableComponent.TableView.ClearSelection();
         _queueTableComponent.TableView.ReloadData();
         
+        ToggleSelectionPanel(false);
+        
         ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
     }
 
