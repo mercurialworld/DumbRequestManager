@@ -124,6 +124,11 @@ internal class QueueViewController : BSMLAutomaticViewController
     private static CustomCellListTableData _selectCharacteristicComponent = null!;
     [UIValue("selectDifficultyComponent")]
     private static CustomCellListTableData _selectDifficultyComponent = null!;
+    
+    [UIComponent("confirmBanModal")]
+    public ModalView confirmBanModal = null!;
+    [UIComponent("banConfirmationText")]
+    public TextMeshProUGUI banConfirmationText = null!;
 
     [Inject]
     [UsedImplicitly]
@@ -181,6 +186,30 @@ internal class QueueViewController : BSMLAutomaticViewController
         ToggleSelectionPanel(false);
 
         _queueTableComponent.TableView.ReloadDataKeepingPosition();
+    }
+
+    [UIAction("showBanModal")]
+    [UsedImplicitly]
+    private void ShowBanModal()
+    {
+        int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
+        NoncontextualizedSong queuedSong = Queue[idx];
+
+        banConfirmationText.lineSpacing = -17;
+        banConfirmationText.text = $"Are you sure you want to ban map <b>{queuedSong.BsrKey}</b>?";
+        
+        confirmBanModal.Show(true, true);
+    }
+
+    [UIAction("banSelectedMap")]
+    [UsedImplicitly]
+    private void BanSelectedMap()
+    {
+        int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
+        NoncontextualizedSong queuedSong = Queue[idx];
+        
+        SocketApi.Broadcast("pressedBan", queuedSong);
+        SkipButtonPressed();
     }
 
     private static readonly Color InactiveColor = new Color(1, 1, 1, 0.25f);

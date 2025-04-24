@@ -256,6 +256,13 @@
                   bg-color="white" background="round-rect-panel"
                   preferred-width="20" horizontal-fit="PreferredSize"
                   spacing="1">
+            <vertical preferred-height="16" vertical-fit="PreferredSize" child-expand-width="true">
+                <primary-button text="Ban" on-click="showBanModal"
+                        horizontal-fit="PreferredSize" preferred-width="16"/>
+                <button text="Link" on-click="linkButtonPressed"
+                                horizontal-fit="PreferredSize" preferred-width="16"/>
+            </vertical>
+            
             <vertical preferred-width="16" horizontal-fit="PreferredSize" 
                       preferred-height="20" min-height="20" vertical-fit="PreferredSize"
                       spacing="1" child-align="UpperCenter">
@@ -346,6 +353,23 @@
                   vertical-fit="PreferredSize" preferred-height="16"
                   horizontal-fit="PreferredSize" preferred-width="16"
                   local-scale="2 2 2">
+        </vertical>
+    </modal>
+    
+    <modal id="confirmBanModal"
+           show-event="showBanModal" hide-event="hideBanModal"
+           move-to-center="true" clickerino-offerino-closerino="true">
+        <vertical preferred-width="70" horizontal-fit="PreferredSize"
+                  vertical-fit="Unconstrained" child-control-height="true"
+                  pad="3" spacing="2" child-align="MiddleCenter"
+                  background="round-rect-panel" bg-color="#FFFFFF">
+            <text id="banConfirmationText"
+                  text="" word-wrapping="true" rich-text="true"
+                  font-align="Center" font-size="4"/>
+            <horizontal>
+                <button text="Cancel"/>
+                <primary-button text="Ban" on-click="banSelectedMap"/>
+            </horizontal>
         </vertical>
     </modal>
 </vertical>

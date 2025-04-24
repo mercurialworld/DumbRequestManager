@@ -56,9 +56,9 @@ module.exports = {
                     description: "When the skip button on a selected map is pressed"
                 },
                 {
-                    id: `blacklist-button-pressed`,
-                    name: "Blacklist Button Pressed",
-                    description: "When the blacklist button on a selected map is pressed"
+                    id: `ban-button-pressed`,
+                    name: "Ban Button Pressed",
+                    description: "When the ban button on a selected map is pressed"
                 },
                 {
                     id: `link-button-pressed`,
@@ -78,7 +78,7 @@ module.exports = {
                         event: [
                             `${SOURCE_ID}:play-button-pressed`,
                             `${SOURCE_ID}:skip-button-pressed`,
-                            `${SOURCE_ID}:blacklist-button-pressed`,
+                            `${SOURCE_ID}:ban-button-pressed`,
                             `${SOURCE_ID}:link-button-pressed`
                         ]
                     },
@@ -143,8 +143,8 @@ module.exports = {
                         eventManager.triggerEvent(SOURCE_ID, "skip-button-pressed", event.Data);
                         break;
 
-                    case "pressedBlacklist":
-                        eventManager.triggerEvent(SOURCE_ID, "blacklist-button-pressed", event.Data);
+                    case "pressedBan":
+                        eventManager.triggerEvent(SOURCE_ID, "ban-button-pressed", event.Data);
                         break;
 
                     case "pressedLink":
