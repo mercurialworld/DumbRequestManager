@@ -6,6 +6,8 @@ Essentially meaning, any streaming bot you use (e.g. Streamer.bot, Firebot, MixI
 > [!IMPORTANT]
 > This is not a mod that is instantly ready to go, unlike most other request queue managers. It *will* require manual setup on your part. Filters, limits, so on and so forth will be something you add in the bot of your choice.
 
+![Image](Images/screenshot.png)
+
 ## Dependencies
 Currently only tested on Beat Saber versions 1.39.1 or newer. Versions of the mod for older game versions are not planned at this time.
 > [!NOTE]
@@ -43,27 +45,59 @@ As this is really only a web server, you can test any of these endpoints in any 
 |            | `/clear`    | Clears the queue.<br/>`/queue/clear`                                                                                                                                                                                 | [Message](#message-data-type)                      |
 | `/history` |             | Gets the current play session history, sorted most recent to least recent.<br/>Response limits can be tacked on with a `limit` query parameter.<br/>`/history?limit=1`                                               | (Array) [Session History Data](#history-data-type) |
 
-## Return schemas
+# WebSocket API
+By default, a WebSocket server is started on `http://localhost:13338`, acting as a firehose (meaning it just spits out information, no input is taken into account). Port and IP can be changed in the mod's JSON configuration file. A game restart (a hard restart) is required for changes to take effect.
+
+> [!CAUTION]
+> It is **NOT RECOMMENDED** to let this listen on a public IP address. Unless you know what you're doing, stick to `localhost`/`127.x.x.x` IP ranges or any LAN IP range (`10.x.x.x`; `172.16.x.x - 172.31.x.x`; or `192.168.x.x`).
+
+**This is only used for button-press events to avoid feature creep with other mods adding WebSocket support for other data.** You do not need to use this if you don't want to or can't use it.
+
+## Events
+You can use these events in any way you would like to -- the intentions here are listed to explain the intended use of pressing the corresponding in-game button. 
+
+| Event         | Intention                                                        |
+|---------------|------------------------------------------------------------------|
+| `pressedBan`  | Banning/blacklisting a requested map                             |
+| `pressedLink` | Sending a direct link to a requested map                         |
+| `pressedPlay` | Playing a requested map                                          |
+| `pressedPoke` | Mentioning/poking/grabbing attention of the next person in queue |
+| `pressedSkip` | Skipping a requested map                                         |
+All events follow the same data structure:
+```json
+{
+  "Timestamp": 1745374880148,
+  "EventType": "pressedSkip",
+  "Data": [map data]
+}
+```
+
+# Data structures/schema
 <a name="map-data-type"></a>
 ### Map data
 ```json
 {
   "BsrKey": "1ad3b",
   "Hash": "A2EE3D6E6C82B89B10B9395BEBF47CF05F316B10",
-  "User": "TheBlackParrot",
+  "User": "theblackparrot",
   "Title": "Megalovania",
   "SubTitle": "",
   "Artist": "Toby Fox",
   "Mapper": "Joshabi & Olaf",
   "Duration": 369,
-  "Votes": [
-    4951,
-    236
-  ],
-  "Rating": 0.919891059,
+  "Votes": [4956, 237],
+  "Rating": 0.9197737,
   "UploadTime": 1627825945,
   "Cover": "https://cdn.beatsaver.com/a2ee3d6e6c82b89b10b9395bebf47cf05f316b10.jpg",
   "Automapped": false,
+  "ScoreSaberRanked": true,
+  "BeatLeaderRanked": true,
+  "Curated": true,
+  "UsesChroma": false,
+  "UsesCinema": false,
+  "UsesMappingExtensions": false,
+  "UsesNoodleExtensions": false,
+  "UsesVivify": false,
   "Diffs": [
     {
       "Difficulty": "Hard",
@@ -71,10 +105,11 @@ As this is really only a web server, you can test any of these endpoints in any 
       "NoteJumpSpeed": 17,
       "NotesPerSecond": 5.929539,
       "MapMods": {
-        "NoodleExtensions": false,
         "Chroma": false,
+        "Cinema": false,
         "MappingExtensions": false,
-        "Cinema": false
+        "NoodleExtensions": false,
+        "Vivify": false
       },
       "ScoreSaberStars": 5.34,
       "BeatLeaderStars": 6.8
@@ -85,10 +120,11 @@ As this is really only a web server, you can test any of these endpoints in any 
       "NoteJumpSpeed": 20,
       "NotesPerSecond": 7.601626,
       "MapMods": {
-        "NoodleExtensions": false,
         "Chroma": false,
+        "Cinema": false,
         "MappingExtensions": false,
-        "Cinema": false
+        "NoodleExtensions": false,
+        "Vivify": false
       },
       "ScoreSaberStars": 6.67,
       "BeatLeaderStars": 8.6
@@ -99,10 +135,11 @@ As this is really only a web server, you can test any of these endpoints in any 
       "NoteJumpSpeed": 22,
       "NotesPerSecond": 10.1300812,
       "MapMods": {
-        "NoodleExtensions": false,
         "Chroma": false,
+        "Cinema": false,
         "MappingExtensions": false,
-        "Cinema": false
+        "NoodleExtensions": false,
+        "Vivify": false
       },
       "ScoreSaberStars": 9.68,
       "BeatLeaderStars": 10.43
@@ -111,25 +148,6 @@ As this is really only a web server, you can test any of these endpoints in any 
 }
 ```
 
-# WebSocket API
-By default, a WebSocket server is started on `http://localhost:13338`, acting as a firehose (meaning it just spits out information, no input is taken into account). Port and IP can be changed in the mod's JSON configuration file. A game restart (a hard restart) is required for changes to take effect.
-
-> [!CAUTION]
-> It is **NOT RECOMMENDED** to let this listen on a public IP address. Unless you know what you're doing, stick to `localhost`/`127.x.x.x` IP ranges or any LAN IP range (`10.x.x.x`; `172.16.x.x - 172.31.x.x`; or `192.168.x.x`).
-
-**This is only used for button-press events to avoid feature creep with other mods adding WebSocket support for other data.** You do not need to use this if you don't want to or can't use it.
-
-## Events
-Both events (`pressedPlay` and `pressedSkip`) follow the same data structure:
-```json
-{
-  "Timestamp": 1745374880148,
-  "EventType": "pressedSkip",
-  "Data": [map data]
-}
-```
-
-# Data structures/schema
 <a name="queue-data-type"></a>
 ## Queue position data
 ```json
