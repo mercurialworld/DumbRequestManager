@@ -203,13 +203,15 @@ internal class QueueViewController : BSMLAutomaticViewController
 
     [UIAction("banSelectedMap")]
     [UsedImplicitly]
-    private void BanSelectedMap()
+    private async Task BanSelectedMap()
     {
         int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
         NoncontextualizedSong queuedSong = Queue[idx];
         
+        _ = SkipButtonPressed(); // waiting on this doesn't matter
+        
         SocketApi.Broadcast("pressedBan", queuedSong);
-        SkipButtonPressed();
+        await HookApi.TriggerHook("pressedBan", queuedSong);
         
         confirmBanModal.Hide(true);
     }
@@ -221,21 +223,23 @@ internal class QueueViewController : BSMLAutomaticViewController
     }
 
     [UIAction("linkSelectedMap")]
-    private void LinkSelectedMap()
+    private async Task LinkSelectedMap()
     {
         int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
         NoncontextualizedSong queuedSong = Queue[idx];
         
         SocketApi.Broadcast("pressedLink", queuedSong);
+        await HookApi.TriggerHook("pressedLink", queuedSong);
     }
     
     [UIAction("pokeNextPerson")]
-    private void PokeNextPerson()
+    private async Task PokeNextPerson()
     {
         int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
         NoncontextualizedSong queuedSong = Queue[idx];
         
         SocketApi.Broadcast("pressedPoke", queuedSong);
+        await HookApi.TriggerHook("pressedPoke", queuedSong);
     }
 
     private static readonly Color InactiveColor = new Color(1, 1, 1, 0.25f);
@@ -479,7 +483,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     }
 
     [UIAction("skipButtonPressed")]
-    public void SkipButtonPressed()
+    public async Task SkipButtonPressed()
     {
         int index = _queueTableComponent.TableView._selectedCellIdxs.First();
         if (index == -1)
@@ -490,15 +494,18 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         Plugin.DebugMessage($"Selected cell: {index}");
         
-        SocketApi.Broadcast("pressedSkip", Queue[index]);
-        
+        NoncontextualizedSong queuedSong = Queue[index];
         Queue.RemoveAt(index);
+        
         _queueTableComponent.TableView.ClearSelection();
         _queueTableComponent.TableView.ReloadData();
         
         ToggleSelectionPanel(false);
         
         ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
+        
+        SocketApi.Broadcast("pressedSkip", queuedSong);
+        await HookApi.TriggerHook("pressedSkip", queuedSong);
     }
 
     [UIAction("playButtonPressed")]
@@ -561,5 +568,6 @@ internal class QueueViewController : BSMLAutomaticViewController
         }
         
         SocketApi.Broadcast("pressedPlay", queuedSong);
+        await HookApi.TriggerHook("pressedPlay", queuedSong);
     }
 }

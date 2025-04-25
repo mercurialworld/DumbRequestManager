@@ -18,4 +18,6 @@ internal class PluginConfig
     
     public virtual string WebSocketAddress { get; set; } = "localhost";
     public virtual int WebSocketPort { get; set; } = 13338;
+    
+    public virtual string WebHookUrl { get; set; } = string.Empty;
 }
