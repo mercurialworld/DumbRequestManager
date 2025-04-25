@@ -76,7 +76,7 @@ All events follow the same data structure:
 
 # Webhook API
 
-> ![NOTE]
+> [!NOTE]
 > Webhooks are not triggered by default, you must define a valid URL in your configuration file (`UserData/DumbRequestManager.json`) before they will fire.
 
 Some bot software (like MixItUp) support Webhooks, which will trigger commands once it detects data POSTed to a URL.
