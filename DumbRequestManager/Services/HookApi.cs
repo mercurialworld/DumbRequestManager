@@ -7,6 +7,15 @@ using Newtonsoft.Json;
 
 namespace DumbRequestManager.Services;
 
+[JsonObject(MemberSerialization.OptIn)]
+internal readonly struct HookObject(string eventName, object? data)
+{
+    [JsonProperty("timestamp")] private long Timestamp => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+    [JsonProperty("id")] private readonly string _id = Guid.NewGuid().ToString();
+    [JsonProperty("event")] private string Event => eventName;
+    [JsonProperty("data")] private object? Data => data;
+}
+
 internal abstract class HookApi
 {
     private static PluginConfig Config => PluginConfig.Instance;
@@ -27,10 +36,7 @@ internal abstract class HookApi
         {
             Dictionary<string, string> formValues = new Dictionary<string, string>
             {
-                { "timestamp", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString() },
-                { "id", Guid.NewGuid().ToString() },
-                { "event", eventName },
-                { "data", JsonConvert.SerializeObject(data) }
+                { "data", JsonConvert.SerializeObject(new HookObject(eventName, data)) }
             };
             FormUrlEncodedContent formUrlEncodedContent = new FormUrlEncodedContent(formValues);
             
