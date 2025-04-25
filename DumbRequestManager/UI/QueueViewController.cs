@@ -228,6 +228,15 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         SocketApi.Broadcast("pressedLink", queuedSong);
     }
+    
+    [UIAction("pokeNextPerson")]
+    private void PokeNextPerson()
+    {
+        int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
+        NoncontextualizedSong queuedSong = Queue[idx];
+        
+        SocketApi.Broadcast("pressedPoke", queuedSong);
+    }
 
     private static readonly Color InactiveColor = new Color(1, 1, 1, 0.25f);
     private void SetMapModsTags(NoncontextualizedSong song)

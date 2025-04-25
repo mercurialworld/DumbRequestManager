@@ -7,7 +7,7 @@ function _scriptManifest() {
         description: "Button events for the DumbRequestManager Beat Saber mod",
         author: "TheBlackParrot",
         website: "https://github.com/TheBlackParrot/DumbRequestManager",
-        version: "0.0.0",
+        version: "0.0.1",
         firebotVersion: "5",
         startupOnly: true
     }
@@ -48,22 +48,27 @@ module.exports = {
                 {
                     id: `play-button-pressed`,
                     name: "Play Button Pressed",
-                    description: "When the play button on a selected map is pressed"
+                    description: "When you want to play a request"
                 },
                 {
                     id: `skip-button-pressed`,
                     name: "Skip Button Pressed",
-                    description: "When the skip button on a selected map is pressed"
+                    description: "When a request is skipped"
                 },
                 {
                     id: `ban-button-pressed`,
                     name: "Ban Button Pressed",
-                    description: "When the ban button on a selected map is pressed"
+                    description: "When you ban a map from being requested"
                 },
                 {
                     id: `link-button-pressed`,
                     name: "Link Button Pressed",
-                    description: "When the link button on a selected map is pressed"
+                    description: "When you link the selected request to your chat"
+                },
+                {
+                    id: `poke-button-pressed`,
+                    name: "Poke Button Pressed",
+                    description: "When you want to grab the attention of the next requester in queue"
                 }
             ]
         });
@@ -79,7 +84,8 @@ module.exports = {
                             `${SOURCE_ID}:play-button-pressed`,
                             `${SOURCE_ID}:skip-button-pressed`,
                             `${SOURCE_ID}:ban-button-pressed`,
-                            `${SOURCE_ID}:link-button-pressed`
+                            `${SOURCE_ID}:link-button-pressed`,
+                            `${SOURCE_ID}:poke-button-pressed`
                         ]
                     },
                     description: "The map information attached to the button press, see https://github.com/TheBlackParrot/DumbRequestManager#map-data for map data keys",
@@ -149,6 +155,10 @@ module.exports = {
 
                     case "pressedLink":
                         eventManager.triggerEvent(SOURCE_ID, "link-button-pressed", event.Data);
+                        break;
+
+                    case "pressedPoke":
+                        eventManager.triggerEvent(SOURCE_ID, "poke-button-pressed", event.Data);
                         break;
                 }
             });
