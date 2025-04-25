@@ -53,6 +53,7 @@ By default, a WebSocket server is started on `http://localhost:13338`, acting as
 
 **This is only used for button-press events to avoid feature creep with other mods adding WebSocket support for other data.** You do not need to use this if you don't want to or can't use it.
 
+<a name="websocket-events"></a>
 ## Events
 You can use these events in any way you would like to -- the intentions here are listed to explain the intended use of pressing the corresponding in-game button. 
 
@@ -70,6 +71,25 @@ All events follow the same data structure:
   "Timestamp": 1745374880148,
   "EventType": "pressedSkip",
   "Data": [map data]
+}
+```
+
+# Webhook API
+
+> ![NOTE]
+> Webhooks are not triggered by default, you must define a valid URL in your configuration file (`UserData/DumbRequestManager.json`) before they will fire.
+
+Some bot software (like MixItUp) support Webhooks, which will trigger commands once it detects data POSTed to a URL.
+
+For valid events and their intended use, see the [WebSocket events](#websocket-events).
+
+All events follow the same data structure:
+```json
+{
+  "timestamp": 1745374880148,
+  "id": "33f0216b-bbed-4784-a9fd-aead73fae069",
+  "event": "pressedSkip",
+  "data": [map data]
 }
 ```
 

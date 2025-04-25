@@ -34,11 +34,11 @@ internal abstract class HookApi
         if (Uri.TryCreate(HookUrl, UriKind.Absolute, out Uri uri) &&
             (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
         {
-            Dictionary<string, string> formValues = new Dictionary<string, string>
+            Dictionary<string, string> formValues = new()
             {
                 { "data", JsonConvert.SerializeObject(new HookObject(eventName, data)) }
             };
-            FormUrlEncodedContent formUrlEncodedContent = new FormUrlEncodedContent(formValues);
+            FormUrlEncodedContent formUrlEncodedContent = new(formValues);
             
             HttpResponseMessage response = await HookClient.PostAsync(uri, formUrlEncodedContent);
 
