@@ -63,6 +63,7 @@ You can use these events in any way you would like to -- the intentions here are
 | `pressedPlay` | Playing a requested map                                          |
 | `pressedPoke` | Mentioning/poking/grabbing attention of the next person in queue |
 | `pressedSkip` | Skipping a requested map                                         |
+
 All events follow the same data structure:
 ```json
 {
@@ -73,8 +74,9 @@ All events follow the same data structure:
 ```
 
 # Data structures/schema
+
 <a name="map-data-type"></a>
-### Map data
+## Map data
 ```json
 {
   "BsrKey": "1ad3b",
