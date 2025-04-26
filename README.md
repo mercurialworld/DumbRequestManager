@@ -35,15 +35,16 @@ By default, a simple HTTP server is started on `http://localhost:13337`. Port an
 
 As this is really only a web server, you can test any of these endpoints in any web browser of your choice, while the game is running of course. 
 
-| Endpoint   | Sub-command | Description/Example                                                                                                                                                                                                  | Returns                                            |
-|------------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
-| `/query`   |             | Queries SongDetailsCache (and then BeatSaver if map data hasn't been cached yet) for map information.<br/>`/query/25f`                                                                                               | [Map Data](#map-data-type)                         |
-|            | `/nocache`  | Queries BeatSaver directly, skipping SongDetailsCache.<br/>`/query/nocache/25f`                                                                                                                                      | [Map Data](#map-data-type)                         |
-| `/addKey`  |             | Adds a map to the queue.<br/>User identifiers can be tacked on with a `user` query parameter. Internally this is set as a string, anything can be used so long as it's unique.<br/>`/addKey/25f?user=TheBlackParrot` | [Map Data](#map-data-type)                         |
-| `/queue`   |             | Get maps currently in the queue.<br/>`/queue`                                                                                                                                                                        | (Array) [Map Data](#map-data-type)                 |
-|            | `/where`    | Get user positions in the queue, along with map data from the maps the targeted user has in queue.<br/>`/queue/where/TheBlackParrot`                                                                                 | (Array) [Queue Position Data](#queue-data-type)    |
-|            | `/clear`    | Clears the queue.<br/>`/queue/clear`                                                                                                                                                                                 | [Message](#message-data-type)                      |
-| `/history` |             | Gets the current play session history, sorted most recent to least recent.<br/>Response limits can be tacked on with a `limit` query parameter.<br/>`/history?limit=1`                                               | (Array) [Session History Data](#history-data-type) |
+| Endpoint   | Sub-command | Description/Example                                                                                                                                                                                                  | Returns                                             |
+|------------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
+| `/query`   |             | Queries SongDetailsCache (and then BeatSaver if map data hasn't been cached yet) for map information.<br/>`/query/25f`                                                                                               | [Map Data](#map-data-type)                          |
+|            | `/nocache`  | Queries BeatSaver directly, skipping SongDetailsCache.<br/>`/query/nocache/25f`                                                                                                                                      | [Map Data](#map-data-type)                          |
+| `/addKey`  |             | Adds a map to the queue.<br/>User identifiers can be tacked on with a `user` query parameter. Internally this is set as a string, anything can be used so long as it's unique.<br/>`/addKey/25f?user=TheBlackParrot` | [Map Data](#map-data-type)                          |
+| `/queue`   |             | Get maps currently in the queue.<br/>`/queue`                                                                                                                                                                        | (Array) [Map Data](#map-data-type)                  |
+|            | `/where`    | Get user positions in the queue, along with map data from the maps the targeted user has in queue.<br/>`/queue/where/TheBlackParrot`                                                                                 | (Array) [Queue Position Data](#queue-data-type)     |
+|            | `/clear`    | Clears the queue.<br/>`/queue/clear`                                                                                                                                                                                 | [Message](#message-data-type)                       |
+|            | `/open`     | Opens and closes the request queue.<br/>`/queue/open/true`                                                                                                                                                           | *(nothing)*                                         |
+| `/history` |             | Gets the current play session history, sorted most recent to least recent.<br/>Response limits can be tacked on with a `limit` query parameter.<br/>`/history?limit=1`                                               | (Array) [Session History Data](#history-data-type)  |
 
 # WebSocket API
 By default, a WebSocket server is started on `http://localhost:13338`, acting as a firehose (meaning it just spits out information, no input is taken into account). Port and IP can be changed in the mod's JSON configuration file. A game restart (a hard restart) is required for changes to take effect.
@@ -64,13 +65,22 @@ You can use these events in any way you would like to -- the intentions here are
 | `pressedPlay` | Playing a requested map                                          |
 | `pressedPoke` | Mentioning/poking/grabbing attention of the next person in queue |
 | `pressedSkip` | Skipping a requested map                                         |
+| `queueOpen`   | Closing or opening the queue                                     |
 
-All events follow the same data structure:
+All `pressed` events follow the same data structure:
 ```json
 {
   "Timestamp": 1745374880148,
   "EventType": "pressedSkip",
-  "Data": [map data]
+  "Data": <map data>
+}
+```
+`queueOpen` uses the following data structure:
+```json
+{
+  "Timestamp": 1745374880148,
+  "EventType": "queueOpen",
+  "Data": <true | false>
 }
 ```
 
@@ -83,13 +93,22 @@ Some bot software (like MixItUp) support Webhooks, which will trigger commands o
 
 For valid events and their intended use, see the [WebSocket events](#websocket-events).
 
-All events follow the same data structure:
+All `pressed` events follow the same data structure:
 ```json
 {
   "timestamp": 1745374880148,
   "id": "33f0216b-bbed-4784-a9fd-aead73fae069",
   "event": "pressedSkip",
-  "data": [map data]
+  "data": <map data>
+}
+```
+`queueOpen` uses the following data structure:
+```json
+{
+  "timestamp": 1745374880148,
+  "id": "33f0216b-bbed-4784-a9fd-aead73fae069",
+  "event": "queueOpen",
+  "data": <true | false>
 }
 ```
 
@@ -175,7 +194,7 @@ All events follow the same data structure:
 ```json
 {
   "Spot": 1,
-  "QueueItem": [map data]
+  "QueueItem": <map data>
 }
 ```
 
@@ -183,8 +202,8 @@ All events follow the same data structure:
 ## Session history item
 ```json
 {
-  "Timestamp": [unix timestamp],
-  "HistoryItem": [map data]
+  "Timestamp": <unix timestamp>,
+  "HistoryItem": <map data>
 }
 ```
 
