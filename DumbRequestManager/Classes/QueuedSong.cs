@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaverSharp.Models;
-using DumbRequestManager.Managers;
 using DumbRequestManager.Utils;
 using Newtonsoft.Json;
 using SongDetailsCache.Structs;

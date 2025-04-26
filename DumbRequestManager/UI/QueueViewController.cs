@@ -217,12 +217,14 @@ internal class QueueViewController : BSMLAutomaticViewController
     }
 
     [UIAction("hideBanModal")]
+    [UsedImplicitly]
     private void HideBanModal()
     {
         confirmBanModal.Hide(true);
     }
 
     [UIAction("linkSelectedMap")]
+    [UsedImplicitly]
     private async Task LinkSelectedMap()
     {
         int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
@@ -233,6 +235,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     }
     
     [UIAction("pokeNextPerson")]
+    [UsedImplicitly]
     private async Task PokeNextPerson()
     {
         int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
@@ -483,7 +486,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     }
 
     [UIAction("skipButtonPressed")]
-    public async Task SkipButtonPressed()
+    private async Task SkipButtonPressed()
     {
         int index = _queueTableComponent.TableView._selectedCellIdxs.First();
         if (index == -1)
