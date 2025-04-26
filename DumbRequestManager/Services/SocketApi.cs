@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using DumbRequestManager.Configuration;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -32,6 +33,18 @@ internal class SocketApi : IInitializable, IDisposable
     {
         _webSocketServer = new WebSocketServer($"ws://{Config.WebSocketAddress}:{Config.WebSocketPort}");
         _webSocketServer.AddWebSocketService<SocketMessageHandler>("/");
+
+        if (Enum.TryParse("6", out LogLevel logLevel))
+        {
+            Plugin.DebugMessage("LogLevel.None exists");
+            _webSocketServer.Log.Level = logLevel;
+        }
+        else
+        {
+            Plugin.DebugMessage("LogLevel.None does not exist");
+            FieldInfo? field = _webSocketServer.Log.GetType().GetField("_output", BindingFlags.NonPublic | BindingFlags.Instance);
+            field?.SetValue(_webSocketServer.Log, new Action<LogData, string>((_, _) => { }));
+        }
 
         if (_webSocketServer.WebSocketServices.TryGetServiceHost("/", out WebSocketServiceHost webSocketServiceHost))
         {
