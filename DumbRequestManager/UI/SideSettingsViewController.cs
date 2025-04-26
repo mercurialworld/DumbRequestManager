@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using DumbRequestManager.Services;
-using UnityEngine.UIElements;
 
 namespace DumbRequestManager.UI;
 
@@ -20,7 +20,7 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
 
     // ReSharper disable FieldCanBeMadeReadOnly.Local
     [UIComponent("queueOpenToggle")]
-    private Toggle _toggleSettingObject = null!;
+    private ToggleSetting _toggleSettingObject = null!;
     // ReSharper restore FieldCanBeMadeReadOnly.Local
 
     [UIAction("setState")]
@@ -32,6 +32,6 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
         SocketApi.Broadcast("queueOpen", isQueueOpen);
         await HookApi.TriggerHook("queueOpen", isQueueOpen);
         
-        _toggleSettingObject.value = isQueueOpen;
+        _toggleSettingObject.Value = IsQueueOpen;
     }
 }
