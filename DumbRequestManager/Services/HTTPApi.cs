@@ -129,6 +129,14 @@ internal class HttpApi : IInitializable
                             ChatRequestButton.Instance.UseAttentiveButton(false);
                             data = "{\"message\": \"Queue cleared\"}"u8.ToArray();
                             break;
+                        
+                        case "open":
+                            if (bool.TryParse(path[3].Replace("/", string.Empty), out bool openResult))
+                            {
+                                statusCode = 200;
+                                await SideSettingsViewController.Instance.SetState(openResult);
+                            }
+                            break;
                     }
                 }
                 else

@@ -173,6 +173,7 @@
         <EmbeddedResource Include="UI/BSML/Settings.bsml"/>
         <EmbeddedResource Include="UI/BSML/ChatRequestButton.bsml"/>
         <EmbeddedResource Include="UI/BSML/QueueView.bsml"/>
+        <EmbeddedResource Include="UI/BSML/SideSettings.bsml"/>
     </ItemGroup>
 
 </Project>

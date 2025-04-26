@@ -12,6 +12,7 @@ internal class MenuInstaller : Installer
         Container.BindInterfacesTo<SettingsMenuManager>().AsSingle();
         
         Container.Bind<QueueViewController>().FromNewComponentAsViewController().AsSingle();
+        Container.Bind<SideSettingsViewController>().FromNewComponentAsViewController().AsSingle();
         Container.Bind<QueueFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
         Container.BindInterfacesTo<ChatRequestButton>().AsSingle();
     }

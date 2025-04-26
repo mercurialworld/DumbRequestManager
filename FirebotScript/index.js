@@ -7,7 +7,7 @@ function _scriptManifest() {
         description: "Button events for the DumbRequestManager Beat Saber mod",
         author: "TheBlackParrot",
         website: "https://github.com/TheBlackParrot/DumbRequestManager",
-        version: "0.0.1",
+        version: "0.0.2",
         firebotVersion: "5",
         startupOnly: true
     }
@@ -35,6 +35,8 @@ module.exports = {
         const eventManager = runRequest.modules.eventManager;
         const replaceVariableManager = runRequest.modules.replaceVariableManager;
         const logger = runRequest.modules.logger; // this is awful, let me have my regular console please
+        
+        let isBSDRMQueueOpen = false;
         
         // gee howdy i hope firebot installs itself to the same folder each and every time
         // i am not telling people to install node and install ws through a terminal. nuh uh. y'all provide ws already
@@ -69,6 +71,11 @@ module.exports = {
                     id: `poke-button-pressed`,
                     name: "Poke Button Pressed",
                     description: "When you want to grab the attention of the next requester in queue"
+                },
+                {
+                    id: `queue-gate-changed`,
+                    name: "Queue Gate Changed",
+                    description: "When the queue opens or closes"
                 }
             ]
         });
@@ -97,6 +104,20 @@ module.exports = {
                         return data[key];
                     }
                     return "";
+                }
+            });
+        }
+
+        if(!replaceVariableManager._registeredVariableHandlers.has("bsDRMQueueOpen")) {
+            replaceVariableManager.registerReplaceVariable({
+                definition: {
+                    handle: "bsDRMQueueOpen",
+                    usage: "bsDRMQueueOpen",
+                    description: "Boolean determining the queue's open/closed status",
+                    possibleDataOutput: ["bool"]
+                },
+                evaluator: () => {
+                    return isBSDRMQueueOpen;
                 }
             });
         }
@@ -159,6 +180,11 @@ module.exports = {
 
                     case "pressedPoke":
                         eventManager.triggerEvent(SOURCE_ID, "poke-button-pressed", event.Data);
+                        break;
+                        
+                    case "queueOpen":
+                        isBSDRMQueueOpen = event.Data ?? false;
+                        eventManager.triggerEvent(SOURCE_ID, "queue-gate-changed");
                         break;
                 }
             });

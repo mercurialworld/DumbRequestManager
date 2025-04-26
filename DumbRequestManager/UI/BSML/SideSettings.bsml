@@ -1,0 +1,9 @@
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+    <vertical preferred-width="80" horizontal-fit="PreferredSize"
+              preferred-height="80" vertical-fit="PreferredSize"
+              child-align="UpperCenter">
+        <toggle-setting id="queueOpenToggle" text="Allow requests"
+                        value="IsQueueOpen" apply-on-change="true" on-change="setState"/>
+    </vertical>
+</bg>
