@@ -51,12 +51,23 @@ internal class SocketApi : IInitializable, IDisposable
 
 internal class SocketMessageHandler : WebSocketBehavior
 {
+    public SocketMessageHandler()
+    {
+        IgnoreExtensions = true;
+    }
+    
     protected override void OnOpen()
     {
         Plugin.DebugMessage("Connection opened");
+        base.OnOpen();
     }
     protected override void OnClose(CloseEventArgs e)
     {
         Plugin.DebugMessage("Connection closed");
+        base.OnClose(e);
+    }
+
+    protected override void OnError(ErrorEventArgs e)
+    {
     }
 }
