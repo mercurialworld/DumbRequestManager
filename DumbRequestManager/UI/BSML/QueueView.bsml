@@ -353,8 +353,7 @@
                   background="round-rect-panel" bg-color="#888888FF"
                   child-align="MiddleCenter"
                   vertical-fit="PreferredSize" preferred-height="16"
-                  horizontal-fit="PreferredSize" preferred-width="16"
-                  local-scale="2 2 2">
+                  horizontal-fit="PreferredSize" preferred-width="48">
         </vertical>
     </modal>
     

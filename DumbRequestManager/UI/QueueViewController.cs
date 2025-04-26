@@ -512,11 +512,21 @@ internal class QueueViewController : BSMLAutomaticViewController
         if (_loadingSpinner == null)
         {
             _loadingSpinner = Instantiate(Resources.FindObjectsOfTypeAll<LoadingControl>().First(), loadingSpinnerContainer.transform);
-            _loadingSpinner.ShowLoading("Downloading..."); // figure out text later
             
-#if DEBUG
-            waitModal.Show(false);
-#endif
+            Vector2 anchorMax = _loadingSpinner.GetComponent<RectTransform>().anchorMax;
+            _loadingSpinner.GetComponent<RectTransform>().anchorMax = anchorMax with { y = 0.8667f };
+
+            Transform? background = _loadingSpinner.transform.FindChildRecursively("DownloadingBG");
+            if (background != null)
+            {
+                background.GetComponent<ImageView>().color = new Color(1f, 1f, 1f, 0.25f);
+            }
+            
+            Transform? text = _loadingSpinner.transform.FindChildRecursively("DownloadingText");
+            if (text != null)
+            {
+                text.GetComponent<TextMeshProUGUI>().richText = true;
+            }
         }
         
         int index = _queueTableComponent.TableView._selectedCellIdxs.First();
@@ -548,7 +558,13 @@ internal class QueueViewController : BSMLAutomaticViewController
             {
                 Plugin.DebugMessage("Beatmap was not null");
                 
-                await SongDownloader.Instance.DownloadSong(beatmap, CancellationToken.None);
+                Progress<double> progress = new();
+                progress.ProgressChanged += (sender, value) =>
+                {
+                    _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#CBADFF><b>{queuedSong.BsrKey}</b> <color=#FFFFFF80>({(value * 100):0}%)", (float)value);
+                };
+                
+                await SongDownloader.Instance.DownloadSong(beatmap, CancellationToken.None, progress);
                 
                 void LoaderOnSongsLoadedEvent(SongCore.Loader loader, ConcurrentDictionary<string, BeatmapLevel> concurrentDictionary)
                 {
