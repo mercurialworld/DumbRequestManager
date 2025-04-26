@@ -403,15 +403,10 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.DebugMessage($"Got {_difficultyChoices.Count} unique difficulties");
         
         _selectCharacteristicComponent.Data = _characteristicChoices;
-        //_selectDifficultyComponent.Data = DifficultyChoices;
-        
         _selectCharacteristicComponent.TableView.ReloadData();
-        //_selectDifficultyComponent.TableView.ReloadData();
-        
         _selectCharacteristicComponent.TableView.SelectCellWithIdx(0, true);
-        //_selectDifficultyComponent.TableView.SelectCellWithIdx(_selectDifficultyComponent.NumberOfCells() - 1, true);
 
-        detailsDescription.color = new Color(1f, 1f, 1f, 0.5f);
+        detailsDescription.color = StandardColor;
         detailsDescription.text = "Loading description...";
         
         SetMapRankedTags(queuedSong);
@@ -544,30 +539,30 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
         
-        Beatmap? beatmap = await SongDetailsManager.BeatSaverInstance.Beatmap(queuedSong.BsrKey);
-        if (beatmap != null)
+        if (!SongCore.Collections.songWithHashPresent(queuedSong.Hash))
         {
-            Plugin.DebugMessage("Beatmap was not null");
+            Plugin.Log.Info("Beatmap doesn't exist locally, grabbing it");
             
-            if (!SongCore.Collections.songWithHashPresent(queuedSong.Hash))
+            Beatmap? beatmap = await SongDetailsManager.BeatSaverInstance.Beatmap(queuedSong.BsrKey);
+            if (beatmap != null)
             {
-                Plugin.Log.Info("Beatmap doesn't exist locally, grabbing it");
+                Plugin.DebugMessage("Beatmap was not null");
                 
                 await SongDownloader.Instance.DownloadSong(beatmap, CancellationToken.None);
                 
+                void LoaderOnSongsLoadedEvent(SongCore.Loader loader, ConcurrentDictionary<string, BeatmapLevel> concurrentDictionary)
+                {
+                    SongCore.Loader.SongsLoadedEvent -= LoaderOnSongsLoadedEvent;
+                    OkGoBack(queuedSong);
+                }
+                
                 SongCore.Loader.SongsLoadedEvent += LoaderOnSongsLoadedEvent;
-                SongCore.Loader.Instance.RefreshSongs();
+                SongCore.Loader.Instance.RefreshSongs(false);
             }
-            else
-            {
-                OkGoBack(queuedSong);
-            }
-
-            void LoaderOnSongsLoadedEvent(SongCore.Loader loader, ConcurrentDictionary<string, BeatmapLevel> concurrentDictionary)
-            {
-                SongCore.Loader.SongsLoadedEvent -= LoaderOnSongsLoadedEvent;
-                OkGoBack(queuedSong);
-            }
+        }
+        else
+        {
+            OkGoBack(queuedSong);
         }
         
         SocketApi.Broadcast("pressedPlay", queuedSong);
