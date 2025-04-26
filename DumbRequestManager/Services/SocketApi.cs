@@ -57,11 +57,6 @@ internal class SocketMessageHandler : WebSocketBehavior
     }
     protected override void OnClose(CloseEventArgs e)
     {
-        Plugin.DebugMessage("Connected closed");
-    }
-
-    protected override void OnMessage(MessageEventArgs e)
-    {
-        // do nothing, this is just a firehose
+        Plugin.DebugMessage("Connection closed");
     }
 }
