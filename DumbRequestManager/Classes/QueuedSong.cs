@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaverSharp.Models;
+using DumbRequestManager.Managers;
 using DumbRequestManager.Utils;
 using Newtonsoft.Json;
+using SongCore.Data;
 using SongDetailsCache.Structs;
 using UnityEngine;
 
@@ -64,9 +67,9 @@ public readonly struct QueuedSongMapMods
         Vivify = hasVivify;
     }
 
-    public QueuedSongMapMods(ReadOnlyCollection<BeatmapDifficulty> difficulties, bool hasVivify = false)
+    public QueuedSongMapMods(ReadOnlyCollection<BeatSaverSharp.Models.BeatmapDifficulty> difficulties, bool hasVivify = false)
     {
-        foreach (BeatmapDifficulty diff in difficulties)
+        foreach (BeatSaverSharp.Models.BeatmapDifficulty diff in difficulties)
         {
             if (diff.Chroma) { Chroma = true; }
             if (diff.Cinema) { Cinema = true; }
@@ -88,6 +91,7 @@ public class NoncontextualizedDifficulty
     [JsonProperty] public float ScoreSaberStars { get; set; }
     [JsonProperty] public float BeatLeaderStars { get; set; }
 
+    // SongDetailsCache
     public NoncontextualizedDifficulty(SongDifficulty difficulty)
     {
         Difficulty = difficulty.difficulty.ToString();
@@ -99,7 +103,8 @@ public class NoncontextualizedDifficulty
         BeatLeaderStars = difficulty.starsBeatleader;
     }
     
-    public NoncontextualizedDifficulty(BeatmapDifficulty difficulty)
+    // BeatSaver
+    public NoncontextualizedDifficulty(BeatSaverSharp.Models.BeatmapDifficulty difficulty)
     {
         Difficulty = difficulty.Difficulty.ToString();
         Characteristic = difficulty.Characteristic.ToString();
@@ -111,6 +116,36 @@ public class NoncontextualizedDifficulty
                    (difficulty.Cinema ? (int)SongDetailsCache.Structs.MapMods.Cinema : 0);
         MapMods = new QueuedSongMapMods((MapMods)mods);
         ScoreSaberStars = difficulty.Stars ?? 0;
+    }
+    
+    // Base game
+    private static readonly Dictionary<string, int> ModValues = new()
+    {
+        { "Noodle Extensions", (int)SongDetailsCache.Structs.MapMods.NoodleExtensions },
+        { "Mapping Extensions", (int)SongDetailsCache.Structs.MapMods.MappingExtensions },
+        { "Chroma", (int)SongDetailsCache.Structs.MapMods.Chroma },
+        { "Cinema", (int)SongDetailsCache.Structs.MapMods.Cinema }
+    };
+    public NoncontextualizedDifficulty(BeatmapLevel level, BeatmapKey key, BeatmapBasicData mapData)
+    {
+        ExtraSongData.DifficultyData? diffData = SongCore.Collections.RetrieveDifficultyData(level, key);
+        
+        int mods = 0;
+        if (diffData != null)
+        {
+            string[] requirements = diffData.additionalDifficultyData._requirements;
+            string[] suggestions = diffData.additionalDifficultyData._suggestions;
+
+            mods += requirements.Sum(requirement => ModValues.GetValueOrDefault(requirement, 0));
+            mods += suggestions.Sum(suggestion => ModValues.GetValueOrDefault(suggestion, 0));
+
+            MapMods = new QueuedSongMapMods((MapMods)mods);
+        }
+        
+        Difficulty = key.difficulty.ToString();
+        Characteristic = key.beatmapCharacteristic.serializedName;
+        NoteJumpSpeed = key.difficulty.NoteJumpMovementSpeed();
+        NotesPerSecond = mapData.notesCount / level.songDuration;
     }
 }
 
@@ -177,7 +212,7 @@ public class NoncontextualizedSong
     public byte[]? CoverImage => _coverImageContainer.CoverImage ?? null;
     // ReSharper restore MemberCanBePrivate.Global
 
-    // sigh
+    // SongDetailsCache
     public NoncontextualizedSong(Song? guh, bool skipCoverImage = false)
     {
         if (guh == null)
@@ -211,6 +246,8 @@ public class NoncontextualizedSong
             _coverImageContainer = new CoverImageContainer(song);
         }
     }
+    
+    // BeatSaver
     public NoncontextualizedSong(Beatmap song, bool skipCoverImage = false)
     {
         BsrKey = song.ID;
@@ -237,5 +274,63 @@ public class NoncontextualizedSong
         {
             _coverImageContainer = new CoverImageContainer(song);
         }
+    }
+    
+    // Base game + supplemental SDC
+    public NoncontextualizedSong(BeatmapLevel level, bool skipCoverImage = false)
+    {
+        Hash = level.levelID.Split('_').Last().Split(' ').First();
+        Title = level.songName;
+        SubTitle = level.songSubName;
+        Artist = level.songAuthorName;
+        Mapper = string.Join(", ", level.allMappers);
+        Duration = (uint)level.songDuration;
+
+        UsesChroma = false;
+        UsesCinema = false;
+        UsesMappingExtensions = false;
+        UsesNoodleExtensions = false;
+        UsesVivify = false;
+        foreach (BeatmapKey key in level.GetBeatmapKeys())
+        {
+            ExtraSongData.DifficultyData? diffData = SongCore.Collections.RetrieveDifficultyData(level, key);
+
+            if (diffData == null)
+            {
+                continue;
+            }
+            
+            string[] requirements = diffData.additionalDifficultyData._requirements;
+            string[] suggestions = diffData.additionalDifficultyData._suggestions;
+            
+            // this is so ugly and i hate it
+            if (requirements.Any(x => x == "Chroma")) { UsesChroma = true; }
+            if (suggestions.Any(x => x == "Chroma")) { UsesChroma = true; }
+            if (requirements.Any(x => x == "Cinema")) { UsesCinema = true; }
+            if (suggestions.Any(x => x == "Cinema")) { UsesCinema = true; }
+            if (requirements.Any(x => x == "Noodle Extensions")) { UsesNoodleExtensions = true; }
+            if (suggestions.Any(x => x == "Noodle Extensions")) { UsesNoodleExtensions = true; }
+            if (requirements.Any(x => x == "Mapping Extensions")) { UsesMappingExtensions = true; }
+            if (suggestions.Any(x => x == "Mapping Extensions")) { UsesMappingExtensions = true; }
+            if (requirements.Any(x => x == "Vivify")) { UsesVivify = true; }
+            if (suggestions.Any(x => x == "Vivify")) { UsesVivify = true; }
+        }
+
+        Song? cachedDetails = SongDetailsManager.GetByMapHash(Hash); // some stuff just isn't available base game
+
+        BsrKey = cachedDetails?.key ?? string.Empty;
+        Votes = [cachedDetails?.upvotes ?? 0, cachedDetails?.downvotes ?? 0];
+        Rating = cachedDetails?.rating ?? 0;
+        UploadTime = cachedDetails?.uploadTimeUnix ?? (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // it's *probably* very new if the null check triggers
+        Cover = cachedDetails?.coverURL ?? string.Empty;
+        BeatLeaderRanked = (cachedDetails?.rankedStates & RankedStates.BeatleaderRanked) != 0;
+        ScoreSaberRanked = (cachedDetails?.rankedStates & RankedStates.ScoresaberRanked) != 0;
+        Curated = (cachedDetails?.uploadFlags & UploadFlags.Curated) != 0;
+        
+        Diffs = level.GetBeatmapKeys().Select(key =>
+        {
+            BeatmapBasicData basicData = level.GetDifficultyBeatmapData(key.beatmapCharacteristic, key.difficulty);
+            return new NoncontextualizedDifficulty(level, key, basicData);
+        }).ToArray();
     }
 }

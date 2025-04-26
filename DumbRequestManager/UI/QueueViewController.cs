@@ -559,7 +559,7 @@ internal class QueueViewController : BSMLAutomaticViewController
                 Plugin.DebugMessage("Beatmap was not null");
                 
                 Progress<double> progress = new();
-                progress.ProgressChanged += (sender, value) =>
+                progress.ProgressChanged += (_, value) =>
                 {
                     _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#CBADFF><b>{queuedSong.BsrKey}</b> <color=#FFFFFF80>({(value * 100):0}%)", (float)value);
                 };
