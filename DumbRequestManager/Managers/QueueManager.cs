@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using BeatSaverDownloader.Misc;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.UI;
@@ -74,7 +73,7 @@ public static class QueueManager
         ChatRequestButton.Instance.UseAttentiveButton(true);
         if (QueueViewController.QueueTableComponent != null)
         {
-            await UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+            _ = UnityMainThreadTaskScheduler.Factory.StartNew(() =>
             {
                 QueueViewController.QueueTableComponent.TableView.ReloadData();
             });
