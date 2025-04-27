@@ -7,7 +7,7 @@ function _scriptManifest() {
         description: "Button events for the DumbRequestManager Beat Saber mod",
         author: "TheBlackParrot",
         website: "https://github.com/TheBlackParrot/DumbRequestManager",
-        version: "0.0.2",
+        version: "0.0.3",
         firebotVersion: "5",
         startupOnly: true
     }
@@ -76,6 +76,16 @@ module.exports = {
                     id: `queue-gate-changed`,
                     name: "Queue Gate Changed",
                     description: "When the queue opens or closes"
+                },
+                {
+                    id: `connection-opened`,
+                    name: "Connection Opened",
+                    description: "When the connection to DRM opens"
+                },
+                {
+                    id: `connection-closed`,
+                    name: "Connection Closed",
+                    description: "When the connection to DRM closes"
                 }
             ]
         });
@@ -136,6 +146,8 @@ module.exports = {
             
             socket.on("close", function() {
                 clearTimeout(reconnectTimeout);
+
+                eventManager.triggerEvent(SOURCE_ID, "connection-closed");
                 
                 logger.warn(`Connection to DRM lost`);
                 reconnectTimeout = setTimeout(startDRMSocket, currentReconnectDelay);
@@ -155,6 +167,7 @@ module.exports = {
                 
                 currentReconnectDelay = 5000;
                 logger.info("Connected to DRM");
+                eventManager.triggerEvent(SOURCE_ID, "connection-opened");
             });
 
             socket.on("message", function(message) {
