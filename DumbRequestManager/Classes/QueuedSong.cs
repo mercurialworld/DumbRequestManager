@@ -141,7 +141,7 @@ public class NoncontextualizedDifficulty
         { "Chroma", (int)SongDetailsCache.Structs.MapMods.Chroma },
         { "Cinema", (int)SongDetailsCache.Structs.MapMods.Cinema }
     };
-    public NoncontextualizedDifficulty(BeatmapLevel level, BeatmapKey key, BeatmapBasicData mapData)
+    public NoncontextualizedDifficulty(BeatmapLevel level, BeatmapKey key, BeatmapBasicData mapData, Song? cachedDetails)
     {
         ExtraSongData.DifficultyData? diffData = SongCore.Collections.RetrieveDifficultyData(level, key);
         
@@ -159,8 +159,19 @@ public class NoncontextualizedDifficulty
         
         Difficulty = key.difficulty.ToString();
         Characteristic = key.beatmapCharacteristic.serializedName;
-        NoteJumpSpeed = key.difficulty.NoteJumpMovementSpeed();
-        NotesPerSecond = mapData.notesCount / level.songDuration;
+        NoteJumpSpeed = mapData.noteJumpMovementSpeed;
+        if (cachedDetails == null)
+        {
+            return;
+        }
+        
+        // using SDC for now, look at StandardLevelDetailView.CalculateAndSetContentAsync
+        SongDifficulty? cachedDiff = cachedDetails.Value.difficulties.First(x => (int)x.difficulty == (int)key.difficulty &&
+            x.characteristic.ToString() == key.beatmapCharacteristic.serializedName);
+        NotesPerSecond = cachedDiff?.notes / level.songDuration ?? 0;
+        
+        //Plugin.DebugMessage($"{mapData.notesCount} / {level.songDuration}");
+        //NotesPerSecond = mapData.notesCount / level.songDuration;
     }
 }
 
@@ -344,8 +355,8 @@ public class NoncontextualizedSong
         
         Diffs = level.GetBeatmapKeys().Select(key =>
         {
-            BeatmapBasicData basicData = level.GetDifficultyBeatmapData(key.beatmapCharacteristic, key.difficulty);
-            return new NoncontextualizedDifficulty(level, key, basicData);
+            BeatmapBasicData? diff = level.GetDifficultyBeatmapData(key.beatmapCharacteristic, key.difficulty);
+            return new NoncontextualizedDifficulty(level, key, diff, cachedDetails);
         }).ToArray();
         
         if (!skipCoverImage)
