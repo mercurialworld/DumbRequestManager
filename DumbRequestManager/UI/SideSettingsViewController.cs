@@ -23,7 +23,7 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
     // ReSharper disable FieldCanBeMadeReadOnly.Local
     // ReSharper disable FieldCanBeMadeReadOnly.Global
     [UIComponent("queueOpenToggle")]
-    private ToggleSetting _toggleSettingObject = null!;
+    private ToggleSetting? _toggleSettingObject = null!;
     [UIComponent("updateObject")]
     internal HorizontalLayoutGroup UpdateObject = null!;
     // ReSharper restore FieldCanBeMadeReadOnly.Global
@@ -54,8 +54,11 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
         
         SocketApi.Broadcast("queueOpen", isQueueOpen);
         await HookApi.TriggerHook("queueOpen", isQueueOpen);
-        
-        _toggleSettingObject.Value = IsQueueOpen;
+
+        if (_toggleSettingObject != null)
+        {
+            _toggleSettingObject.Value = IsQueueOpen;
+        }
     }
 
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
