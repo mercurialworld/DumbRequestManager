@@ -1,11 +1,28 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-    xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+﻿<vertical xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns="$LOCAL_SCHEMA$"
+          xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+    <vertical vertical-fit="PreferredSize" preferred-height="3">
+        <horizontal id="updateObject">
+            <horizontal horizontal-fit="Unconstrained" pref-width="40"
+                        child-align="MiddleRight" spacing="1">
+                <text text="Update available!"
+                      font-size="3" font-color="#FFDD99"
+                      rich-text="true" align="Right"/>
+                <text text="~updateString"
+                      font-size="3" font-color="#FFDD99"
+                      rich-text="true" align="Left"/>
+            </horizontal>
+            <horizontal horizontal-fit="Unconstrained" pref-width="32"
+                        child-align="MiddleLeft">
+                <button text="Download from GitHub" on-click="openNewReleaseTag"
+                        local-scale="0.67" align="Left"/>
+            </horizontal>
+        </horizontal>
+    </vertical>
+    
     <vertical preferred-width="80" horizontal-fit="PreferredSize"
-              preferred-height="70" vertical-fit="PreferredSize"
-              child-align="UpperCenter" child-expand-height="false">
-        <text text="~updateString" id="updateObject"
-              font-size="3" align="Center"/>
+              preferred-height="65" vertical-fit="PreferredSize"
+              child-align="UpperCenter" child-expand-height="false" child-control-height="false">
         <toggle-setting id="queueOpenToggle" text="Allow requests"
                         value="IsQueueOpen" apply-on-change="true" on-change="setState"/>
     </vertical>
-</bg>
+</vertical>

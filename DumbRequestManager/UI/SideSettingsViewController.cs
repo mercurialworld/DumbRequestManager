@@ -5,7 +5,8 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using DumbRequestManager.Managers;
 using DumbRequestManager.Services;
 using JetBrains.Annotations;
-using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace DumbRequestManager.UI;
 
@@ -24,7 +25,7 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
     [UIComponent("queueOpenToggle")]
     private ToggleSetting _toggleSettingObject = null!;
     [UIComponent("updateObject")]
-    internal TextMeshProUGUI UpdateObject = null!;
+    internal HorizontalLayoutGroup UpdateObject = null!;
     // ReSharper restore FieldCanBeMadeReadOnly.Global
     // ReSharper restore FieldCanBeMadeReadOnly.Local
     
@@ -36,6 +37,14 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
     {
         Instance = this;
     }
+    
+    [UIAction("openNewReleaseTag")]
+    [UsedImplicitly]
+    private void OpenNewReleaseTag()
+    {
+        Application.OpenURL($"https://github.com/TheBlackParrot/DumbRequestManager/releases/tag/{VersionManager.LatestVersion?.ToString(3)}");
+    }
+    
 
     [UIAction("setState")]
     public async Task SetState(bool isQueueOpen)
