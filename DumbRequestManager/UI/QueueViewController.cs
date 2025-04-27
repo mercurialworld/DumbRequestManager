@@ -320,14 +320,17 @@ internal class QueueViewController : BSMLAutomaticViewController
         _difficultyChoices = _selectedSong.Diffs.Where(x => x.Characteristic == characteristic.Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
 
         Plugin.DebugMessage($"Got {_difficultyChoices.Count} unique difficulties");
-        
-        _selectDifficultyComponent.Data = _difficultyChoices;
 
-        _selectDifficultyComponent.TableView.ReloadData();
-        Plugin.DebugMessage("Reloaded characteristics/difficulties UI");
+        UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+        {
+            _selectDifficultyComponent.Data = _difficultyChoices;
 
-        _selectDifficultyComponent.TableView.SelectCellWithIdx(_selectDifficultyComponent.NumberOfCells() - 1, true);
-        Plugin.DebugMessage("Should have selected difficulty");
+            _selectDifficultyComponent.TableView.ReloadData();
+            Plugin.DebugMessage("Reloaded characteristics/difficulties UI");
+
+            _selectDifficultyComponent.TableView.SelectCellWithIdx(_selectDifficultyComponent.NumberOfCells() - 1, true);
+            Plugin.DebugMessage("Should have selected difficulty");
+        });
     }
     
     private static void DidSelectDifficultyCellWithIdxEvent(TableView tableView, int idx)
@@ -403,10 +406,13 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.DebugMessage("Updated characteristic choices");
         _difficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic == _characteristicChoices[0].Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
         Plugin.DebugMessage($"Got {_difficultyChoices.Count} unique difficulties");
-        
-        _selectCharacteristicComponent.Data = _characteristicChoices;
-        _selectCharacteristicComponent.TableView.ReloadData();
-        _selectCharacteristicComponent.TableView.SelectCellWithIdx(0, true);
+
+        UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+        {
+            _selectCharacteristicComponent.Data = _characteristicChoices;
+            _selectCharacteristicComponent.TableView.ReloadData();
+            _selectCharacteristicComponent.TableView.SelectCellWithIdx(0, true);
+        });
 
         detailsDescription.color = StandardColor;
         detailsDescription.text = "Loading description...";
