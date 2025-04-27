@@ -77,7 +77,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     private HorizontalLayoutGroup _tagsCuratedTag = null!;
     
     [UIComponent("queueTableComponent")]
-    private static CustomCellListTableData _queueTableComponent = null!;
+    internal static CustomCellListTableData QueueTableComponent = null!;
     
     [UIComponent("waitModal")]
     public ModalView waitModal = null!;
@@ -143,10 +143,10 @@ internal class QueueViewController : BSMLAutomaticViewController
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
-        if (_queueTableComponent == null)
+        if (QueueTableComponent == null)
         {
             // i... don't know. this works.
-            _queueTableComponent = GameObject.Find("QueueTableComponent").GetComponent<CustomCellListTableData>();
+            QueueTableComponent = GameObject.Find("QueueTableComponent").GetComponent<CustomCellListTableData>();
             _selectCharacteristicComponent = GameObject.Find("DRM_SelectCharacteristicComponent").GetComponent<CustomCellListTableData>();
             _selectDifficultyComponent = GameObject.Find("DRM_SelectDifficultyComponent").GetComponent<CustomCellListTableData>();
             _detailsNps = GameObject.Find("DRM_DetailsNotesPerSecond").GetComponent<TextMeshProUGUI>();
@@ -155,7 +155,7 @@ internal class QueueViewController : BSMLAutomaticViewController
 
         if (firstActivation)
         {
-            _queueTableComponent.TableView.selectionType = TableViewSelectionType.Single;
+            QueueTableComponent.TableView.selectionType = TableViewSelectionType.Single;
             _selectCharacteristicComponent.TableView.selectionType = TableViewSelectionType.Single;
             _selectDifficultyComponent.TableView.selectionType = TableViewSelectionType.Single;
             
@@ -182,19 +182,19 @@ internal class QueueViewController : BSMLAutomaticViewController
         }
         else
         {
-            _queueTableComponent.TableView.ClearSelection();
+            QueueTableComponent.TableView.ClearSelection();
         }
         
         ToggleSelectionPanel(false);
 
-        _queueTableComponent.TableView.ReloadDataKeepingPosition();
+        QueueTableComponent.TableView.ReloadDataKeepingPosition();
     }
 
     [UIAction("showBanModal")]
     [UsedImplicitly]
     private void ShowBanModal()
     {
-        int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
+        int idx = QueueTableComponent.TableView._selectedCellIdxs.First();
         NoncontextualizedSong queuedSong = Queue[idx];
 
         banConfirmationText.lineSpacing = -17;
@@ -207,7 +207,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UsedImplicitly]
     private async Task BanSelectedMap()
     {
-        int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
+        int idx = QueueTableComponent.TableView._selectedCellIdxs.First();
         NoncontextualizedSong queuedSong = Queue[idx];
         
         _ = SkipButtonPressed(); // waiting on this doesn't matter
@@ -229,7 +229,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UsedImplicitly]
     private async Task LinkSelectedMap()
     {
-        int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
+        int idx = QueueTableComponent.TableView._selectedCellIdxs.First();
         NoncontextualizedSong queuedSong = Queue[idx];
         
         SocketApi.Broadcast("pressedLink", queuedSong);
@@ -240,7 +240,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UsedImplicitly]
     private async Task PokeNextPerson()
     {
-        int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
+        int idx = QueueTableComponent.TableView._selectedCellIdxs.First();
         NoncontextualizedSong queuedSong = Queue[idx];
         
         SocketApi.Broadcast("pressedPoke", queuedSong);
@@ -485,7 +485,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UIAction("skipButtonPressed")]
     private async Task SkipButtonPressed()
     {
-        int index = _queueTableComponent.TableView._selectedCellIdxs.First();
+        int index = QueueTableComponent.TableView._selectedCellIdxs.First();
         if (index == -1)
         {
             Plugin.DebugMessage("Nothing selected");
@@ -497,8 +497,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         NoncontextualizedSong queuedSong = Queue[index];
         Queue.RemoveAt(index);
         
-        _queueTableComponent.TableView.ClearSelection();
-        _queueTableComponent.TableView.ReloadData();
+        QueueTableComponent.TableView.ClearSelection();
+        QueueTableComponent.TableView.ReloadData();
         
         ToggleSelectionPanel(false);
         
@@ -531,7 +531,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             }
         }
         
-        int index = _queueTableComponent.TableView._selectedCellIdxs.First();
+        int index = QueueTableComponent.TableView._selectedCellIdxs.First();
         if (index == -1)
         {
             Plugin.DebugMessage("Nothing selected");
@@ -546,8 +546,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.DebugMessage($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
         
         Queue.RemoveAt(index);
-        _queueTableComponent.TableView.ClearSelection();
-        _queueTableComponent.TableView.ReloadData();
+        QueueTableComponent.TableView.ClearSelection();
+        QueueTableComponent.TableView.ReloadData();
         
         ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
         

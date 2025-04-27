@@ -2,9 +2,11 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BeatSaverDownloader.Misc;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.UI;
+using IPA.Utilities.Async;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using SongDetailsCache.Structs;
@@ -70,7 +72,14 @@ public static class QueueManager
         QueuedSongs.Add(queuedSong);
         
         ChatRequestButton.Instance.UseAttentiveButton(true);
-        
+        if (QueueViewController.QueueTableComponent != null)
+        {
+            await UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+            {
+                QueueViewController.QueueTableComponent.TableView.ReloadData();
+            });
+        }
+
         Plugin.Log.Info($"Added map {key}, queue has {QueuedSongs.Count} map(s)");
         if (!skipPersistence)
         {
