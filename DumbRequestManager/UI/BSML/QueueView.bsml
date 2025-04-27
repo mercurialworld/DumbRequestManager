@@ -24,8 +24,9 @@
                               padding="2"
                               child-align="MiddleLeft" anchor-min-x="0.025">
                         <horizontal child-align="UpperLeft" child-expand-width="true">
-                            <text data="title"
-                                  font-size="4" align="Left" overflow-mode="Ellipsis"/>
+                            <text data="displayedTitle"
+                                  font-size="4" align="Left" rich-text="true"
+                                  overflow-mode="Ellipsis"/>
                         </horizontal>
                         <horizontal child-expand-width="false" child-align="LowerLeft">
                             <text data="artist"

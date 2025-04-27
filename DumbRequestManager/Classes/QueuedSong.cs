@@ -194,6 +194,9 @@ public class NoncontextualizedSong
     [JsonProperty] [UIValue("subtitle")]
     public string SubTitle { get; set; } = string.Empty;
     
+    [UIValue("displayedTitle")]
+    internal string DisplayedTitle => SubTitle == string.Empty ? Title : $"{Title} <size=75%><alpha=#AA>{SubTitle}";
+    
     [JsonProperty] [UIValue("artist")]
     public string Artist { get; set; } = string.Empty;
 

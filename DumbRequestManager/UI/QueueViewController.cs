@@ -177,6 +177,8 @@ internal class QueueViewController : BSMLAutomaticViewController
             _tagsScoreSaberRankedTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
             _tagsBeatLeaderRankedTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
             _tagsCuratedTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
+
+            detailsTitle.richText = true;
         }
         else
         {
@@ -369,7 +371,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.DebugMessage($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
         Plugin.DebugMessage($"Cells: {tableView._contentTransform.childCount}");
 
-        detailsTitle.text = queuedSong.Title;
+        detailsTitle.text = queuedSong.SubTitle == string.Empty ? queuedSong.Title : $"{queuedSong.Title} <size=75%><alpha=#AA>{queuedSong.SubTitle}";
         detailsArtist.text = queuedSong.Artist;
         detailsMapper.text = queuedSong.Mapper;
         detailsRequester.text = queuedSong.User ?? "someone";
