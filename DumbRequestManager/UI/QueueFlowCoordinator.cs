@@ -1,4 +1,6 @@
-﻿using HMUI;
+﻿using System.Collections.Concurrent;
+using DumbRequestManager.Managers;
+using HMUI;
 using JetBrains.Annotations;
 using Zenject;
 
@@ -19,6 +21,14 @@ internal class QueueFlowCoordinator : FlowCoordinator
         _soloFreePlayFlowCoordinator = soloFreePlayFlowCoordinator;
         _queueViewController = queueViewController;
         _sideSettingsViewController = sideSettingsViewController;
+        
+        SongCore.Loader.SongsLoadedEvent += EventLoadThing;
+    }
+    
+    private static void EventLoadThing(SongCore.Loader loader, ConcurrentDictionary<string, BeatmapLevel> concurrentDictionary)
+    {
+        _ = QueueManager.Load();
+        SongCore.Loader.SongsLoadedEvent -= EventLoadThing;
     }
 
     public override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)

@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,17 +23,6 @@ public static class QueueManager
 {
     private static readonly string PersistentQueueFilename = Path.Combine(Plugin.UserDataDir, "queue.json");
     public static readonly List<NoncontextualizedSong> QueuedSongs = [];
-
-    static QueueManager()
-    {
-        SongCore.Loader.SongsLoadedEvent += EventLoadThing;
-    }
-
-    private static void EventLoadThing(SongCore.Loader loader, ConcurrentDictionary<string, BeatmapLevel> concurrentDictionary)
-    {
-        _ = Load();
-        SongCore.Loader.SongsLoadedEvent -= EventLoadThing;
-    }
 
     public static async Task<NoncontextualizedSong?> AddKey(string key, string? user = null, bool skipPersistence = false)
     {
