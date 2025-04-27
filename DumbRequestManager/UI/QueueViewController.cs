@@ -428,7 +428,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         {
             if (queuedSong.CoverImage == null)
             {
-                detailsCoverImage.sprite = SongCore.Loader.defaultCoverImage;
+                detailsCoverImage.sprite = queuedSong.CoverImageSprite;
                 return;
             }
             

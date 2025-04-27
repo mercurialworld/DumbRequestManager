@@ -34,16 +34,32 @@ public static class QueueManager
             Beatmap? beatmap = await SongDetailsManager.GetDirectByKey(key); 
             if (beatmap != null)
             {
+                Plugin.DebugMessage("Using BeatSaverSharp method");
                 queuedSong = new NoncontextualizedSong(beatmap);
             }
             else
             {
+                Plugin.Log.Info("oh we're screwed");
                 return null;
             }
         }
         else
         {
-            queuedSong = new NoncontextualizedSong(song);
+            string hash = song.Value.hash.ToLower();
+            Plugin.DebugMessage($"Checking SongCore for hash {hash}");
+            if (SongCore.Collections.songWithHashPresent(hash))
+            {
+                Plugin.DebugMessage("Using local map method");
+                
+                // can't be null here
+                BeatmapLevel beatmapLevel = SongCore.Loader.GetLevelByHash(hash)!;
+                queuedSong = new NoncontextualizedSong(beatmapLevel);
+            }
+            else
+            {
+                Plugin.DebugMessage("Using SongDetailsCache method");
+                queuedSong = new NoncontextualizedSong(song);
+            }
         }
 
         if (user != null)

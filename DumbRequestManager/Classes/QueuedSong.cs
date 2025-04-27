@@ -7,6 +7,7 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Managers;
 using DumbRequestManager.Utils;
+using IPA.Utilities.Async;
 using Newtonsoft.Json;
 using SongCore.Data;
 using SongDetailsCache.Structs;
@@ -17,6 +18,7 @@ namespace DumbRequestManager.Classes;
 public class CoverImageContainer
 {
     public byte[]? CoverImage;
+    public Sprite CoverImageSprite = SongCore.Loader.defaultCoverImage;
 
     public CoverImageContainer(Song song)
     {
@@ -40,6 +42,19 @@ public class CoverImageContainer
         {
             Plugin.Log.Error(e);
         }
+    }
+
+    public CoverImageContainer(BeatmapLevel beatmapLevel)
+    {
+        _ = GetLocal(beatmapLevel);
+    }
+
+    private async Task GetLocal(BeatmapLevel beatmapLevel)
+    {
+        await UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
+        {
+            CoverImageSprite = await beatmapLevel.previewMediaData.GetCoverSpriteAsync();
+        });
     }
 
     private async Task Get(string url)
@@ -208,8 +223,8 @@ public class NoncontextualizedSong
     [JsonProperty] public NoncontextualizedDifficulty[] Diffs { get; set; } = [];
 
     private CoverImageContainer _coverImageContainer = null!;
-    [UIValue("coverImage")]
     public byte[]? CoverImage => _coverImageContainer.CoverImage ?? null;
+    public Sprite CoverImageSprite => _coverImageContainer.CoverImageSprite;
     // ReSharper restore MemberCanBePrivate.Global
 
     // SongDetailsCache
@@ -332,5 +347,10 @@ public class NoncontextualizedSong
             BeatmapBasicData basicData = level.GetDifficultyBeatmapData(key.beatmapCharacteristic, key.difficulty);
             return new NoncontextualizedDifficulty(level, key, basicData);
         }).ToArray();
+        
+        if (!skipCoverImage)
+        {
+            _coverImageContainer = new CoverImageContainer(level);
+        }
     }
 }
