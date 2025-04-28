@@ -510,8 +510,13 @@ internal class QueueViewController : BSMLAutomaticViewController
                     _songPreviewPlayer.CrossfadeToDefault();
                 }
             });
-            //_songPreviewPlayer.CrossfadeToDefault();
         }
+    }
+    
+    protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+    {
+        _songPreviewPlayer.CrossfadeToDefault();
+        base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
     }
     
     public void GoToLevel(BeatmapLevel? beatmapLevel)
