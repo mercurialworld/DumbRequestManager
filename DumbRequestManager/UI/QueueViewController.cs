@@ -406,13 +406,25 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.DebugMessage("Updated characteristic choices");
         _difficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic == _characteristicChoices[0].Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
         Plugin.DebugMessage($"Got {_difficultyChoices.Count} unique difficulties");
-
+        
         UnityMainThreadTaskScheduler.Factory.StartNew(() =>
         {
             _selectCharacteristicComponent.Data = _characteristicChoices;
             _selectCharacteristicComponent.TableView.ReloadData();
             _selectCharacteristicComponent.TableView.SelectCellWithIdx(0, true);
         });
+
+        // this fixes stuff not centering on the first selected map in the session
+        // cursed, i know. this is why it's not aligned to the center in the BSML file
+        if (!_selectCharacteristicComponent.TableView._alignToCenter)
+        {
+            UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
+            {
+                await Task.Delay(1);
+                _selectCharacteristicComponent.TableView._alignToCenter = true;
+                _selectCharacteristicComponent.TableView.RefreshCellsContent();
+            });
+        }
 
         detailsDescription.color = StandardColor;
         detailsDescription.text = "Loading description...";

@@ -220,7 +220,7 @@
                                 preferred-height="6" vertical-fit="PreferredSize"
                                 bg="round-rect-panel" bg-color="grey">
                         <custom-list id="selectCharacteristicComponent" contents="characteristicChoices" name="DRM_SelectCharacteristicComponent"
-                                     align-to-center="true" list-direction="Horizontal"
+                                     align-to-center="false" list-direction="Horizontal"
                                      preferred-width="56" preferred-height="4" cell-size="6">
                             <horizontal preferred-height="4" vertical-fit="PreferredSize"
                                         preferred-width="6" horizontal-fit="PreferredSize"
