@@ -10,6 +10,7 @@ using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using BeatSaverDownloader.Misc;
 using BeatSaverSharp.Models;
+using BGLib.UnityExtension;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
 using DumbRequestManager.Services;
@@ -18,6 +19,7 @@ using IPA.Utilities.Async;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 using Zenject;
 
@@ -367,6 +369,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     }
 
     private static NoncontextualizedSong _selectedSong = null!;
+    private static UnityWebRequest? _webRequest;
     [UIAction("selectCell")]
     public void SelectCell(TableView tableView, NoncontextualizedSong queuedSong)
     {
@@ -469,6 +472,45 @@ internal class QueueViewController : BSMLAutomaticViewController
                 AudioClip previewAudioClip = await localLevel.previewMediaData.GetPreviewAudioClip();
                 _songPreviewPlayer.CrossfadeTo(previewAudioClip, _songPreviewPlayer._volume, localLevel.previewStartTime, localLevel.previewDuration, false, null);
             });
+        }
+        else
+        {
+            UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
+            {
+                Beatmap? remoteData = await SongDetailsManager.BeatSaverInstance.Beatmap(queuedSong.BsrKey);
+                if (remoteData != null)
+                {
+                    if (_webRequest != null)
+                    {
+                        // ReSharper disable once MergeIntoPattern
+                        if (!_webRequest.isDone)
+                        {
+                            _webRequest.Abort();
+                        }
+                    }
+
+                    _webRequest = UnityWebRequestMultimedia.GetAudioClip(remoteData.LatestVersion.PreviewURL, AudioType.MPEG);
+                    await _webRequest.SendWebRequestAsync();
+                    
+                    if (_webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+                    {
+                        _songPreviewPlayer.CrossfadeToDefault();
+                    }
+                    else
+                    {
+                        if (_webRequest.isDone)
+                        {
+                            AudioClip previewAudioClip = DownloadHandlerAudioClip.GetContent(_webRequest);
+                            _songPreviewPlayer.CrossfadeTo(previewAudioClip, _songPreviewPlayer._volume, 0, previewAudioClip.length, false, null);
+                        }   
+                    }
+                }
+                else
+                {
+                    _songPreviewPlayer.CrossfadeToDefault();
+                }
+            });
+            //_songPreviewPlayer.CrossfadeToDefault();
         }
     }
     
