@@ -43,6 +43,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     private LevelFilteringNavigationController _levelFilteringNavigationController = null!;
     private LevelCollectionViewController _levelCollectionViewController = null!;
     private SelectLevelCategoryViewController _selectLevelCategoryViewController = null!;
+    private SongPreviewPlayer _songPreviewPlayer = null!;
     
     private LoadingControl _loadingSpinner = null!;
     
@@ -132,11 +133,15 @@ internal class QueueViewController : BSMLAutomaticViewController
 
     [Inject]
     [UsedImplicitly]
-    private void Construct(LevelFilteringNavigationController levelFilteringNavigationController, LevelCollectionViewController levelCollectionViewController, SelectLevelCategoryViewController selectLevelCategoryViewController)
+    private void Construct(LevelFilteringNavigationController levelFilteringNavigationController,
+        LevelCollectionViewController levelCollectionViewController,
+        SelectLevelCategoryViewController selectLevelCategoryViewController,
+        SongPreviewPlayer songPreviewPlayer)
     {
         _levelFilteringNavigationController = levelFilteringNavigationController;
         _levelCollectionViewController = levelCollectionViewController;
         _selectLevelCategoryViewController = selectLevelCategoryViewController;
+        _songPreviewPlayer = songPreviewPlayer;
     }
     
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -455,6 +460,16 @@ internal class QueueViewController : BSMLAutomaticViewController
             detailsCoverImage.sprite = await Utilities.LoadSpriteAsync(queuedSong.CoverImage);
             Plugin.DebugMessage("Cover display updated");
         });
+
+        BeatmapLevel? localLevel = SongCore.Loader.GetLevelByHash(queuedSong.Hash);
+        if (localLevel != null)
+        {
+            UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
+            {
+                AudioClip previewAudioClip = await localLevel.previewMediaData.GetPreviewAudioClip();
+                _songPreviewPlayer.CrossfadeTo(previewAudioClip, _songPreviewPlayer._volume, localLevel.previewStartTime, localLevel.previewDuration, false, null);
+            });
+        }
     }
     
     public void GoToLevel(BeatmapLevel? beatmapLevel)
