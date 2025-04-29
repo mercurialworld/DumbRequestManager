@@ -135,6 +135,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     public ModalView confirmBanModal = null!;
     [UIComponent("banConfirmationText")]
     public TextMeshProUGUI banConfirmationText = null!;
+    
+    private static readonly Sprite BorderSprite = Resources.FindObjectsOfTypeAll<Sprite>().First(x => x.name == "RoundRect10Border");
 
     [Inject]
     [UsedImplicitly]
@@ -189,6 +191,11 @@ internal class QueueViewController : BSMLAutomaticViewController
             _tagsCuratedTag.GetComponent<ImageView>().material = uiNoGlowRoundEdge;
 
             detailsTitle.richText = true;
+
+            QueueTableComponent.TableView.didDeselectCellWithIdxEvent += (_, _) =>
+            {
+                ClearHighlightedCells();
+            };
         }
         else
         {
@@ -371,6 +378,32 @@ internal class QueueViewController : BSMLAutomaticViewController
         _detailsNps.SetText($"{difficulty.NotesPerSecond:0.00} <size=80%><alpha=#AA>NPS");
     }
 
+    private static void SetHighlightedCellsForUser(int ignoreIndex, NoncontextualizedSong queuedSong)
+    {
+        TableView tableView = QueueTableComponent.TableView;
+        
+        for (int idx = 0; idx < Queue.Count; idx++)
+        {
+            Transform cellTransform = tableView.GetCellAtIndex(idx).transform.FindChildRecursively("CellHighlightBG");
+            
+            cellTransform.GetComponent<ImageView>().sprite = BorderSprite;
+            cellTransform.GetComponent<ImageView>().overrideSprite = BorderSprite;
+            
+            cellTransform.gameObject.SetActive(queuedSong.User == Queue[idx].User && ignoreIndex != idx);
+        }
+    }
+
+    private static void ClearHighlightedCells()
+    {
+        TableView tableView = QueueTableComponent.TableView;
+        
+        for (int idx = 0; idx < Queue.Count; idx++)
+        {
+            Transform cellTransform = tableView.GetCellAtIndex(idx).transform.FindChildRecursively("CellHighlightBG");
+            cellTransform.gameObject.SetActive(false);
+        }
+    }
+
     private static NoncontextualizedSong _selectedSong = null!;
     private static UnityWebRequest? _webRequest;
     [UIAction("selectCell")]
@@ -380,7 +413,12 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         _selectedSong = queuedSong;
         int index = tableView._selectedCellIdxs.First();
-        
+
+        if (queuedSong.User != null)
+        {
+            SetHighlightedCellsForUser(index, queuedSong);
+        }
+
         Plugin.DebugMessage($"Selected cell: {index}");
         Plugin.DebugMessage($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
         Plugin.DebugMessage($"Cells: {tableView._contentTransform.childCount}");

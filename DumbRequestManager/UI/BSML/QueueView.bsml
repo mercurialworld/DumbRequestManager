@@ -15,6 +15,10 @@
                     <background tags="selected" background="title-gradient" bg-color="#FFFFFFFF" bg-color0="#CBADFF60" bg-color1="#CBADFF50"
                                 anchor-min-x="0.01" anchor-max-x="0.99"
                                 anchor-min-y="0.025"/>
+                    <background active="false" name="CellHighlightBG"
+                                background="title-gradient" bg-color="#FFFFFFFF" bg-color0="#CBADFF60" bg-color1="#CBADFF00"
+                                anchor-min-x="0.01" anchor-max-x="0.99"
+                                anchor-min-y="0.025"/>
                     <background tags="hovered" background="title-gradient" bg-color="#FFFFFF40"
                                 anchor-min-x="0.01" anchor-max-x="0.99"
                                 anchor-min-y="0.025"/>
