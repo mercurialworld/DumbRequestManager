@@ -22,6 +22,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using Zenject;
+using PluginConfig = DumbRequestManager.Configuration.PluginConfig;
 
 namespace DumbRequestManager.UI;
 
@@ -48,6 +49,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     private SongPreviewPlayer _songPreviewPlayer = null!;
     
     private LoadingControl _loadingSpinner = null!;
+
+    private static PluginConfig Config => PluginConfig.Instance;
     
     [UIValue("queue")]
     private static List<NoncontextualizedSong> Queue => QueueManager.QueuedSongs;
@@ -464,6 +467,11 @@ internal class QueueViewController : BSMLAutomaticViewController
             Plugin.DebugMessage("Cover display updated");
         });
 
+        if (!Config.PlayAudioPreviews)
+        {
+            return;
+        }
+        
         BeatmapLevel? localLevel = SongCore.Loader.GetLevelByHash(queuedSong.Hash);
         if (localLevel != null)
         {
@@ -475,6 +483,12 @@ internal class QueueViewController : BSMLAutomaticViewController
         }
         else
         {
+            if (!Config.PlayRemoteAudioPreviews)
+            {
+                _songPreviewPlayer.CrossfadeToDefault();
+                return;
+            }
+            
             UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
             {
                 Beatmap? remoteData = await SongDetailsManager.BeatSaverInstance.Beatmap(queuedSong.BsrKey);

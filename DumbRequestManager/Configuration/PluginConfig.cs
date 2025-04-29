@@ -20,4 +20,7 @@ internal class PluginConfig
     public virtual int WebSocketPort { get; set; } = 13338;
     
     public virtual string WebHookUrl { get; set; } = string.Empty;
+    
+    public virtual bool PlayAudioPreviews { get; set; } = true;
+    public virtual bool PlayRemoteAudioPreviews { get; set; } = false;
 }

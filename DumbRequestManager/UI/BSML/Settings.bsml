@@ -1,5 +1,14 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-                     xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+﻿<vertical xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns="$LOCAL_SCHEMA$"
+          xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+    <vertical>
+        <toggle-setting text="Play Audio Previews" value="PlayAudioPreviews"
+                        hover-hint="Play audio previews for maps already downloaded"
+                        apply-on-change="true"/>
+        <toggle-setting text="Play Remote Audio Previews" value="PlayRemoteAudioPreviews"
+                        hover-hint="Play audio previews for maps that have yet to be downloaded"
+                        apply-on-change="true"/>
+    </vertical>
+
     <vertical>
         <vertical preferred-height="10" vertical-fit="PreferredSize" child-align="MiddleCenter">
             <text text="HTTP API listening on" underlined="true" align="Center"/>
@@ -10,4 +19,4 @@
             <text text="~whereIsItAlsoListening" color="#CBADFF" align="Center" font-size="5"/>
         </vertical>
     </vertical>
-</bg>
+</vertical>

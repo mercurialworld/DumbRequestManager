@@ -19,6 +19,20 @@ internal class SettingsMenuManager : IInitializable, IDisposable
     [UIValue("whereIsItAlsoListening")]
     private static string WhereIsItAlsoListening => $"ws://{Config.WebSocketAddress}:{Config.WebSocketPort}";
     
+    [UsedImplicitly]
+    protected bool PlayAudioPreviews
+    {
+        get => Config.PlayAudioPreviews;
+        set => Config.PlayAudioPreviews = value;
+    }
+    
+    [UsedImplicitly]
+    protected bool PlayRemoteAudioPreviews
+    {
+        get => Config.PlayRemoteAudioPreviews;
+        set => Config.PlayRemoteAudioPreviews = value;
+    }
+    
     public void Initialize()
     {
 #if V1_39_1
