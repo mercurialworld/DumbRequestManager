@@ -472,13 +472,14 @@ internal class QueueViewController : BSMLAutomaticViewController
             return;
         }
         
+        _songPreviewPlayer._audioManager._audioMixer.GetFloat("MusicVolume", out float volume);
         BeatmapLevel? localLevel = SongCore.Loader.GetLevelByHash(queuedSong.Hash);
         if (localLevel != null)
         {
             UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
             {
                 AudioClip previewAudioClip = await localLevel.previewMediaData.GetPreviewAudioClip();
-                _songPreviewPlayer.CrossfadeTo(previewAudioClip, _songPreviewPlayer._volume, localLevel.previewStartTime, localLevel.previewDuration, false, null);
+                _songPreviewPlayer.CrossfadeTo(previewAudioClip, volume, localLevel.previewStartTime, localLevel.previewDuration, false, null);
             });
         }
         else
@@ -515,7 +516,7 @@ internal class QueueViewController : BSMLAutomaticViewController
                         if (_webRequest.isDone)
                         {
                             AudioClip previewAudioClip = DownloadHandlerAudioClip.GetContent(_webRequest);
-                            _songPreviewPlayer.CrossfadeTo(previewAudioClip, _songPreviewPlayer._volume, 0, previewAudioClip.length, false, null);
+                            _songPreviewPlayer.CrossfadeTo(previewAudioClip, volume, 0, previewAudioClip.length, false, null);
                         }   
                     }
                 }
