@@ -40,10 +40,6 @@ internal class ChatRequestButton(
         _standardButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = IdleColor;
         _attentionButton.gameObject.name = "DRM_AttentionButton";
         _attentionButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = Color.white;
-        
-#if !DEBUG
-        _standardButton.interactable = false;
-#endif
 
         if (_attentionButton.transform.Find("BG").TryGetComponent(out ImageView imageView))
         {
