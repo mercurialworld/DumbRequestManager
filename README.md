@@ -1,5 +1,5 @@
 # DumbRequestManager
-A map request manager for Beat Saber that abstracts out functions to an HTTP GET API, with (eventually) a WebSocket for real-time in-game queue event responses.  
+A map request manager for Beat Saber that abstracts out functions to an HTTP GET API, with a WebSocket API and Webhook API for real-time in-game queue event responses.  
 
 Essentially meaning, any streaming bot you use (e.g. Streamer.bot, Firebot, MixItUp, etc.) now has request queue functionality -- so long as it supports making HTTP requests (at the minimum).
 
@@ -120,16 +120,16 @@ All `pressed` events follow the same data structure:
 {
   "BsrKey": "1ad3b",
   "Hash": "A2EE3D6E6C82B89B10B9395BEBF47CF05F316B10",
-  "User": "theblackparrot",
+  "User": <string | null>,
   "Title": "Megalovania",
   "SubTitle": "",
   "Artist": "Toby Fox",
   "Mapper": "Joshabi & Olaf",
-  "Duration": 369,
-  "Votes": [4956, 237],
-  "Rating": 0.9197737,
-  "UploadTime": 1627825945,
-  "Cover": "https://cdn.beatsaver.com/a2ee3d6e6c82b89b10b9395bebf47cf05f316b10.jpg",
+  "Duration": <int (seconds)>,
+  "Votes": [<int (upvotes)>, <int (downvotes)>],
+  "Rating": <float (0-1)>,
+  "UploadTime": <int (unix timestmap (seconds))>,
+  "Cover": <string (image URL, jpg format)>,
   "Automapped": false,
   "ScoreSaberRanked": true,
   "BeatLeaderRanked": true,
