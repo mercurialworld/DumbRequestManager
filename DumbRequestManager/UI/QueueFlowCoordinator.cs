@@ -8,17 +8,17 @@ namespace DumbRequestManager.UI;
 
 internal class QueueFlowCoordinator : FlowCoordinator
 {
-    private SoloFreePlayFlowCoordinator _soloFreePlayFlowCoordinator = null!;
+    private MainFlowCoordinator _mainFlowCoordinator = null!;
     private QueueViewController _queueViewController = null!;
     private SideSettingsViewController _sideSettingsViewController = null!;
     
     [Inject]
     [UsedImplicitly]
-    private void Construct(SoloFreePlayFlowCoordinator soloFreePlayFlowCoordinator,
+    private void Construct(MainFlowCoordinator mainFlowCoordinator,
         QueueViewController queueViewController,
         SideSettingsViewController sideSettingsViewController)
     {
-        _soloFreePlayFlowCoordinator = soloFreePlayFlowCoordinator;
+        _mainFlowCoordinator = mainFlowCoordinator;
         _queueViewController = queueViewController;
         _sideSettingsViewController = sideSettingsViewController;
         
@@ -48,6 +48,6 @@ internal class QueueFlowCoordinator : FlowCoordinator
     // ReSharper disable once ParameterHidesMember
     public override void BackButtonWasPressed(ViewController _)
     {
-        _soloFreePlayFlowCoordinator.DismissFlowCoordinator(this);
+        _mainFlowCoordinator.childFlowCoordinator.DismissFlowCoordinator(this);
     }
 }

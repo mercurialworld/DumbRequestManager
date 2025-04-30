@@ -604,7 +604,15 @@ internal class QueueViewController : BSMLAutomaticViewController
         waitModal.Hide(false);
         
         Plugin.DebugMessage("Going back to the map list screen");
-        GameObject.Find("QueueFlowCoordinator").GetComponent<QueueFlowCoordinator>().BackButtonWasPressed(this);
+        try
+        {
+            GameObject.Find("QueueFlowCoordinator").GetComponent<QueueFlowCoordinator>().BackButtonWasPressed(this);
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.Error(e);
+        }
+
         try
         {
             GoToLevel(SongCore.Loader.GetLevelByHash(queuedSong.Hash));
