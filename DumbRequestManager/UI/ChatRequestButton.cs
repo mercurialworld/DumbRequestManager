@@ -15,7 +15,7 @@ namespace DumbRequestManager.UI;
 internal class ChatRequestButton(
     LevelFilteringNavigationController levelFilteringNavigationController,
     BSMLParser bsmlParser,
-    SoloFreePlayFlowCoordinator soloFreePlayFlowCoordinator,
+    MainFlowCoordinator mainFlowCoordinator,
     QueueFlowCoordinator queueFlowCoordinator)
     : IInitializable, IDisposable
 {
@@ -65,6 +65,6 @@ internal class ChatRequestButton(
     [UIAction("openQueue")]
     internal void OpenQueue()
     {
-        soloFreePlayFlowCoordinator.PresentFlowCoordinator(queueFlowCoordinator);
+        mainFlowCoordinator.childFlowCoordinator.PresentFlowCoordinator(queueFlowCoordinator);
     }
 }
