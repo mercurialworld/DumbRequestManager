@@ -14,6 +14,15 @@ internal abstract class RemoteImage
 
     private static async Task<byte[]?> FetchData(string url)
     {
+        if (!Directory.Exists(Plugin.UserDataDir))
+        {
+            Directory.CreateDirectory(Plugin.UserDataDir);
+        }
+        if (!Directory.Exists(CachePath))
+        {
+            Directory.CreateDirectory(CachePath);
+        }
+        
         Uri uri = new(url);
         string filename = Path.Combine(CachePath, uri.Segments.Last().Replace("/", string.Empty));
         
@@ -41,9 +50,14 @@ internal abstract class RemoteImage
 
     private static bool IsCoverCached(string url)
     {
+        if (!Directory.Exists(Plugin.UserDataDir))
+        {
+            Directory.CreateDirectory(Plugin.UserDataDir);
+            Directory.CreateDirectory(CachePath);
+            return false;
+        }
         if (!Directory.Exists(CachePath))
         {
-            Plugin.DebugMessage("Creating hard cache directory");
             Directory.CreateDirectory(CachePath);
             return false;
         }

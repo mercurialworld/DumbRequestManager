@@ -90,6 +90,17 @@ public static class QueueManager
 
     public static async Task Load()
     {
+        if (!Directory.Exists(Plugin.UserDataDir))
+        {
+            Directory.CreateDirectory(Plugin.UserDataDir);
+        }
+
+        if (!File.Exists(PersistentQueueFilename))
+        {
+            Plugin.Log.Info("No persistent queue data, skipping loading it");
+            return;
+        }
+        
         Plugin.DebugMessage("Loading persistent queue...");
         PersistentQueueEntry[]? entries = JsonConvert.DeserializeObject<PersistentQueueEntry[]>(await File.ReadAllTextAsync(PersistentQueueFilename));
         if (entries == null)
@@ -107,6 +118,11 @@ public static class QueueManager
 
     private static void Save()
     {
+        if (!Directory.Exists(Plugin.UserDataDir))
+        {
+            Directory.CreateDirectory(Plugin.UserDataDir);
+        }
+        
         // we can do this the easy way, should be fine
         // if it becomes a problem i'll deal with it later
         
