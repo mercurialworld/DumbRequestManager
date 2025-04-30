@@ -5,8 +5,14 @@
                   bg="round-rect-panel" bg-color="white">
             <vertical preferred-height="76" vertical-fit="PreferredSize" 
                       preferred-width="66" horizontal-fit="PreferredSize"
-                      child-expand-width="true" child-control-width="true" child-align="MiddleLeft">
-                <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" align-to-center="false"
+                      child-expand-width="false" child-control-width="true" child-align="MiddleLeft">
+                <vertical background="round-rect-panel" bg-color="#000000C0"
+                          ignore-layout="true"
+                          horizontal-fit="PreferredSize" preferred-width="5"
+                          vertical-fit="PreferredSize" preferred-height="74"
+                          anchor-min-x="0.94" anchor-max-x="1"
+                          anchor-min-y="0" anchor-max-y="1"/>
+                <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" align-to-center="false" list-width="60"
                              id="queueTableComponent" name="QueueTableComponent"
                              show-scrollbar="true" select-cell="selectCell">
                     <background tags="neither" background="panel-top" bg-color="#000000C0"
@@ -23,7 +29,7 @@
                                 anchor-min-x="0.01" anchor-max-x="0.99"
                                 anchor-min-y="0.025"/>
                     <vertical vertical-fit="PreferredSize" preferred-height="11"
-                              horizontal-fit="PreferredSize" preferred-width="66"
+                              horizontal-fit="PreferredSize" preferred-width="60"
                               child-expand-width="true" child-control-width="true"
                               padding="2"
                               child-align="MiddleLeft" anchor-min-x="0.025">
