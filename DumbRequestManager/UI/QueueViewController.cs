@@ -168,6 +168,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         if (firstActivation)
         {
             QueueTableComponent.TableView.selectionType = TableViewSelectionType.Single;
+            QueueTableComponent.TableView._spawnCellsThatAreNotVisible = true;
             _selectCharacteristicComponent.TableView.selectionType = TableViewSelectionType.Single;
             _selectDifficultyComponent.TableView.selectionType = TableViewSelectionType.Single;
             
@@ -417,6 +418,10 @@ internal class QueueViewController : BSMLAutomaticViewController
         if (queuedSong.User != null)
         {
             SetHighlightedCellsForUser(index, queuedSong);
+        }
+        else
+        {
+            ClearHighlightedCells();
         }
 
         Plugin.DebugMessage($"Selected cell: {index}");
