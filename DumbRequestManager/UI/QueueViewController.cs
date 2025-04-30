@@ -411,17 +411,14 @@ internal class QueueViewController : BSMLAutomaticViewController
     public void SelectCell(TableView tableView, NoncontextualizedSong queuedSong)
     {
         ToggleSelectionPanel(true);
+        ClearHighlightedCells();
         
         _selectedSong = queuedSong;
         int index = tableView._selectedCellIdxs.First();
 
-        if (queuedSong.User != null)
+        if (!string.IsNullOrEmpty(queuedSong.User))
         {
             SetHighlightedCellsForUser(index, queuedSong);
-        }
-        else
-        {
-            ClearHighlightedCells();
         }
 
         Plugin.DebugMessage($"Selected cell: {index}");
