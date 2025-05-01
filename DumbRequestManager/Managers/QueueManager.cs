@@ -9,6 +9,7 @@ using IPA.Utilities.Async;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using SongDetailsCache.Structs;
+using UnityEngine;
 
 namespace DumbRequestManager.Managers;
 
@@ -87,6 +88,23 @@ public static class QueueManager
         }
 
         return queuedSong;
+    }
+
+    public static void Shuffle()
+    {
+        if (QueuedSongs.Count <= 1)
+        {
+            return;
+        }
+        
+        for (int i = 0; i < QueuedSongs.Count; i++)
+        {
+            NoncontextualizedSong oldEntry = QueuedSongs[i];
+            QueuedSongs.RemoveAt(i);
+            QueuedSongs.Insert(Random.Range(0, QueuedSongs.Count), oldEntry);
+        }
+        
+        QueueViewController.RefreshQueue();
     }
 
     public static async Task Load()

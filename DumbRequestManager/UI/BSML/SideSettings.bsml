@@ -29,7 +29,11 @@
         </vertical>
         <vertical child-align="LowerCenter"
                   preferred-height="5" vertical-fit="PreferredSize">
-            <button text="Clear Request Queue" click-event="showClearModal"/>
+            <horizontal spacing="3">
+                <button text="Clear Queue" click-event="showClearModal"
+                        color="#FFAAAA"/>
+                <button text="Shuffle Queue" click-event="showShuffleModal"/>
+            </horizontal>
         </vertical>
     </vertical>
 
@@ -44,6 +48,21 @@
             <horizontal>
                 <button text="Cancel" on-click="hideClearModal"/>
                 <primary-button text="Clear" on-click="clearQueue"/>
+            </horizontal>
+        </vertical>
+    </modal>
+
+    <modal id="confirmShuffleModal" size-delta="80 25"
+           show-event="showShuffleModal" hide-event="hideShuffleModal"
+           move-to-center="true" clickerino-offerino-closerino="true">
+        <vertical preferred-width="80" horizontal-fit="PreferredSize"
+                  vertical-fit="Unconstrained" child-control-height="true"
+                  pad="3" spacing="2" child-align="MiddleCenter">
+            <text text="Are you sure you want to shuffle the request queue?" word-wrapping="true"
+                  font-align="Center" font-size="4"/>
+            <horizontal>
+                <button text="Cancel" on-click="hideShuffleModal"/>
+                <primary-button text="Shuffle" on-click="shuffleQueue"/>
             </horizontal>
         </vertical>
     </modal>

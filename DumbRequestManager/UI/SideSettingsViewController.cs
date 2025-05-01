@@ -29,6 +29,8 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
     internal HorizontalLayoutGroup UpdateObject = null!;
     [UIComponent("confirmClearModal")]
     public ModalView confirmClearModal = null!;
+    [UIComponent("confirmShuffleModal")]
+    public ModalView confirmShuffleModal = null!;
     // ReSharper restore FieldCanBeMadeReadOnly.Global
     // ReSharper restore FieldCanBeMadeReadOnly.Local
     
@@ -92,6 +94,27 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
     private void HideClearModal()
     {
         confirmClearModal.Hide(true);
+    }
+    
+    [UIAction("shuffleQueue")]
+    public void ShuffleQueue()
+    {
+        QueueManager.Shuffle();
+        confirmShuffleModal.Hide(true);
+    }
+    
+    [UIAction("showShuffleModal")]
+    [UsedImplicitly]
+    private void ShowShuffleModal()
+    {
+        confirmShuffleModal.Show(true, true);
+    }
+    
+    [UIAction("hideShuffleModal")]
+    [UsedImplicitly]
+    private void HideShuffleModal()
+    {
+        confirmShuffleModal.Hide(true);
     }
 
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
