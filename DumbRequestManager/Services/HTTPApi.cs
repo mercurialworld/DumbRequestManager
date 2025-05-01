@@ -129,8 +129,12 @@ internal class HttpApi : IInitializable
                         
                         case "clear":
                             statusCode = 200;
+                            
                             QueueManager.QueuedSongs.Clear();
+                            
+                            QueueViewController.RefreshQueue();
                             ChatRequestButton.Instance.UseAttentiveButton(false);
+                            
                             data = "{\"message\": \"Queue cleared\"}"u8.ToArray();
                             break;
                         
@@ -187,14 +191,8 @@ internal class HttpApi : IInitializable
                             NoncontextualizedSong oldSong = QueueManager.QueuedSongs[targetedIndex];
                             QueueManager.QueuedSongs.RemoveAt(targetedIndex);
                             QueueManager.QueuedSongs.Insert(newIndex, oldSong);
-                            
-                            if (QueueViewController.QueueTableComponent != null)
-                            {
-                                _ = UnityMainThreadTaskScheduler.Factory.StartNew(() =>
-                                {
-                                    QueueViewController.QueueTableComponent.TableView.ReloadData();
-                                });
-                            }
+
+                            QueueViewController.RefreshQueue();
                             
                             statusCode = 200;
                             data = "{\"message\": \"Moved entry\"}"u8.ToArray();

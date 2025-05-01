@@ -78,13 +78,7 @@ public static class QueueManager
         }
 
         ChatRequestButton.Instance.UseAttentiveButton(true);
-        if (QueueViewController.QueueTableComponent != null)
-        {
-            _ = UnityMainThreadTaskScheduler.Factory.StartNew(() =>
-            {
-                QueueViewController.QueueTableComponent.TableView.ReloadData();
-            });
-        }
+        QueueViewController.RefreshQueue();
 
         Plugin.Log.Info($"Added map {key}, queue has {QueuedSongs.Count} map(s)");
         if (!skipPersistence)

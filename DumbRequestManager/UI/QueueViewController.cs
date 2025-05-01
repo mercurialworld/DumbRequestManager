@@ -729,4 +729,15 @@ internal class QueueViewController : BSMLAutomaticViewController
         SocketApi.Broadcast("pressedPlay", queuedSong);
         await HookApi.TriggerHook("pressedPlay", queuedSong);
     }
+
+    public static void RefreshQueue()
+    {
+        if (QueueTableComponent != null)
+        {
+            _ = UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+            {
+                QueueTableComponent.TableView.ReloadData();
+            });
+        }
+    }
 }
