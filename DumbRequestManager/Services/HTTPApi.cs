@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
@@ -134,8 +135,50 @@ internal class HttpApi : IInitializable
                             if (bool.TryParse(path[3].Replace("/", string.Empty), out bool openResult))
                             {
                                 statusCode = 200;
+                                data = "{\"message\": \"Queue gate changed\"}"u8.ToArray();
                                 await SideSettingsViewController.Instance.SetState(openResult);
                             }
+                            break;
+                        
+                        case "move":
+                            if (path.Length != 5)
+                            {
+                                statusCode = 400;
+                                data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                            }
+                            
+                            int min = 0;
+                            int max = QueueManager.QueuedSongs.Count - 1;
+
+                            if (!int.TryParse(path[3].Replace("/", string.Empty), out int targetedIndex))
+                            {
+                                statusCode = 400;
+                                data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                                break;
+                            }
+                            targetedIndex--;
+
+                            if (!int.TryParse(path[4].Replace("/", string.Empty), out int newIndex))
+                            {
+                                statusCode = 400;
+                                data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                                break;
+                            }
+                            newIndex--;
+                            
+                            if (targetedIndex < min || targetedIndex > max || newIndex < min || newIndex > max)
+                            {
+                                statusCode = 400;
+                                data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                                break;
+                            }
+                            
+                            NoncontextualizedSong oldSong = QueueManager.QueuedSongs[targetedIndex];
+                            QueueManager.QueuedSongs.RemoveAt(targetedIndex);
+                            QueueManager.QueuedSongs.Insert(newIndex, oldSong);
+                            
+                            statusCode = 200;
+                            data = "{\"message\": \"Moved entry\"}"u8.ToArray();
                             break;
                     }
                 }
