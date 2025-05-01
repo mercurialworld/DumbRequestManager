@@ -196,6 +196,13 @@ internal class HttpApi : IInitializable
                             statusCode = 200;
                             data = "{\"message\": \"Moved entry\"}"u8.ToArray();
                             break;
+                        
+                        case "shuffle":
+                            statusCode = 200;
+                            data = "{\"message\": \"Queue shuffled\"}"u8.ToArray();
+                            
+                            QueueManager.Shuffle();
+                            break;
                     }
                 }
                 else
