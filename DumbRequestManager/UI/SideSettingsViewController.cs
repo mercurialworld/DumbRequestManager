@@ -49,16 +49,21 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
     [UIAction("setState")]
     public async Task SetState(bool isQueueOpen)
     {
+        if (isQueueOpen == IsQueueOpen)
+        {
+            return;
+        }
+        
         IsQueueOpen = isQueueOpen;
         NotifyPropertyChanged(nameof(IsQueueOpen));
         
-        SocketApi.Broadcast("queueOpen", isQueueOpen);
-        await HookApi.TriggerHook("queueOpen", isQueueOpen);
-
         if (_toggleSettingObject != null)
         {
             _toggleSettingObject.Value = IsQueueOpen;
         }
+        
+        SocketApi.Broadcast("queueOpen", isQueueOpen);
+        await HookApi.TriggerHook("queueOpen", isQueueOpen);
     }
 
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
