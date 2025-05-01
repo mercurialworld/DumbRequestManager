@@ -12,6 +12,7 @@ using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
 using DumbRequestManager.UI;
+using IPA.Utilities.Async;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using SongDetailsCache.Structs;
@@ -176,6 +177,14 @@ internal class HttpApi : IInitializable
                             NoncontextualizedSong oldSong = QueueManager.QueuedSongs[targetedIndex];
                             QueueManager.QueuedSongs.RemoveAt(targetedIndex);
                             QueueManager.QueuedSongs.Insert(newIndex, oldSong);
+                            
+                            if (QueueViewController.QueueTableComponent != null)
+                            {
+                                _ = UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+                                {
+                                    QueueViewController.QueueTableComponent.TableView.ReloadData();
+                                });
+                            }
                             
                             statusCode = 200;
                             data = "{\"message\": \"Moved entry\"}"u8.ToArray();
