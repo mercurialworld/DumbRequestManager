@@ -25,7 +25,7 @@ public static class QueueManager
     private static readonly string PersistentQueueFilename = Path.Combine(Plugin.UserDataDir, "queue.json");
     public static readonly List<NoncontextualizedSong> QueuedSongs = [];
 
-    public static async Task<NoncontextualizedSong?> AddKey(string key, string? user = null, bool skipPersistence = false)
+    public static async Task<NoncontextualizedSong?> AddKey(string key, string? user = null, bool skipPersistence = false, bool prepend = false)
     {
         NoncontextualizedSong queuedSong;
         
@@ -68,8 +68,15 @@ public static class QueueManager
             queuedSong.User = user;
         }
 
-        QueuedSongs.Add(queuedSong);
-        
+        if (prepend)
+        {
+            QueuedSongs.Insert(0, queuedSong);
+        }
+        else
+        {
+            QueuedSongs.Add(queuedSong);
+        }
+
         ChatRequestButton.Instance.UseAttentiveButton(true);
         if (QueueViewController.QueueTableComponent != null)
         {

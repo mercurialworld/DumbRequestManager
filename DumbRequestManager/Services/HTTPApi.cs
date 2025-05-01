@@ -101,7 +101,10 @@ internal class HttpApi : IInitializable
                 break;
             
             case "addKey":
-                byte[]? keyResponse = await AddKey(path.Last().Replace("/", string.Empty), urlQuery.Get("user"));
+                byte[]? keyResponse = await AddKey(path.Last().Replace("/", string.Empty),
+                    urlQuery.Get("user"),
+                    bool.Parse(urlQuery.Get("prepend") ?? "false"));
+                
                 if (keyResponse != null)
                 {
                     statusCode = 200;
@@ -282,10 +285,10 @@ internal class HttpApi : IInitializable
 
     private static byte[] GetEncodedQueue => System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(QueueManager.QueuedSongs));
 
-    private static async Task<byte[]?> AddKey(string key, string? user = null)
+    private static async Task<byte[]?> AddKey(string key, string? user = null, bool prepend = false)
     {
         Plugin.Log.Info($"Adding key {key}...");
-        NoncontextualizedSong? queuedSong = await QueueManager.AddKey(key, user);
+        NoncontextualizedSong? queuedSong = await QueueManager.AddKey(key, user, false, prepend);
         
         return queuedSong == null
             ? null
