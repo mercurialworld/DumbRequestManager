@@ -21,8 +21,30 @@
     
     <vertical preferred-width="80" horizontal-fit="PreferredSize"
               preferred-height="65" vertical-fit="PreferredSize"
-              child-align="UpperCenter" child-expand-height="false" child-control-height="false">
-        <toggle-setting id="queueOpenToggle" text="Allow requests"
-                        value="IsQueueOpen" apply-on-change="true" on-change="setState"/>
+              child-align="UpperCenter" child-expand-height="true" child-control-height="true">
+        <vertical child-align="UpperCenter"
+                  preferred-height="60" vertical-fit="PreferredSize">
+            <toggle-setting id="queueOpenToggle" text="Allow requests"
+                            value="IsQueueOpen" apply-on-change="true" on-change="setState"/>
+        </vertical>
+        <vertical child-align="LowerCenter"
+                  preferred-height="5" vertical-fit="PreferredSize">
+            <button text="Clear Request Queue" click-event="showClearModal"/>
+        </vertical>
     </vertical>
+
+    <modal id="confirmClearModal" size-delta="80 25"
+           show-event="showClearModal" hide-event="hideClearModal"
+           move-to-center="true" clickerino-offerino-closerino="true">
+        <vertical preferred-width="80" horizontal-fit="PreferredSize"
+                  vertical-fit="Unconstrained" child-control-height="true"
+                  pad="3" spacing="2" child-align="MiddleCenter">
+            <text text="Are you sure you want to clear the request queue?" word-wrapping="true"
+                  font-align="Center" font-size="4"/>
+            <horizontal>
+                <button text="Cancel" on-click="hideClearModal"/>
+                <primary-button text="Clear" on-click="clearQueue"/>
+            </horizontal>
+        </vertical>
+    </modal>
 </vertical>

@@ -4,6 +4,7 @@ using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using DumbRequestManager.Managers;
 using DumbRequestManager.Services;
+using HMUI;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,6 +27,8 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
     private ToggleSetting? _toggleSettingObject = null!;
     [UIComponent("updateObject")]
     internal HorizontalLayoutGroup UpdateObject = null!;
+    [UIComponent("confirmClearModal")]
+    public ModalView confirmClearModal = null!;
     // ReSharper restore FieldCanBeMadeReadOnly.Global
     // ReSharper restore FieldCanBeMadeReadOnly.Local
     
@@ -66,9 +69,36 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
         await HookApi.TriggerHook("queueOpen", isQueueOpen);
     }
 
+    [UIAction("clearQueue")]
+    public void ClearQueue()
+    {
+        QueueManager.QueuedSongs.Clear();
+                            
+        QueueViewController.RefreshQueue();
+        ChatRequestButton.Instance.UseAttentiveButton(false);
+        
+        confirmClearModal.Hide(true);
+    }
+    
+    [UIAction("showClearModal")]
+    [UsedImplicitly]
+    private void ShowClearModal()
+    {
+        confirmClearModal.Show(true, true);
+    }
+    
+    [UIAction("hideClearModal")]
+    [UsedImplicitly]
+    private void HideClearModal()
+    {
+        confirmClearModal.Hide(true);
+    }
+
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+#if !DEBUG
         UpdateObject.gameObject.SetActive(VersionManager.LatestVersion > _versionData.ModVersion);
+#endif
     }
 }

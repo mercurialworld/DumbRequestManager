@@ -56,10 +56,14 @@ namespace DumbRequestManager.Managers
                 LatestVersion = await GetRemoteVersionData();
                 Plugin.Log.Info("Latest version is " + LatestVersion?.ToString(3));
 
+#if DEBUG
+                SideSettingsViewController.Instance.UpdateObject.gameObject.SetActive(true);
+#else
                 if (LatestVersion > ModVersion)
                 {
                     SideSettingsViewController.Instance.UpdateObject.gameObject.SetActive(true);
                 }
+#endif
             });
         }
     }

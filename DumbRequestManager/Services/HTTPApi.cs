@@ -11,7 +11,6 @@ using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
 using DumbRequestManager.UI;
-using IPA.Utilities.Async;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using SongDetailsCache.Structs;
