@@ -133,6 +133,13 @@ internal class HttpApi : IInitializable
                             break;
                         
                         case "open":
+                            if (path.Length <= 3)
+                            {
+                                statusCode = 400;
+                                data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                                break;
+                            }
+
                             if (bool.TryParse(path[3].Replace("/", string.Empty), out bool openResult))
                             {
                                 statusCode = 200;
@@ -146,6 +153,7 @@ internal class HttpApi : IInitializable
                             {
                                 statusCode = 400;
                                 data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                                break;
                             }
                             
                             int min = 0;
