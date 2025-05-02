@@ -670,9 +670,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             {
                 _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80>({(value * 100):0}%)", value);
             };
-            
-            //Task task = SongDownloader.Instance.DownloadSong(beatmap, TokenSource.Token, progress);
-            //await task.ConfigureAwait(false);
+
             try
             {
                 await _downloaderUtils.DownloadUsingKey(beatmap, TokenSource.Token, progress);

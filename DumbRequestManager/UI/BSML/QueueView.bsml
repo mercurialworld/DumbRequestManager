@@ -365,17 +365,11 @@
         <vertical vertical-fit="PreferredSize" preferred-height="20"
                   horizontal-fit="PreferredSize" preferred-width="48"
                   background="round-rect-panel" bg-color="#888888FF">
-            <!--
-            <vertical id="loadingSpinnerContainer"
-                      vertical-fit="PreferredSize" preferred-height="20"
-                      horizontal-fit="PreferredSize" preferred-width="48"
-                      child-align="LowerCenter">
-            </vertical>
-            -->
             <vertical id="loadingSpinnerContainer"
                       vertical-fit="PreferredSize" preferred-height="10"
                       horizontal-fit="PreferredSize" preferred-width="48"
                       child-align="LowerCenter">
+                <text text="-------" color="#FFFFFF00" font-size="1"/>
             </vertical>
             <horizontal vertical-fit="PreferredSize" preferred-height="10"
                         horizontal-fit="PreferredSize" preferred-width="48"
