@@ -668,7 +668,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             Progress<float> progress = new();
             progress.ProgressChanged += (_, value) =>
             {
-                _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80>({(value * 100):0}%)", value);
+                _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80><size=80%>({(value * 100):0}%)", value);
             };
 
             try
