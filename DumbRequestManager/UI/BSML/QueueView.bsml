@@ -365,12 +365,14 @@
         <vertical vertical-fit="PreferredSize" preferred-height="20"
                   horizontal-fit="PreferredSize" preferred-width="48"
                   background="round-rect-panel" bg-color="#888888FF">
+            <!--
             <vertical id="loadingSpinnerContainer"
                       vertical-fit="PreferredSize" preferred-height="20"
                       horizontal-fit="PreferredSize" preferred-width="48"
                       child-align="LowerCenter">
             </vertical>
-            <!--<vertical id="loadingSpinnerContainer"
+            -->
+            <vertical id="loadingSpinnerContainer"
                       vertical-fit="PreferredSize" preferred-height="10"
                       horizontal-fit="PreferredSize" preferred-width="48"
                       child-align="LowerCenter">
@@ -379,7 +381,7 @@
                         horizontal-fit="PreferredSize" preferred-width="48"
                         child-align="UpperCenter">
                 <button on-click="cancelDownload" text="Cancel"/>
-            </horizontal>-->
+            </horizontal>
         </vertical>
     </modal>
     

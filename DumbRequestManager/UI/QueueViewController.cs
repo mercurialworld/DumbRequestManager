@@ -8,13 +8,12 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
-using BeatSaverDownloader.Misc;
-using BeatSaverSharp;
 using BeatSaverSharp.Models;
 using BGLib.UnityExtension;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
 using DumbRequestManager.Services;
+using DumbRequestManager.Utils;
 using HMUI;
 using IPA.Utilities.Async;
 using JetBrains.Annotations;
@@ -35,7 +34,7 @@ public readonly struct CharacteristicUICellWrapper(string name, string icon)
 
 public readonly struct DifficultyUICellWrapper(NoncontextualizedDifficulty difficulty)
 {
-    [UIValue("name")] public string Name => Utils.Normalize.GetDifficultyName(difficulty.Difficulty);
+    [UIValue("name")] public string Name => Normalize.GetDifficultyName(difficulty.Difficulty);
     public float NotesPerSecond => difficulty.NotesPerSecond;
     public float NoteJumpSpeed => difficulty.NoteJumpSpeed;
 }
@@ -48,6 +47,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     private LevelCollectionViewController _levelCollectionViewController = null!;
     private SelectLevelCategoryViewController _selectLevelCategoryViewController = null!;
     private SongPreviewPlayer _songPreviewPlayer = null!;
+    private static DownloaderUtils _downloaderUtils = null!;
     
     private static LoadingControl _loadingSpinner = null!;
 
@@ -146,12 +146,14 @@ internal class QueueViewController : BSMLAutomaticViewController
     private void Construct(LevelFilteringNavigationController levelFilteringNavigationController,
         LevelCollectionViewController levelCollectionViewController,
         SelectLevelCategoryViewController selectLevelCategoryViewController,
-        SongPreviewPlayer songPreviewPlayer)
+        SongPreviewPlayer songPreviewPlayer,
+        DownloaderUtils downloaderUtils)
     {
         _levelFilteringNavigationController = levelFilteringNavigationController;
         _levelCollectionViewController = levelCollectionViewController;
         _selectLevelCategoryViewController = selectLevelCategoryViewController;
         _songPreviewPlayer = songPreviewPlayer;
+        _downloaderUtils = downloaderUtils;
         
         _instance = this;
     }
@@ -458,7 +460,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             characteristics.Add(diff.Characteristic);
         }
         Plugin.DebugMessage($"Got {characteristics.Count} unique characteristics");
-        _characteristicChoices = characteristics.Select(x => new CharacteristicUICellWrapper(x, Utils.Normalize.GetCharacteristicIcon(x))).ToList();
+        _characteristicChoices = characteristics.Select(x => new CharacteristicUICellWrapper(x, Normalize.GetCharacteristicIcon(x))).ToList();
         Plugin.DebugMessage("Updated characteristic choices");
         _difficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic == _characteristicChoices[0].Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
         Plugin.DebugMessage($"Got {_difficultyChoices.Count} unique difficulties");
@@ -663,14 +665,28 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         public async Task Start()
         {
-            Progress<double> progress = new();
+            Progress<float> progress = new();
             progress.ProgressChanged += (_, value) =>
             {
-                _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80>({(value * 100):0}%)", (float)value);
+                _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80>({(value * 100):0}%)", value);
             };
             
-            Task task = SongDownloader.Instance.DownloadSong(beatmap, TokenSource.Token, progress);
-            await task.ConfigureAwait(false);
+            //Task task = SongDownloader.Instance.DownloadSong(beatmap, TokenSource.Token, progress);
+            //await task.ConfigureAwait(false);
+            try
+            {
+                await _downloaderUtils.DownloadUsingKey(beatmap, TokenSource.Token, progress);
+            }
+            catch (Exception exception)
+            {
+                if (exception is TaskCanceledException)
+                {
+                    Plugin.DebugMessage("exception is TaskCanceledException");
+                
+                    WaitModal.Hide(false);
+                    return;
+                }
+            }
 
             if (TokenSource.IsCancellationRequested)
             {

@@ -27,7 +27,8 @@ internal class Plugin
         
         PluginConfig c = ipaConfig.Generated<PluginConfig>();
         PluginConfig.Instance = c;
-        
+
+        zenjector.UseHttpService();
         zenjector.Install<AppInstaller>(Location.App);
         zenjector.Install<MenuInstaller>(Location.Menu);
         zenjector.Install<PlayerInstaller>(Location.Player);

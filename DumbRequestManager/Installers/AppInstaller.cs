@@ -10,6 +10,8 @@ internal class AppInstaller : Installer
 {
     public override void InstallBindings()
     {
+        Container.BindInterfacesAndSelfTo<Utils.DownloaderUtils>().AsSingle();
+        
         Container.BindInterfacesTo<HttpApi>().AsSingle();
         Container.BindInterfacesTo<SocketApi>().AsSingle();
         
