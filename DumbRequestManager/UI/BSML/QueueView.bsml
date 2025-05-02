@@ -359,12 +359,21 @@
         </vertical>
     </horizontal>
     
-    <modal id="waitModal" move-to-center="true" clickerino-offerino-closerino="false">
-        <vertical id="loadingSpinnerContainer"
-                  background="round-rect-panel" bg-color="#888888FF"
-                  child-align="MiddleCenter"
-                  vertical-fit="PreferredSize" preferred-height="16"
-                  horizontal-fit="PreferredSize" preferred-width="48">
+    <modal id="waitModal"
+           size-delta="48 20"
+           move-to-center="true" clickerino-offerino-closerino="false">
+        <vertical vertical-fit="PreferredSize" preferred-height="20"
+                  horizontal-fit="PreferredSize" preferred-width="48"
+                  background="round-rect-panel" bg-color="#888888FF">
+            <vertical id="loadingSpinnerContainer"
+                      vertical-fit="PreferredSize" preferred-height="16"
+                      horizontal-fit="PreferredSize" preferred-width="48"
+                      child-align="MiddleCenter">
+            </vertical>
+            <horizontal vertical-fit="PreferredSize" preferred-height="4"
+                        horizontal-fit="PreferredSize" preferred-width="48">
+                <button on-click="cancelDownload" text="Cancel"/>
+            </horizontal>
         </vertical>
     </modal>
     
