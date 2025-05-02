@@ -48,6 +48,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     private SelectLevelCategoryViewController _selectLevelCategoryViewController = null!;
     private SongPreviewPlayer _songPreviewPlayer = null!;
     private static DownloaderUtils _downloaderUtils = null!;
+    private static BasicUIAudioManager _basicUIAudioManager = null!;
     
     private static LoadingControl _loadingSpinner = null!;
 
@@ -174,6 +175,8 @@ internal class QueueViewController : BSMLAutomaticViewController
 
         if (firstActivation)
         {
+            _basicUIAudioManager = GameObject.Find("BasicUIAudioManager").GetComponent<BasicUIAudioManager>();
+            
             _queueTableComponent.TableView.selectionType = TableViewSelectionType.Single;
             _queueTableComponent.TableView._spawnCellsThatAreNotVisible = true;
             _selectCharacteristicComponent.TableView.selectionType = TableViewSelectionType.Single;
@@ -323,6 +326,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     private static readonly Color StandardColor = new Color(1, 1, 1, 0.5f);
     private static void DidSelectCharacteristicCellWithIdxEvent(TableView tableView, int idx)
     {
+        _basicUIAudioManager.HandleButtonClickEvent();
+        
         int childIdx = -1;
         for (int checkedIdx = 0; checkedIdx < tableView.contentTransform.transform.childCount; checkedIdx++)
         {
@@ -360,6 +365,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     
     private static void DidSelectDifficultyCellWithIdxEvent(TableView tableView, int idx)
     {
+        _basicUIAudioManager.HandleButtonClickEvent();
+        
         int childIdx = -1;
         for (int checkedIdx = 0; checkedIdx < tableView.contentTransform.transform.childCount; checkedIdx++)
         {
@@ -419,6 +426,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     {
         ToggleSelectionPanel(true);
         ClearHighlightedCells();
+
+        _basicUIAudioManager.HandleButtonClickEvent();
         
         _selectedSong = queuedSong;
         int index = tableView._selectedCellIdxs.First();
