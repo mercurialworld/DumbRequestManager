@@ -214,6 +214,8 @@ public class NoncontextualizedSong
 
     [JsonProperty]
     public uint UploadTime { get; set; }
+    [JsonProperty]
+    public uint LastUpdated { get; set; }
     
     [UIValue("durationFormatted")]
     public string DurationFormatted => $"{Mathf.FloorToInt(Duration / 60f)}:{(Duration % 60):00}";
@@ -259,7 +261,8 @@ public class NoncontextualizedSong
         Duration = song.songDurationSeconds;
         Votes = [song.upvotes, song.downvotes];
         Rating = song.rating;
-        UploadTime = song.uploadTimeUnix;
+        UploadTime = song.uploadTimeUnix; // SDC returns the wrong value, you'll have to skip SDC if you want the real upload time
+        LastUpdated = song.uploadTimeUnix;
         Cover = song.coverURL;
         BeatLeaderRanked = (song.rankedStates & RankedStates.BeatleaderRanked) != 0;
         ScoreSaberRanked = (song.rankedStates & RankedStates.ScoresaberRanked) != 0;
@@ -288,6 +291,7 @@ public class NoncontextualizedSong
         Duration = (uint)song.Metadata.Duration;
         Votes = [(uint)song.Stats.Upvotes, (uint)song.Stats.Downvotes];
         Rating = song.Stats.Score;
+        LastUpdated = (uint)song.LatestVersion.CreatedAt.Subtract(DateTime.UnixEpoch).TotalSeconds;
         UploadTime = (uint)song.Uploaded.Subtract(DateTime.UnixEpoch).TotalSeconds;
         Cover = song.LatestVersion.CoverURL;
         Automapped = song.Automapper;
@@ -350,6 +354,7 @@ public class NoncontextualizedSong
         BsrKey = cachedDetails?.key ?? string.Empty;
         Votes = [cachedDetails?.upvotes ?? 0, cachedDetails?.downvotes ?? 0];
         Rating = cachedDetails?.rating ?? 0;
+        LastUpdated = cachedDetails?.uploadTimeUnix ?? (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // it's *probably* very new if the null check triggers
         UploadTime = cachedDetails?.uploadTimeUnix ?? (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // it's *probably* very new if the null check triggers
         Cover = cachedDetails?.coverURL ?? string.Empty;
         BeatLeaderRanked = (cachedDetails?.rankedStates & RankedStates.BeatleaderRanked) != 0;
