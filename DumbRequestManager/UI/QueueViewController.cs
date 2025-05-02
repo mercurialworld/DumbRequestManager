@@ -9,6 +9,7 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using BeatSaverDownloader.Misc;
+using BeatSaverSharp;
 using BeatSaverSharp.Models;
 using BGLib.UnityExtension;
 using DumbRequestManager.Classes;
@@ -658,7 +659,7 @@ internal class QueueViewController : BSMLAutomaticViewController
 
     private class DownloadSongHandler(string bsrKey, Beatmap beatmap, NoncontextualizedSong queuedSong)
     {
-        private readonly CancellationTokenSource _tokenSource = new ();
+        internal readonly CancellationTokenSource TokenSource = new ();
         
         public async Task Start()
         {
@@ -668,14 +669,14 @@ internal class QueueViewController : BSMLAutomaticViewController
                 _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80>({(value * 100):0}%)", (float)value);
             };
             
-            await SongDownloader.Instance.DownloadSong(beatmap, _tokenSource.Token, progress);
+            Task task = SongDownloader.Instance.DownloadSong(beatmap, TokenSource.Token, progress);
+            await task.ConfigureAwait(false);
 
-            if (_tokenSource.IsCancellationRequested)
+            if (TokenSource.IsCancellationRequested)
             {
-                Plugin.DebugMessage("IsCancellationRequested was true");
-                _tokenSource.Dispose();
-                _loadingSpinner.Hide();
-                WaitModal.Hide(true);
+                Plugin.DebugMessage("TokenSource.IsCancellationRequested");
+                
+                WaitModal.Hide(false);
                 return;
             }
 
@@ -693,7 +694,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         public void Cancel()
         {
             Plugin.Log.Info("Download cancelled");
-            _tokenSource.Cancel();
+            TokenSource.Cancel();
+            TokenSource.Dispose();
         }
     }
 
@@ -758,7 +760,14 @@ internal class QueueViewController : BSMLAutomaticViewController
             {
                 Plugin.DebugMessage("Beatmap was not null");
 
-                _downloadHandler?.Cancel();
+                if (_downloadHandler != null)
+                {
+                    // ReSharper disable once MergeIntoPattern
+                    if (!_downloadHandler.TokenSource.IsCancellationRequested)
+                    {
+                        _downloadHandler.Cancel();
+                    }
+                }
 
                 _downloadHandler = new DownloadSongHandler(queuedSong.BsrKey, beatmap, queuedSong);
                 await _downloadHandler.Start();
