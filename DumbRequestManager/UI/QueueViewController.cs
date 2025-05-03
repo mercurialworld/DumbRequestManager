@@ -419,35 +419,11 @@ internal class QueueViewController : BSMLAutomaticViewController
         }
     }
 
-    private static NoncontextualizedSong _selectedSong = null!;
-    private static UnityWebRequest? _webRequest;
-    private static CancellationTokenSource _descriptionCancellationToken = new();
-    [UIAction("selectCell")]
-    public void SelectCell(TableView tableView, NoncontextualizedSong queuedSong)
+    private static void YeetTableCells(TableView tableView)
     {
-        ToggleSelectionPanel(true);
-        ClearHighlightedCells();
-        try
-        {
-            if (_descriptionCancellationToken.Token.CanBeCanceled)
-            {
-                _descriptionCancellationToken.Cancel();
-                _descriptionCancellationToken.Dispose();
-            }
-        }
-        catch (Exception exception)
-        {
-            if (exception is ObjectDisposedException)
-            {
-                Plugin.DebugMessage("Token is already disposed");
-            }
-        }
-
-        _basicUIAudioManager.HandleButtonClickEvent();
-        
         // (i like my code readable)
         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-        foreach (KeyValuePair<string, List<TableCell>> pair in _queueTableComponent.TableView._reusableCells)
+        foreach (KeyValuePair<string, List<TableCell>> pair in tableView._reusableCells)
         {
             // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             foreach (TableCell? cell in pair.Value)
@@ -461,6 +437,34 @@ internal class QueueViewController : BSMLAutomaticViewController
                 {
                     Destroy(cell.gameObject);
                 }
+            }
+        } 
+    }
+
+    private static NoncontextualizedSong _selectedSong = null!;
+    private static UnityWebRequest? _webRequest;
+    private static CancellationTokenSource _descriptionCancellationToken = new();
+    [UIAction("selectCell")]
+    public void SelectCell(TableView tableView, NoncontextualizedSong queuedSong)
+    {
+        ToggleSelectionPanel(true);
+        ClearHighlightedCells();
+        _basicUIAudioManager.HandleButtonClickEvent();
+        YeetTableCells(_queueTableComponent.TableView);
+        
+        try
+        {
+            if (_descriptionCancellationToken.Token.CanBeCanceled)
+            {
+                _descriptionCancellationToken.Cancel();
+                _descriptionCancellationToken.Dispose();
+            }
+        }
+        catch (Exception exception)
+        {
+            if (exception is ObjectDisposedException)
+            {
+                Plugin.DebugMessage("Token is already disposed");
             }
         }
         
@@ -527,6 +531,9 @@ internal class QueueViewController : BSMLAutomaticViewController
                 _selectCharacteristicComponent.TableView.RefreshCellsContent();
             });
         }
+        
+        YeetTableCells(_selectCharacteristicComponent.TableView);
+        YeetTableCells(_selectDifficultyComponent.TableView);
 
         detailsDescription.color = StandardColor;
         detailsDescription.text = "Loading description...";
