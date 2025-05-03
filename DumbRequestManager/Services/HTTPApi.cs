@@ -325,16 +325,32 @@ internal class HttpApi : IInitializable
             Beatmap? beatmap = await SongDetailsManager.GetDirectByKey(key); 
             if (beatmap != null)
             {
+                Plugin.DebugMessage("Using BeatSaverSharp method");
                 queriedSong = new NoncontextualizedSong(beatmap);
             }
             else
             {
+                Plugin.Log.Info("oh we're screwed");
                 return null;
             }
         }
         else
         {
-            queriedSong = new NoncontextualizedSong(song);
+            string hash = song.Value.hash.ToLower();
+            Plugin.DebugMessage($"Checking SongCore for hash {hash}");
+            if (SongCore.Collections.songWithHashPresent(hash))
+            {
+                Plugin.DebugMessage("Using local map method");
+                
+                // can't be null here
+                BeatmapLevel beatmapLevel = SongCore.Loader.GetLevelByHash(hash)!;
+                queriedSong = new NoncontextualizedSong(beatmapLevel);
+            }
+            else
+            {
+                Plugin.DebugMessage("Using SongDetailsCache method");
+                queriedSong = new NoncontextualizedSong(song);
+            }
         }
 
         return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queriedSong));
