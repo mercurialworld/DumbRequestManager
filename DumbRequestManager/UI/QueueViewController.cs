@@ -421,11 +421,27 @@ internal class QueueViewController : BSMLAutomaticViewController
 
     private static NoncontextualizedSong _selectedSong = null!;
     private static UnityWebRequest? _webRequest;
+    private static CancellationTokenSource _descriptionCancellationToken = new();
     [UIAction("selectCell")]
     public void SelectCell(TableView tableView, NoncontextualizedSong queuedSong)
     {
         ToggleSelectionPanel(true);
         ClearHighlightedCells();
+        try
+        {
+            if (_descriptionCancellationToken.Token.CanBeCanceled)
+            {
+                _descriptionCancellationToken.Cancel();
+                _descriptionCancellationToken.Dispose();
+            }
+        }
+        catch (Exception exception)
+        {
+            if (exception is ObjectDisposedException)
+            {
+                Plugin.DebugMessage("Token is already disposed");
+            }
+        }
 
         _basicUIAudioManager.HandleButtonClickEvent();
         
@@ -501,15 +517,26 @@ internal class QueueViewController : BSMLAutomaticViewController
 
         Task.Run(async () =>
         {
+            _descriptionCancellationToken = new CancellationTokenSource();
+            
             Plugin.DebugMessage("(downloading BeatSaver data)");
-            Beatmap? beatmap = await SongDetailsManager.BeatSaverInstance.Beatmap(queuedSong.BsrKey);
+            Beatmap? beatmap = await SongDetailsManager.BeatSaverInstance.Beatmap(queuedSong.BsrKey, _descriptionCancellationToken.Token);
 
-            if (beatmap != null)
+            if (!_descriptionCancellationToken.IsCancellationRequested)
             {
-                Plugin.DebugMessage("Description updated");
-                detailsDescription.text = beatmap.Description;
-                detailsDescription.color = Color.white;
+                if (beatmap != null)
+                {
+                    Plugin.DebugMessage("Description updated");
+                    detailsDescription.text = beatmap.Description;
+                    detailsDescription.color = Color.white;
+                }
             }
+            else
+            {
+                Plugin.DebugMessage("Description data cancelled");
+            }
+            
+            _descriptionCancellationToken.Dispose();
         });
         
         UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
