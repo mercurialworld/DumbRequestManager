@@ -53,11 +53,6 @@
             <Private>false</Private>
             <Publicize>true</Publicize>
         </Reference>
-        <Reference Include="BeatSaverDownloader">
-            <HintPath>$(BeatSaberDir)\Plugins\BeatSaverDownloader.dll</HintPath>
-            <Private>false</Private>
-            <Publicize>true</Publicize>
-        </Reference>
         <Reference Include="BeatSaverSharp">
             <HintPath>$(BeatSaberDir)\Libs\BeatSaverSharp.dll</HintPath>
             <Private>false</Private>
@@ -130,6 +125,10 @@
         <Reference Include="System.Core"/>
         <Reference Include="System.Core">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\System.Core.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="System.IO.Compression">
+            <HintPath>$(BeatSaberDir)\Libs\System.IO.Compression.dll</HintPath>
             <Private>false</Private>
         </Reference>
         <Reference Include="System.Net.Http">

@@ -11,7 +11,6 @@
     <SiraUtilVersion>3.1.14</SiraUtilVersion>
     <SongCoreVersion>3.14.15</SongCoreVersion>
     <SongDetailsVersion>1.4.0</SongDetailsVersion>
-    <BeatSaverDLVersion>6.0.7</BeatSaverDLVersion>
     <BeatSaverSharpVersion>3.4.5</BeatSaverSharpVersion>
 
     <BSMLFolder>LATEST</BSMLFolder>
@@ -22,7 +21,7 @@
     <PluginId>DumbRequestManager</PluginId>
     <PluginName>DumbRequestManager</PluginName>
     <Authors>TheBlackParrot</Authors>
-    <Version>0.0.3+$(GameVersion)</Version>
+    <Version>0.1.0+$(GameVersion)</Version>
     <Description>Beat Saber map request manager that abstracts various functions for use in external applications</Description>
     <ProjectSource>https://github.com/TheBlackParrot/DumbRequestManager</ProjectSource>
     <ProjectHome>https://github.com/TheBlackParrot/DumbRequestManager</ProjectHome>
@@ -36,7 +35,6 @@
     <DependsOn Include="SiraUtil" Version="^$(SiraUtilVersion)"/>
     <DependsOn Include="SongCore" Version="^$(SongCoreVersion)"/>
     <DependsOn Include="SongDetailsCache" Version="^$(SongDetailsVersion)"/>
-    <DependsOn Include="BeatSaverDownloader" Version="^$(BeatSaverDLVersion)"/>
     <DependsOn Include="BeatSaverSharp" Version="^$(BeatSaverSharpVersion)"/>
   </ItemGroup>
   
