@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.UI;
-using IPA.Utilities.Async;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using SongDetailsCache.Structs;
