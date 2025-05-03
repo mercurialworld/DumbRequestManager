@@ -445,6 +445,25 @@ internal class QueueViewController : BSMLAutomaticViewController
 
         _basicUIAudioManager.HandleButtonClickEvent();
         
+        // (i like my code readable)
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+        foreach (KeyValuePair<string, List<TableCell>> pair in _queueTableComponent.TableView._reusableCells)
+        {
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+            foreach (TableCell? cell in pair.Value)
+            {
+                if (cell == null)
+                {
+                    continue;
+                }
+                
+                if (!cell.gameObject.activeSelf)
+                {
+                    Destroy(cell.gameObject);
+                }
+            }
+        }
+        
         _selectedSong = queuedSong;
         int index = tableView._selectedCellIdxs.First();
 
