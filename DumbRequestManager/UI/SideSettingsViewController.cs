@@ -64,7 +64,10 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
         
         if (_toggleSettingObject != null)
         {
-            _toggleSettingObject.Value = IsQueueOpen;
+            if (_toggleSettingObject.isActiveAndEnabled)
+            {
+                _toggleSettingObject.Value = IsQueueOpen;
+            }
         }
         
         SocketApi.Broadcast("queueOpen", isQueueOpen);
@@ -120,6 +123,12 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+        
+        if (_toggleSettingObject != null)
+        {
+            _toggleSettingObject.Value = IsQueueOpen;
+        }
+        
 #if !DEBUG
         UpdateObject.gameObject.SetActive(VersionManager.LatestVersion > _versionData.ModVersion);
 #endif
