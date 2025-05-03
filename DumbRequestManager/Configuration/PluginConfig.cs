@@ -23,4 +23,5 @@ internal class PluginConfig
     
     public virtual bool PlayAudioPreviews { get; set; } = true;
     public virtual bool PlayRemoteAudioPreviews { get; set; } = false;
+    public virtual bool NeverUseLocalCoverImages { get; set; } = true;
 }

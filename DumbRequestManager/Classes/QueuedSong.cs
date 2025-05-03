@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaverSharp.Models;
+using DumbRequestManager.Configuration;
 using DumbRequestManager.Managers;
 using DumbRequestManager.Utils;
 using IPA.Utilities.Async;
@@ -47,6 +48,18 @@ public class CoverImageContainer
     public CoverImageContainer(BeatmapLevel beatmapLevel)
     {
         _ = GetLocal(beatmapLevel);
+    }
+
+    public CoverImageContainer(string hash)
+    {
+        try
+        {
+            _ = Get($"https://cdn.beatsaver.com/{hash.ToLower()}.jpg");
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.Error(e);
+        }
     }
 
     private async Task GetLocal(BeatmapLevel beatmapLevel)
@@ -369,7 +382,14 @@ public class NoncontextualizedSong
         
         if (!skipCoverImage)
         {
-            _coverImageContainer = new CoverImageContainer(level);
+            if (PluginConfig.Instance.NeverUseLocalCoverImages)
+            {
+                _coverImageContainer = new CoverImageContainer(Hash);
+            }
+            else
+            {
+                _coverImageContainer = new CoverImageContainer(level);
+            }
         }
     }
 }
