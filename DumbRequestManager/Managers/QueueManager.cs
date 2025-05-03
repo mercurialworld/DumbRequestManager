@@ -105,6 +105,7 @@ public static class QueueManager
         }
         
         QueueViewController.RefreshQueue();
+        Save();
     }
 
     public static async Task Load()
@@ -135,7 +136,8 @@ public static class QueueManager
         Plugin.DebugMessage("Loaded persistent queue");
     }
 
-    private static void Save()
+    // ReSharper disable once MemberCanBePrivate.Global
+    public static void Save()
     {
         if (!Directory.Exists(Plugin.UserDataDir))
         {

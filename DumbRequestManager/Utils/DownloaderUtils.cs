@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
+using DumbRequestManager.Managers;
 using JetBrains.Annotations;
 using SiraUtil.Web;
 using Zenject;
@@ -93,5 +94,8 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         Plugin.DebugMessage("[DownloadUtils] Disposed stuff");
         
         SongCore.Loader.Instance.RefreshSongs(false);
+#if !DEBUG
+        QueueManager.Save();
+#endif
     }
 }

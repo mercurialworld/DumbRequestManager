@@ -657,6 +657,10 @@ internal class QueueViewController : BSMLAutomaticViewController
         NoncontextualizedSong queuedSong = Queue[index];
         Queue.RemoveAt(index);
         
+#if !DEBUG
+        QueueManager.Save();
+#endif
+        
         _queueTableComponent.TableView.ClearSelection();
         _queueTableComponent.TableView.ReloadData();
         
@@ -768,10 +772,6 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         Plugin.DebugMessage($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
         
-        Queue.RemoveAt(index);
-        _queueTableComponent.TableView.ClearSelection();
-        _queueTableComponent.TableView.ReloadData();
-        
         ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
         
         if (!SongCore.Collections.songWithHashPresent(queuedSong.Hash))
@@ -800,6 +800,17 @@ internal class QueueViewController : BSMLAutomaticViewController
         {
             OkGoBack(queuedSong);
         }
+
+        await UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+        {
+            Queue.RemoveAt(index);
+            _queueTableComponent.TableView.ClearSelection();
+            _queueTableComponent.TableView.ReloadData();
+        });
+        
+        
+        // persistence saving is taken care of in the downloader
+        // i don't want it triggering unless everything goes to plan
         
         SocketApi.Broadcast("pressedPlay", queuedSong);
         await HookApi.TriggerHook("pressedPlay", queuedSong);
