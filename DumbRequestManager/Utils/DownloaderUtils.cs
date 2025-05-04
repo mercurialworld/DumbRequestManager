@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
+using DumbRequestManager.Configuration;
 #if !DEBUG
 using DumbRequestManager.Managers;
 #endif
@@ -17,11 +18,13 @@ namespace DumbRequestManager.Utils;
 [UsedImplicitly]
 internal class DownloaderUtils(IHttpService httpService) : IInitializable
 {
+    private static PluginConfig Config => PluginConfig.Instance;
+    
     public void Initialize()
     {
         try
         {
-            httpService.Timeout = 300;
+            httpService.Timeout = Config.MapDownloadTimeout;
         }
         catch (Exception)
         {
