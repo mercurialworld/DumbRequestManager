@@ -847,6 +847,11 @@ internal class QueueViewController : BSMLAutomaticViewController
 
                 _downloadHandler = new DownloadSongHandler(queuedSong.BsrKey, beatmap, queuedSong);
                 await _downloadHandler.Start();
+
+                if (_downloadHandler.TokenSource.IsCancellationRequested)
+                {
+                    return;
+                }
             }
         }
         else
