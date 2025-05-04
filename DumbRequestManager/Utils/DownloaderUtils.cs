@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
+#if !DEBUG
 using DumbRequestManager.Managers;
+#endif
 using JetBrains.Annotations;
 using SiraUtil.Web;
 using Zenject;
@@ -17,6 +19,14 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
 {
     public void Initialize()
     {
+        try
+        {
+            httpService.Timeout = 300;
+        }
+        catch (Exception)
+        {
+            // do nothing, this is new. submitted a PR to SiraUtil (still pending)
+        }
     }
     
     // bypassing BeatSaverDownloader's downloading code as it doesn't properly handle token cancellations
