@@ -383,9 +383,10 @@ public class NoncontextualizedSong
             BeatmapBasicData? diff = level.GetDifficultyBeatmapData(key.beatmapCharacteristic, key.difficulty);
             return new NoncontextualizedDifficulty(level, key, diff, cachedDetails);
         }).ToArray();
-        
+
+        LevelIDComparer comparer = new();
         Playlists = BeatSaberPlaylistsLib.PlaylistManager.DefaultManager.GetAllPlaylists()
-            .Where(playlist => playlist.BeatmapLevels.Contains(level)).Select(playlist => playlist.Title).ToArray();
+            .Where(playlist => playlist.BeatmapLevels.Contains(level, comparer)).Select(playlist => playlist.Title).ToArray();
 
         if (!skipCoverImage)
         {
@@ -398,5 +399,28 @@ public class NoncontextualizedSong
                 _coverImageContainer = new CoverImageContainer(level);
             }
         }
+    }
+}
+
+internal class LevelIDComparer : IEqualityComparer<BeatmapLevel>
+{
+    public bool Equals(BeatmapLevel? x, BeatmapLevel? y)
+    {
+        if (ReferenceEquals(x, y))
+        {
+            return true;
+        }
+
+        if (x is null || y is null)
+        {
+            return false;
+        }
+        
+        return string.Equals(x.levelID, y.levelID, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public int GetHashCode(BeatmapLevel level)
+    {
+        return StringComparer.OrdinalIgnoreCase.GetHashCode(level.levelID);
     }
 }
