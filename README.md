@@ -17,6 +17,7 @@ Currently only tested on Beat Saber versions 1.39.1 or newer. Versions of the mo
 
 ### Mods
 - BeatSaberMarkupLanguage
+- BeatSaberPlaylistsLib
 - BeatSaverSharp
 - SiraUtil
 - SongCore
@@ -135,6 +136,7 @@ All `pressed` events follow the same data structure:
   "ScoreSaberRanked": true,
   "BeatLeaderRanked": true,
   "Curated": true,
+  "Playlists": [<string (playlist title)>, ...],
   "UsesChroma": false,
   "UsesCinema": false,
   "UsesMappingExtensions": false,
