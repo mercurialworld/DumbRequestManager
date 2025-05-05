@@ -13,10 +13,11 @@ using UnityEngine;
 namespace DumbRequestManager.Managers;
 
 [JsonObject(MemberSerialization.OptIn)]
-public readonly struct PersistentQueueEntry(string key, string? user)
+public readonly struct PersistentQueueEntry(string key, string? user, bool isWip = false)
 {
     [JsonProperty] internal string Key => key;
     [JsonProperty] internal string? User => user;
+    [JsonProperty] internal bool IsWip => isWip;
 }
 
 [UsedImplicitly]
@@ -89,6 +90,34 @@ public static class QueueManager
         return queuedSong;
     }
 
+    public static NoncontextualizedSong AddWip(string key, string? user = null, bool prepend = true)
+    {
+        NoncontextualizedSong queuedSong = new()
+        {
+            BsrKey = key,
+            User = user,
+            Title = $"WIP Map {key}",
+            Artist = "N/A",
+            Mapper = user ?? "unknown"
+        };
+        
+        if (prepend)
+        {
+            QueuedSongs.Insert(0, queuedSong);
+        }
+        else
+        {
+            QueuedSongs.Add(queuedSong);
+        }
+        
+        ChatRequestButton.Instance.UseAttentiveButton(true);
+        QueueViewController.RefreshQueue();
+        
+        Plugin.Log.Info($"Added WIP map {key}, queue has {QueuedSongs.Count} map(s)");
+        
+        return queuedSong;
+    }
+
     public static void Shuffle()
     {
         if (QueuedSongs.Count <= 1)
@@ -130,7 +159,14 @@ public static class QueueManager
 
         foreach (PersistentQueueEntry entry in entries)
         {
-            await AddKey(entry.Key, entry.User, true);
+            if (entry.IsWip)
+            {
+                AddWip(entry.Key, entry.User);
+            }
+            else
+            {
+                await AddKey(entry.Key, entry.User, true);
+            }
         }
         Plugin.DebugMessage("Loaded persistent queue");
     }

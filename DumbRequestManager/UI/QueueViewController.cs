@@ -739,7 +739,14 @@ internal class QueueViewController : BSMLAutomaticViewController
 
             try
             {
-                await _downloaderUtils.DownloadUsingKey(beatmap, TokenSource.Token, progress);
+                if (queuedSong.IsWip)
+                {
+                    await _downloaderUtils.DownloadWip(queuedSong, TokenSource.Token, progress);
+                }
+                else
+                {
+                    await _downloaderUtils.DownloadUsingKey(beatmap, TokenSource.Token, progress);   
+                }
             }
             catch (Exception exception)
             {

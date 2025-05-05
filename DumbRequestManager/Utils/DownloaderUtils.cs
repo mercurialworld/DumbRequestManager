@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
+using DumbRequestManager.Classes;
 using DumbRequestManager.Configuration;
 #if !DEBUG
 using DumbRequestManager.Managers;
@@ -48,6 +49,63 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         token.ThrowIfCancellationRequested();
 
         return result;
+    }
+
+    internal async Task DownloadWip(NoncontextualizedSong beatmap, CancellationToken token = default, IProgress<float>? progress = null)
+    {
+        string customSongsPath = Path.Combine(CustomLevelPathHelper.baseProjectPath, "CustomWIPLevels");
+        if (!Directory.Exists(customSongsPath))
+        {
+            Directory.CreateDirectory(customSongsPath);
+        }
+        
+        Plugin.DebugMessage($"[DownloadUtils] Downloading wip map {beatmap.BsrKey}...");
+        byte[] result = await DownloadZip($"http://catse.net/wips/{beatmap.BsrKey}.zip", token, progress);
+        token.ThrowIfCancellationRequested();
+        Plugin.DebugMessage($"[DownloadUtils] Downloaded {beatmap.BsrKey}");
+        
+        if (result.Length == 0)
+        {
+            Plugin.Log.Warn("[DownloadUtils] Map download was empty");
+            return;
+        }
+        
+        string folderName = $"WIP-{beatmap.BsrKey}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+        if (beatmap.User != null)
+        {
+            folderName += $" ({beatmap.User})";
+        }
+        
+        Plugin.DebugMessage($"[DownloadUtils] Folder name before: {folderName}...");
+        Path.GetInvalidFileNameChars().Concat(Path.GetInvalidPathChars()).Aggregate(folderName,
+            (current, invalidCharacter) => current.Replace(invalidCharacter.ToString(), string.Empty));
+        Plugin.DebugMessage($"[DownloadUtils] Folder name after: {folderName}...");
+        
+        // this is guaranteed to not exist
+        string fullFolderPath = Path.Combine(customSongsPath, folderName);
+        Directory.CreateDirectory(fullFolderPath);
+        
+        MemoryStream stream = new(result);
+        Plugin.DebugMessage("[DownloadUtils] Created MemoryStream");
+        ZipArchive archive = new(stream, ZipArchiveMode.Read);
+        Plugin.DebugMessage("[DownloadUtils] Created ZipArchive");
+        archive.ExtractToDirectory(fullFolderPath);
+        Plugin.DebugMessage($"[DownloadUtils] Extracted to {fullFolderPath}");
+        
+        await stream.DisposeAsync();
+        archive.Dispose();
+        Plugin.DebugMessage("[DownloadUtils] Disposed stuff");
+        
+        SongCore.Loader.Instance.RefreshSongs(false);
+
+        (string, BeatmapLevel)? wipLevelData = SongCore.Loader.LoadCustomLevel(fullFolderPath);
+        if (wipLevelData != null)
+        {
+            beatmap.Hash = wipLevelData.Value.Item1.Replace("custom_level_", string.Empty);
+        }
+#if !DEBUG
+        QueueManager.Save();
+#endif
     }
 
     internal async Task DownloadUsingKey(Beatmap beatmap, CancellationToken token = default, IProgress<float>? progress = null)

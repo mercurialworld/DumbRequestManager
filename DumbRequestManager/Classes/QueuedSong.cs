@@ -64,6 +64,10 @@ public class CoverImageContainer
         }
     }
 
+    public CoverImageContainer()
+    {
+    }
+
     private async Task GetLocal(BeatmapLevel beatmapLevel)
     {
         await UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
@@ -199,6 +203,9 @@ public class NoncontextualizedSong
 
     [JsonProperty] [UIValue("hash")]
     public string Hash { get; set; } = string.Empty;
+    
+    [JsonProperty]
+    public bool IsWip { get; set; }
     
     [JsonProperty] [UIValue("user")]
     public string? User { get; set; }
@@ -394,6 +401,13 @@ public class NoncontextualizedSong
         }
         
         _coverImageContainer = PluginConfig.Instance.NeverUseLocalCoverImages ? new CoverImageContainer(Hash) : new CoverImageContainer(level);
+    }
+
+    public NoncontextualizedSong()
+    {
+        // blank, assume a WIP
+        IsWip = true;
+        _coverImageContainer = new CoverImageContainer();
     }
 }
 

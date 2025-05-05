@@ -124,6 +124,19 @@ internal class HttpApi : IInitializable
                 break;
             
             case "addWip":
+                if (path.Length <= 2)
+                {
+                    statusCode = 400;
+                    data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                    break;
+                }
+
+                byte[] wipResponse = AddWip(path.Last().Replace("/", string.Empty),
+                    urlQuery.Get("user"),
+                    bool.Parse(urlQuery.Get("prepend") ?? "true"));
+                
+                statusCode = 200;
+                data = wipResponse;
                 break;
             
             case "queue":
@@ -307,6 +320,14 @@ internal class HttpApi : IInitializable
         return queuedSong == null
             ? null
             : System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
+    }
+
+    private static byte[] AddWip(string key, string? user = null, bool prepend = true)
+    {
+        Plugin.Log.Info($"Adding wip {key}...");
+        NoncontextualizedSong queuedSong = QueueManager.AddWip(key, user, prepend);
+        
+        return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
     }
 
     private static async Task<byte[]?> QuerySkipCache(string key)
