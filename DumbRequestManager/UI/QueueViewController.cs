@@ -725,7 +725,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         await HookApi.TriggerHook("pressedSkip", queuedSong);
     }
 
-    private class DownloadSongHandler(string bsrKey, Beatmap beatmap, NoncontextualizedSong queuedSong)
+    private class DownloadSongHandler(string bsrKey, Beatmap? beatmap, NoncontextualizedSong queuedSong)
     {
         internal readonly CancellationTokenSource TokenSource = new ();
         
@@ -734,8 +734,10 @@ internal class QueueViewController : BSMLAutomaticViewController
             Progress<float> progress = new();
             progress.ProgressChanged += (_, value) =>
             {
-                _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80><size=80%>({(value * 100):0}%)", value);
+                _loadingSpinner.ShowDownloadingProgress($"Downloading {(queuedSong.IsWip ? "WIP map" : "map")} <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80><size=80%>({(value * 100):0}%)", value);
             };
+            
+            SongCore.Loader.SongsLoadedEvent += LoaderOnSongsLoadedEvent;
 
             try
             {
@@ -745,7 +747,7 @@ internal class QueueViewController : BSMLAutomaticViewController
                 }
                 else
                 {
-                    await _downloaderUtils.DownloadUsingKey(beatmap, TokenSource.Token, progress);   
+                    await _downloaderUtils.DownloadUsingKey(beatmap!, TokenSource.Token, progress);   
                 }
             }
             catch (Exception exception)
@@ -766,9 +768,13 @@ internal class QueueViewController : BSMLAutomaticViewController
                 WaitModal.Hide(false);
                 return;
             }
+            
+            if (!queuedSong.IsWip)
+            {
+                // refreshing on wips needs to be handled in DownloadWip, not here
+                SongCore.Loader.Instance.RefreshSongs(false);
+            }
 
-            SongCore.Loader.SongsLoadedEvent += LoaderOnSongsLoadedEvent;
-            SongCore.Loader.Instance.RefreshSongs(false);
             return;
 
             void LoaderOnSongsLoadedEvent(SongCore.Loader loader, ConcurrentDictionary<string, BeatmapLevel> concurrentDictionary)
@@ -833,8 +839,27 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.DebugMessage($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
         
         ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
-        
-        if (!SongCore.Collections.songWithHashPresent(queuedSong.Hash))
+
+        if (queuedSong.IsWip)
+        {
+            if (_downloadHandler != null)
+            {
+                // ReSharper disable once MergeIntoPattern
+                if (!_downloadHandler.TokenSource.IsCancellationRequested)
+                {
+                    _downloadHandler.Cancel();
+                }
+                
+                _downloadHandler = new DownloadSongHandler(queuedSong.BsrKey, null, queuedSong);
+                await _downloadHandler.Start();
+
+                if (_downloadHandler.TokenSource.IsCancellationRequested)
+                {
+                    return;
+                }
+            }
+        }
+        else if (!SongCore.Collections.songWithHashPresent(queuedSong.Hash))
         {
             Plugin.Log.Info("Beatmap doesn't exist locally, grabbing it");
             

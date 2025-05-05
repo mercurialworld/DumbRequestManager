@@ -95,6 +95,14 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         await stream.DisposeAsync();
         archive.Dispose();
         Plugin.DebugMessage("[DownloadUtils] Disposed stuff");
+        
+        SongCore.Loader.Instance.RefreshSongs(false);
+
+        (string, BeatmapLevel)? wipLevelData = SongCore.Loader.LoadCustomLevel(fullFolderPath);
+        if (wipLevelData != null)
+        {
+            beatmap.Hash = wipLevelData.Value.Item1.Replace("custom_level_", string.Empty);
+        }
 #if !DEBUG
         QueueManager.Save();
 #endif
