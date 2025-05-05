@@ -388,17 +388,12 @@ public class NoncontextualizedSong
         Playlists = BeatSaberPlaylistsLib.PlaylistManager.DefaultManager.GetAllPlaylists()
             .Where(playlist => playlist.BeatmapLevels.Contains(level, comparer)).Select(playlist => playlist.Title).ToArray();
 
-        if (!skipCoverImage)
+        if (skipCoverImage)
         {
-            if (PluginConfig.Instance.NeverUseLocalCoverImages)
-            {
-                _coverImageContainer = new CoverImageContainer(Hash);
-            }
-            else
-            {
-                _coverImageContainer = new CoverImageContainer(level);
-            }
+            return;
         }
+        
+        _coverImageContainer = PluginConfig.Instance.NeverUseLocalCoverImages ? new CoverImageContainer(Hash) : new CoverImageContainer(level);
     }
 }
 
