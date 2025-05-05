@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberPlaylistsLib.Blist;
+using BeatSaberPlaylistsLib.Types;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Configuration;
 using DumbRequestManager.Managers;
@@ -242,6 +244,8 @@ public class NoncontextualizedSong
     [JsonProperty] public bool ScoreSaberRanked { get; set; }
     [JsonProperty] public bool BeatLeaderRanked { get; set; }
     [JsonProperty] public bool Curated { get; set; }
+
+    [JsonProperty] public string[] Playlists { get; set; } = [];
     
     [JsonProperty] public bool UsesChroma { get; set; }
     [JsonProperty] public bool UsesCinema { get; set; }
@@ -380,6 +384,9 @@ public class NoncontextualizedSong
             return new NoncontextualizedDifficulty(level, key, diff, cachedDetails);
         }).ToArray();
         
+        Playlists = BeatSaberPlaylistsLib.PlaylistManager.DefaultManager.GetAllPlaylists()
+            .Where(playlist => playlist.BeatmapLevels.Contains(level)).Select(playlist => playlist.Title).ToArray();
+
         if (!skipCoverImage)
         {
             if (PluginConfig.Instance.NeverUseLocalCoverImages)

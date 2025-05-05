@@ -53,6 +53,10 @@
             <Private>false</Private>
             <Publicize>true</Publicize>
         </Reference>
+        <Reference Include="BeatSaberPlaylistsLib">
+            <HintPath>$(BeatSaberDir)\Libs\BeatSaberPlaylistsLib.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
         <Reference Include="BeatSaverSharp">
             <HintPath>$(BeatSaberDir)\Libs\BeatSaverSharp.dll</HintPath>
             <Private>false</Private>
