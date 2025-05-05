@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Configuration;
+using DumbRequestManager.UI;
 #if !DEBUG
 using DumbRequestManager.Managers;
 #endif
@@ -60,7 +62,7 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         }
         
         Plugin.DebugMessage($"[DownloadUtils] Downloading wip map {beatmap.BsrKey}...");
-        byte[] result = await DownloadZip($"http://catse.net/wips/{beatmap.BsrKey}.zip", token, progress);
+        byte[] result = await DownloadZip($"https://catse.net/wips/{beatmap.BsrKey}.zip", token, progress);
         token.ThrowIfCancellationRequested();
         Plugin.DebugMessage($"[DownloadUtils] Downloaded {beatmap.BsrKey}");
         
@@ -96,12 +98,19 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         archive.Dispose();
         Plugin.DebugMessage("[DownloadUtils] Disposed stuff");
         
+        SongCore.Loader.SongsLoadedEvent += LoaderOnSongsLoadedEvent;
         SongCore.Loader.Instance.RefreshSongs(false);
 
-        (string, BeatmapLevel)? wipLevelData = SongCore.Loader.LoadCustomLevel(fullFolderPath);
-        if (wipLevelData != null)
+        void LoaderOnSongsLoadedEvent(SongCore.Loader loader, ConcurrentDictionary<string, BeatmapLevel> concurrentDictionary)
         {
-            beatmap.Hash = wipLevelData.Value.Item1.Replace("custom_level_", string.Empty);
+            (string, BeatmapLevel)? wipLevelData = SongCore.Loader.LoadCustomLevel(fullFolderPath);
+            if (wipLevelData != null)
+            {
+                beatmap.Hash = $"{wipLevelData.Value.Item1} WIP";
+                QueueViewController._instance.OkGoBack(beatmap, wipLevelData.Value.Item2);
+            }
+
+            SongCore.Loader.SongsLoadedEvent -= LoaderOnSongsLoadedEvent;
         }
 #if !DEBUG
         QueueManager.Save();

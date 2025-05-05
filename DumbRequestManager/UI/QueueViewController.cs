@@ -53,7 +53,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     private static LoadingControl _loadingSpinner = null!;
 
     private static PluginConfig Config => PluginConfig.Instance;
-    private static QueueViewController _instance = null!;
+    internal static QueueViewController _instance = null!;
     
     [UIValue("queue")]
     private static List<NoncontextualizedSong> Queue => QueueManager.QueuedSongs;
@@ -543,6 +543,13 @@ internal class QueueViewController : BSMLAutomaticViewController
 
         Task.Run(async () =>
         {
+            if (queuedSong.IsWip)
+            {
+                detailsDescription.text = "Map is a WIP, no description available.";
+                detailsDescription.color = Color.white;
+                return;
+            }
+            
             _descriptionCancellationToken = new CancellationTokenSource();
             
             Plugin.DebugMessage("(downloading BeatSaver data)");
@@ -577,7 +584,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             Plugin.DebugMessage("Cover display updated");
         });
 
-        if (!Config.PlayAudioPreviews)
+        if (!Config.PlayAudioPreviews || queuedSong.IsWip)
         {
             return;
         }
@@ -669,7 +676,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         Plugin.DebugMessage("Should be selected");
     }
 
-    public void OkGoBack(NoncontextualizedSong queuedSong)
+    public void OkGoBack(NoncontextualizedSong queuedSong, BeatmapLevel? beatmapLevel = null)
     {
         WaitModal.Hide(false);
         
@@ -685,7 +692,15 @@ internal class QueueViewController : BSMLAutomaticViewController
 
         try
         {
-            GoToLevel(SongCore.Loader.GetLevelByHash(queuedSong.Hash));
+            if (beatmapLevel != null)
+            {
+                GoToLevel(beatmapLevel);
+            }
+            else
+            {
+                Plugin.DebugMessage($"Using {queuedSong.Hash} for GoToLevel within OkGoBack");
+                GoToLevel(SongCore.Loader.GetLevelByHash(queuedSong.Hash));
+            }
         }
         catch (Exception e)
         {
@@ -736,8 +751,6 @@ internal class QueueViewController : BSMLAutomaticViewController
             {
                 _loadingSpinner.ShowDownloadingProgress($"Downloading {(queuedSong.IsWip ? "WIP map" : "map")} <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80><size=80%>({(value * 100):0}%)", value);
             };
-            
-            SongCore.Loader.SongsLoadedEvent += LoaderOnSongsLoadedEvent;
 
             try
             {
@@ -759,7 +772,11 @@ internal class QueueViewController : BSMLAutomaticViewController
                     WaitModal.Hide(false);
                     return;
                 }
+
+                Plugin.Log.Error(exception);
             }
+            
+            SongCore.Loader.SongsLoadedEvent += LoaderOnSongsLoadedEvent;
 
             if (TokenSource.IsCancellationRequested)
             {
@@ -780,7 +797,10 @@ internal class QueueViewController : BSMLAutomaticViewController
             void LoaderOnSongsLoadedEvent(SongCore.Loader loader, ConcurrentDictionary<string, BeatmapLevel> concurrentDictionary)
             {
                 SongCore.Loader.SongsLoadedEvent -= LoaderOnSongsLoadedEvent;
-                _instance.OkGoBack(queuedSong);
+                if (!queuedSong.IsWip)
+                {
+                    _instance.OkGoBack(queuedSong);
+                }
             }
         }
 
@@ -849,14 +869,14 @@ internal class QueueViewController : BSMLAutomaticViewController
                 {
                     _downloadHandler.Cancel();
                 }
-                
-                _downloadHandler = new DownloadSongHandler(queuedSong.BsrKey, null, queuedSong);
-                await _downloadHandler.Start();
+            }
 
-                if (_downloadHandler.TokenSource.IsCancellationRequested)
-                {
-                    return;
-                }
+            _downloadHandler = new DownloadSongHandler(queuedSong.BsrKey, null, queuedSong);
+            await _downloadHandler.Start();
+
+            if (_downloadHandler.TokenSource.IsCancellationRequested)
+            {
+                return;
             }
         }
         else if (!SongCore.Collections.songWithHashPresent(queuedSong.Hash))
