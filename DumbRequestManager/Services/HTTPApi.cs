@@ -100,6 +100,13 @@ internal class HttpApi : IInitializable
                 break;
             
             case "addKey":
+                if (path.Length <= 2)
+                {
+                    statusCode = 400;
+                    data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                    break;
+                }
+                
                 byte[]? keyResponse = await AddKey(path.Last().Replace("/", string.Empty),
                     urlQuery.Get("user"),
                     bool.Parse(urlQuery.Get("prepend") ?? "false"));
@@ -114,6 +121,9 @@ internal class HttpApi : IInitializable
                     statusCode = 400;
                     data = "{\"message\": \"Invalid request\"}"u8.ToArray();
                 }
+                break;
+            
+            case "addWip":
                 break;
             
             case "queue":
