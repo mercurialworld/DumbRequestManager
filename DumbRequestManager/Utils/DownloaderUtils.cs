@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
@@ -25,13 +26,16 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
     
     public void Initialize()
     {
-        try
+        MethodInfo? timeoutMethod = httpService.GetType().GetMethod("set_Timeout");
+        
+        if (timeoutMethod == null)
         {
-            httpService.Timeout = Config.MapDownloadTimeout;
+            Plugin.Log.Info("Timeout value cannot be set, doesn't exist in SiraUtil yet.");
         }
-        catch (Exception)
+        else
         {
-            // do nothing, this is new. submitted a PR to SiraUtil (still pending)
+            timeoutMethod.Invoke(httpService, [Config.MapDownloadTimeout]);
+            Plugin.Log.Info($"Set timeout value to {Config.MapDownloadTimeout} seconds.");
         }
     }
     
