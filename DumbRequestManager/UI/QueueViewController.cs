@@ -857,8 +857,6 @@ internal class QueueViewController : BSMLAutomaticViewController
         NoncontextualizedSong queuedSong = Queue[index];
         
         Plugin.DebugMessage($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
-        
-        ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
 
         if (queuedSong.IsWip)
         {
@@ -918,6 +916,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             _queueTableComponent.TableView.ReloadData();
         });
         
+        ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
         
         // persistence saving is taken care of in the downloader
         // i don't want it triggering unless everything goes to plan
