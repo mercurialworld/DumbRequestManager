@@ -39,7 +39,9 @@
                                   overflow-mode="Ellipsis"/>
                         </horizontal>
                         <horizontal child-expand-width="false" child-align="LowerLeft">
-                            <text data="artist"
+                            <text data="displayedSecondaryLine"
+                                  font-size="3" align="Left" overflow-mode="Ellipsis" rich-text="true"/>
+                            <!--<text data="artist"
                                   font-size="3" align="Left" overflow-mode="Ellipsis"
                                   color="#FFFFFFAA"/>
                             <horizontal child-expand-width="false" child-align="LowerLeft"
@@ -50,7 +52,7 @@
                                 <text data="mapper"
                                       font-size="3" align="Left" overflow-mode="Ellipsis"
                                       color="#CBADFFFF"/>
-                            </horizontal>
+                            </horizontal>-->
                         </horizontal>
                     </vertical>
                     

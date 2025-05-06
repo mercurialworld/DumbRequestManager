@@ -202,6 +202,19 @@ public class NoncontextualizedDifficulty
     }
 }
 
+internal static class StringExtensions
+{
+    // https://gist.github.com/Caeden117/1e0187d8f7f89717974a1b558c0acc2a
+    
+    /*
+     * Original code by @lolPants, put into an Extension class.
+     *
+     * The second replace is not necessary, but is there for completeness. If you need to strip TMP tags regularly,
+     * you can easily remove it for added performance.
+     */
+    public static string StripTMPTags(this string source) => source.Replace(@"<", "<\u200B").Replace(@">", "\u200B>");
+}
+
 [JsonObject(MemberSerialization.OptIn)]
 public class NoncontextualizedSong
 {
@@ -225,13 +238,16 @@ public class NoncontextualizedSong
     public string SubTitle { get; set; } = string.Empty;
     
     [UIValue("displayedTitle")]
-    internal string DisplayedTitle => SubTitle == string.Empty ? Title : $"{Title} <size=75%><alpha=#AA>{SubTitle}";
+    internal string DisplayedTitle => SubTitle == string.Empty ? Title : $"{Title.StripTMPTags()} <size=75%><alpha=#AA>{SubTitle.StripTMPTags()}";
     
     [JsonProperty] [UIValue("artist")]
     public string Artist { get; set; } = string.Empty;
 
     [JsonProperty] [UIValue("mapper")]
     public string Mapper { get; set; } = string.Empty;
+    
+    [UIValue("displayedSecondaryLine")]
+    public string DisplayedSecondaryLine => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color=#CBADFF>{Mapper.StripTMPTags()}<color=#FFFFFF>]";
 
     [JsonProperty] [UIValue("duration")]
     public uint Duration { get; set; }
