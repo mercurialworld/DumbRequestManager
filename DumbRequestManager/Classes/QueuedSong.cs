@@ -185,8 +185,8 @@ public class NoncontextualizedDifficulty
         }
         
         // using SDC for now, look at StandardLevelDetailView.CalculateAndSetContentAsync
-        SongDifficulty? cachedDiff = cachedDetails.Value.difficulties.First(x => (int)x.difficulty == (int)key.difficulty &&
-            x.characteristic.ToString() == key.beatmapCharacteristic.serializedName);
+        SongDifficulty? cachedDiff = cachedDetails.Value.difficulties.First(x => Normalize.GetDifficultyName(x.difficulty.ToString()) == Normalize.GetDifficultyName(key.difficulty.ToString()) &&
+            Normalize.GetCharacteristicName(x.characteristic.ToString()) == Normalize.GetCharacteristicName(key.beatmapCharacteristic.name));
         NotesPerSecond = cachedDiff?.notes / level.songDuration ?? 0;
         
         //Plugin.DebugMessage($"{mapData.notesCount} / {level.songDuration}");

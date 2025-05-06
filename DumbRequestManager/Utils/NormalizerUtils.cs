@@ -28,6 +28,25 @@ internal abstract class Normalize
         }
     }
 
+    public static string GetCharacteristicName(string characteristic)
+    {
+        switch (characteristic)
+        {
+            case "SingleSaber":
+            case "OneSaber":
+                return "OneSaber";
+            case "NinetyDegree":
+            case "90Degree":
+                return "90Degree";
+            case "ThreeSixtyDegree":
+            case "360Degree":
+                return "360Degree";
+            
+            default:
+                return characteristic;
+        }
+    }
+
     public static string GetDifficultyName(string difficulty)
     {
         switch (difficulty)
