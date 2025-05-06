@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberPlaylistsLib.Blist;
-using BeatSaberPlaylistsLib.Types;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Configuration;
 using DumbRequestManager.Managers;

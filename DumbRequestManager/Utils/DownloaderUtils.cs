@@ -107,7 +107,7 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
             if (wipLevelData != null)
             {
                 beatmap.Hash = $"{wipLevelData.Value.Item1} WIP";
-                QueueViewController._instance.OkGoBack(beatmap, wipLevelData.Value.Item2);
+                QueueViewController.Instance.OkGoBack(beatmap, wipLevelData.Value.Item2);
             }
 
             SongCore.Loader.SongsLoadedEvent -= LoaderOnSongsLoadedEvent;

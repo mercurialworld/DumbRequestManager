@@ -1,8 +1,4 @@
-﻿using System.Linq;
-using BeatSaverSharp;
-using SongDetailsCache.Structs;
-
-namespace DumbRequestManager.Utils;
+﻿namespace DumbRequestManager.Utils;
 
 internal abstract class Normalize
 {

@@ -54,7 +54,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     private static LoadingControl _loadingSpinner = null!;
 
     private static PluginConfig Config => PluginConfig.Instance;
-    internal static QueueViewController _instance = null!;
+    internal static QueueViewController Instance = null!;
     
     [UIValue("queue")]
     private static List<NoncontextualizedSong> Queue => QueueManager.QueuedSongs;
@@ -91,7 +91,7 @@ internal class QueueViewController : BSMLAutomaticViewController
 
     [UIComponent("waitModal")]
     private ModalView _waitModalActual = null!;
-    private static ModalView WaitModal => _instance._waitModalActual; // sigh
+    private static ModalView WaitModal => Instance._waitModalActual; // sigh
     
     [UIComponent("loadingSpinnerContainer")]
     public VerticalLayoutGroup loadingSpinnerContainer = null!;
@@ -159,7 +159,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         _songPreviewPlayer = songPreviewPlayer;
         _downloaderUtils = downloaderUtils;
         
-        _instance = this;
+        Instance = this;
     }
     
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -824,7 +824,7 @@ internal class QueueViewController : BSMLAutomaticViewController
                 SongCore.Loader.SongsLoadedEvent -= LoaderOnSongsLoadedEvent;
                 if (!queuedSong.IsWip)
                 {
-                    _instance.OkGoBack(queuedSong);
+                    Instance.OkGoBack(queuedSong);
                 }
             }
         }
