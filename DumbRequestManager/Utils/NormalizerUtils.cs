@@ -1,4 +1,8 @@
-﻿namespace DumbRequestManager.Utils;
+﻿using System.Linq;
+using BeatSaverSharp;
+using SongDetailsCache.Structs;
+
+namespace DumbRequestManager.Utils;
 
 internal abstract class Normalize
 {
@@ -11,8 +15,10 @@ internal abstract class Normalize
             case "NoArrows":
                 return "#NoArrowsIcon";
             case "NinetyDegree":
+            case "90Degree":
                 return "#90DegreesIcon";
             case "ThreeSixtyDegree":
+            case "360Degree":
                 return "#360DegreesIcon";
             case "Custom" or "Legacy": // wtf
                 return "#LegacyIcon";
@@ -30,6 +36,19 @@ internal abstract class Normalize
 
     public static string GetCharacteristicName(string characteristic)
     {
+        // for a 90 Degree map:
+        
+        // BeatSaverSharp
+        // new BeatSaver().Beatmap().Result.LatestVersion.Difficulties[0].Characteristic -> _90Degree
+        
+        // SongDetailsCache
+        // new Song().difficulties.First().characteristic. -> NinetyDegree
+        
+        // Base game
+        // new BeatmapKey().beatmapCharacteristic.serializedName -> 90Degree
+        
+        // ...can we like, come together and figure this out? Can we agree.
+        
         switch (characteristic)
         {
             case "SingleSaber":
@@ -37,9 +56,11 @@ internal abstract class Normalize
                 return "OneSaber";
             case "NinetyDegree":
             case "90Degree":
+            case "_90Degree":
                 return "90Degree";
             case "ThreeSixtyDegree":
             case "360Degree":
+            case "_360Degree":
                 return "360Degree";
             
             default:
