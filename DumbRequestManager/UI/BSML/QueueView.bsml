@@ -29,10 +29,10 @@
                                 anchor-min-x="0.01" anchor-max-x="0.99"
                                 anchor-min-y="0.025"/>
                     <vertical vertical-fit="PreferredSize" preferred-height="11"
-                              horizontal-fit="PreferredSize" preferred-width="60"
+                              horizontal-fit="PreferredSize" preferred-width="50"
                               child-expand-width="true" child-control-width="true"
                               padding="2"
-                              child-align="MiddleLeft" anchor-min-x="0.025">
+                              child-align="MiddleLeft" anchor-min-x="-0.15">
                         <horizontal child-align="UpperLeft" child-expand-width="true">
                             <text data="displayedTitle"
                                   font-size="4" align="Left" rich-text="true"
