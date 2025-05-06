@@ -45,6 +45,7 @@ internal class QueueViewController : BSMLAutomaticViewController
 {
     private LevelFilteringNavigationController _levelFilteringNavigationController = null!;
     private LevelCollectionViewController _levelCollectionViewController = null!;
+    private LevelCollectionNavigationController _levelCollectionNavigationController = null!;
     private SelectLevelCategoryViewController _selectLevelCategoryViewController = null!;
     private SongPreviewPlayer _songPreviewPlayer = null!;
     private static DownloaderUtils _downloaderUtils = null!;
@@ -146,12 +147,14 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UsedImplicitly]
     private void Construct(LevelFilteringNavigationController levelFilteringNavigationController,
         LevelCollectionViewController levelCollectionViewController,
+        LevelCollectionNavigationController levelCollectionNavigationController,
         SelectLevelCategoryViewController selectLevelCategoryViewController,
         SongPreviewPlayer songPreviewPlayer,
         DownloaderUtils downloaderUtils)
     {
         _levelFilteringNavigationController = levelFilteringNavigationController;
         _levelCollectionViewController = levelCollectionViewController;
+        _levelCollectionNavigationController = levelCollectionNavigationController;
         _selectLevelCategoryViewController = selectLevelCategoryViewController;
         _songPreviewPlayer = songPreviewPlayer;
         _downloaderUtils = downloaderUtils;
@@ -669,11 +672,33 @@ internal class QueueViewController : BSMLAutomaticViewController
         _levelFilteringNavigationController.HandleSelectLevelCategoryViewControllerDidSelectLevelCategory(
             _selectLevelCategoryViewController, SelectLevelCategoryViewController.LevelCategory.All);
         //_levelFilteringNavigationController.UpdateSecondChildControllerContent(SelectLevelCategoryViewController.LevelCategory.All);
-        
-        Plugin.DebugMessage($"Selecting {beatmapLevel.songName} in the map list...");
-        _levelCollectionViewController._levelCollectionTableView.ReloadCellsData();
-        _levelCollectionViewController._levelCollectionTableView.SelectLevel(beatmapLevel);
-        Plugin.DebugMessage("Should be selected");
+
+        UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+        {
+            Plugin.DebugMessage($"Selecting {beatmapLevel.songName} in the map list...");
+            _levelCollectionViewController._levelCollectionTableView.ReloadCellsData();
+
+            if (!beatmapLevel.levelID.Contains("WIP"))
+            {
+                _levelCollectionViewController._levelCollectionTableView.SelectLevel(beatmapLevel);
+            }
+            else if (SongCore.Loader.CustomLevelsRepository != null)
+            {
+                // used wipbot for reference. no idea why the above won't work for WIPs
+                // https://github.com/Danielduel/wipbot/blob/961d70157f21046997c7466621a68dcf72527e6e/wipbot/Plugin.cs#L477
+                foreach (BeatmapLevelPack levelPack in SongCore.Loader.CustomLevelsRepository.beatmapLevelPacks)
+                {
+                    foreach (BeatmapLevel level in levelPack.AllBeatmapLevels().Where(level =>
+                                 level.levelID.StartsWith("custom_level_" + beatmapLevel.levelID.Split('_')[2])))
+                    {
+                        _levelCollectionNavigationController.SelectLevel(level);
+                        break;
+                    }
+                }
+            }
+
+            Plugin.DebugMessage("Should be selected");
+        });
     }
 
     public void OkGoBack(NoncontextualizedSong queuedSong, BeatmapLevel? beatmapLevel = null)
