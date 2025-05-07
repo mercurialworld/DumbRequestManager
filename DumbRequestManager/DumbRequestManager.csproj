@@ -195,5 +195,17 @@
         <EmbeddedResource Include="UI/BSML/QueueView.bsml"/>
         <EmbeddedResource Include="UI/BSML/SideSettings.bsml"/>
     </ItemGroup>
+    
+    <ItemGroup>
+        <None Include="Assets\CensorWords.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <OutputCopy Include="Assets\CensorWords.txt">
+            <OutputPath>UserData\DumbRequestManager\CensorWords.txt</OutputPath>
+        </OutputCopy>
+    </ItemGroup>
 
 </Project>

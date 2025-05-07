@@ -1,0 +1,96 @@
+// As a reminder, this is only here to prevent potential auto-bans on Twitch, it is VERY RECOMMENDED to not display
+// ANY MAP METADATA unless it is from a agree/confirm input *you yourself* do in-game.
+
+// BeatSaver has no input filters, so it's on us modders to the bare minimum. Please exercise caution.
+
+// skimmed through https://raw.githubusercontent.com/censor-text/profanity-list/refs/heads/main/list/en.txt
+
+// a = agressive, will search within words (default)
+// s = soft, will censor only if the full word is used
+
+a aryan
+s blackie
+s blackies
+s blacks
+s blacky
+s blackys
+a chingchong
+s coon
+s coons
+s darkie
+s darkies
+s darky
+s darkys
+s fag
+s fags
+s fagg
+s faggs
+a faggy
+a faggie
+a faggit
+s faget
+s fagit
+s fagot
+a fagget
+s faggo
+s faggos
+a faggot
+s negro
+s negros
+a negroes
+s nigro
+s nigros
+a negroid
+s nig
+s nigs
+s nigar
+s nigars
+a nigga
+a niggr
+a niggar
+a nigger
+a nignog
+a niglet
+a nigglet
+a niggette
+a nigette
+a niggur
+s nigur
+s nigurs
+s whitie
+s whities
+s whites
+s whitey
+s whiteys
+a tranny
+a trannie
+a gaytard
+a shemale
+s goyim
+s goyims
+a halfbreed
+s jap
+s japs
+a jewboy
+a jigaboo
+a jigarooni
+a jigga
+a jigger
+a poonan
+a poontang
+a poontsee
+a raghead
+a redskin
+s spic
+s spics
+s spick
+s spicks
+a towelhead
+s wetback
+s wetbacks
+a wigga
+a wigger
+s wiger
+s wigers
+a zigabo
+a zipperhead

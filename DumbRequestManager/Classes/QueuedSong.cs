@@ -231,18 +231,26 @@ public class NoncontextualizedSong
 
     [JsonProperty] [UIValue("title")]
     public string Title { get; set; } = string.Empty;
+    [JsonProperty]
+    public bool CensorTitle { get; set; }
 
     [JsonProperty] [UIValue("subtitle")]
     public string SubTitle { get; set; } = string.Empty;
+    [JsonProperty]
+    public bool CensorSubTitle { get; set; }
     
     [UIValue("displayedTitle")]
     internal string DisplayedTitle => SubTitle == string.Empty ? Title : $"{Title.StripTMPTags()} <size=75%><alpha=#AA>{SubTitle.StripTMPTags()}";
     
     [JsonProperty] [UIValue("artist")]
     public string Artist { get; set; } = string.Empty;
+    [JsonProperty]
+    public bool CensorArtist { get; set; }
 
     [JsonProperty] [UIValue("mapper")]
     public string Mapper { get; set; } = string.Empty;
+    [JsonProperty]
+    public bool CensorMapper { get; set; }
     
     [UIValue("displayedSecondaryLine")]
     public string DisplayedSecondaryLine => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color=#CBADFF>{Mapper.StripTMPTags()}<color=#FFFFFF>]";
@@ -302,8 +310,11 @@ public class NoncontextualizedSong
         BsrKey = song.key;
         Hash = song.hash;
         Title = song.songName;
+        CensorTitle = Censor.Check(Title);
         Artist = song.songAuthorName;
+        CensorArtist = Censor.Check(Artist);
         Mapper = song.levelAuthorName;
+        CensorMapper = Censor.Check(Mapper);
         Duration = song.songDurationSeconds;
         Votes = [song.upvotes, song.downvotes];
         Rating = song.rating;
@@ -331,9 +342,13 @@ public class NoncontextualizedSong
         BsrKey = song.ID;
         Hash = song.LatestVersion.Hash;
         Title = song.Metadata.SongName;
+        CensorTitle = Censor.Check(Title);
         SubTitle = song.Metadata.SongSubName;
+        CensorSubTitle = Censor.Check(SubTitle);
         Artist = song.Metadata.SongAuthorName;
+        CensorArtist = Censor.Check(Artist);
         Mapper = song.Metadata.LevelAuthorName;
+        CensorMapper = Censor.Check(Mapper);
         Duration = (uint)song.Metadata.Duration;
         Votes = [(uint)song.Stats.Upvotes, (uint)song.Stats.Downvotes];
         Rating = song.Stats.Score;
@@ -360,9 +375,13 @@ public class NoncontextualizedSong
     {
         Hash = level.levelID.Split('_').Last().Split(' ').First();
         Title = level.songName;
+        CensorTitle = Censor.Check(Title);
         SubTitle = level.songSubName;
+        CensorSubTitle = Censor.Check(SubTitle);
         Artist = level.songAuthorName;
+        CensorArtist = Censor.Check(Artist);
         Mapper = string.Join(", ", level.allMappers);
+        CensorMapper = Censor.Check(Mapper);
         Duration = (uint)level.songDuration;
 
         UsesChroma = false;

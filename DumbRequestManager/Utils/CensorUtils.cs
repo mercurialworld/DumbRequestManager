@@ -1,0 +1,107 @@
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace DumbRequestManager.Utils;
+
+internal static class Extensions
+{
+    // https://stackoverflow.com/a/7471047
+    public static string RemoveDiacritics(this string s)
+    {
+        string normalizedString = s.Normalize(NormalizationForm.FormD);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        foreach (char c in normalizedString.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark))
+        {
+            stringBuilder.Append(c);
+        }
+
+        return stringBuilder.ToString();
+    }
+}
+internal abstract class Censor
+{
+    private static readonly Dictionary<string, bool> CensorWords = new();
+
+    private static readonly string[] AgePhrases =
+    [
+        "am # year old",
+        "am # year young",
+        "im #",
+        "i am #",
+        "am age of #",
+        "am the age of #"
+    ];
+
+    private static void InitializeCensorWords()
+    {
+        string[] lines = File.ReadAllLines(Path.Combine(Plugin.UserDataDir, "CensorWords.txt"));
+
+        foreach (string line in lines)
+        {
+            if (string.IsNullOrEmpty(line))
+            {
+                continue;
+            }
+            if (line[..2] == "//")
+            {
+                continue;
+            }
+            
+            string[] parts = line.ToLowerInvariant().RemoveDiacritics().Split(' ');
+            if (parts.Length == 1)
+            {
+                CensorWords.Add(parts[0], true);
+            }
+            else
+            {
+                CensorWords.Add(parts[1], parts[0] == "a");
+            }
+        }
+        
+        Plugin.Log.Info($"CensorWords contains {CensorWords.Count} words");
+    }
+
+    private static bool StringContainsCensoredWord(string input)
+    {
+        if (CensorWords.Count == 0)
+        {
+            InitializeCensorWords();
+        }
+        
+        string strippedInput = input.ToLowerInvariant().RemoveDiacritics();
+            
+        string aggressiveStrippedInput = input.Replace(" ", string.Empty);
+        string[] softStrippedInput = strippedInput.Split(' ');
+        
+        foreach ((string word, bool aggressive) in CensorWords)
+        {
+            if (aggressive ? aggressiveStrippedInput.Contains(word) : softStrippedInput.Contains(word))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    private static bool StringContainsAgePhrase(string input)
+    {
+        Regex step1 = new (@"[^a-rt-zA-RT-Z0-9 \s]");
+        Regex step2 = new ("[0-9]");
+        string normalized = step1.Replace(input.ToLowerInvariant().RemoveDiacritics(), string.Empty);
+        normalized = step2.Replace(normalized, "#");
+        normalized = Regex.Replace(normalized, "#+", "#");
+
+        return AgePhrases.Any(agePhrase => normalized.Contains(agePhrase));
+    }
+
+    public static bool Check(string input)
+    {
+        return StringContainsCensoredWord(input) || StringContainsAgePhrase(input);
+    }
+}
