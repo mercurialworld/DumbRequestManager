@@ -29,12 +29,12 @@ internal abstract class Censor
 
     private static readonly string[] AgePhrases =
     [
-        "am # year old",
-        "am # year young",
+        "# year old",
+        "# year young",
         "im #",
         "i am #",
-        "am age of #",
-        "am the age of #"
+        "age of #",
+        "the age of #"
     ];
 
     private static void InitializeCensorWords()
