@@ -119,6 +119,12 @@ All `pressed` events follow the same data structure:
 
 <a name="map-data-type"></a>
 ## Map data
+> [!CAUTION]
+> It is ***STRONGLY ADVISED*** that you do **NOT** show user-editable map metadata in your chat responses, [as BeatSaver has no bare-minimum filters in place for map uploads](https://discord.com/channels/882730837974609940/882730837974609943/983438702938300488).  
+> 
+> If you still want to risk it, at least check if any of the `CensorTitle`, `CensorSubTitle`, `CensorArtist`, and `CensorMapper` attributes are set to `true`. There are ways to get around these, of course, but the filters on DRM's side are bare minimum enough to prevent auto-bans on Twitch.
+> 
+> > (Also of note, Twitch viewers/users with the Moderator status do not have any AutoMod rulesets applied to them. If your bot is a moderator in your channel, responses will be allowed through verbatim.)
 ```json
 {
   "BsrKey": "1ad3b",
