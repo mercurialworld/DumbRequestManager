@@ -48,6 +48,9 @@ internal class QueueFlowCoordinator : FlowCoordinator
     // ReSharper disable once ParameterHidesMember
     public override void BackButtonWasPressed(ViewController _)
     {
+#if !DEBUG
+        QueueManager.Save();
+#endif
         _mainFlowCoordinator.childFlowCoordinator.DismissFlowCoordinator(this);
     }
 }
