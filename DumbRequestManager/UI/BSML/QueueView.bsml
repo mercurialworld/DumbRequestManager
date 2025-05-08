@@ -362,19 +362,19 @@
     </horizontal>
     
     <modal id="waitModal"
-           size-delta="48 20"
+           size-delta="60 20"
            move-to-center="true" clickerino-offerino-closerino="false">
         <vertical vertical-fit="PreferredSize" preferred-height="20"
-                  horizontal-fit="PreferredSize" preferred-width="48"
+                  horizontal-fit="PreferredSize" preferred-width="60"
                   background="round-rect-panel" bg-color="#888888FF">
             <vertical id="loadingSpinnerContainer"
                       vertical-fit="PreferredSize" preferred-height="10"
-                      horizontal-fit="PreferredSize" preferred-width="48"
+                      horizontal-fit="PreferredSize" preferred-width="60"
                       child-align="LowerCenter">
                 <text text="-------" color="#FFFFFF00" font-size="1"/>
             </vertical>
             <horizontal vertical-fit="PreferredSize" preferred-height="10"
-                        horizontal-fit="PreferredSize" preferred-width="48"
+                        horizontal-fit="PreferredSize" preferred-width="60"
                         child-align="UpperCenter">
                 <button on-click="cancelDownload" text="Cancel"/>
             </horizontal>

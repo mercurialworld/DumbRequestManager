@@ -774,7 +774,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             Progress<float> progress = new();
             progress.ProgressChanged += (_, value) =>
             {
-                _loadingSpinner.ShowDownloadingProgress($"Downloading {(queuedSong.IsWip ? "WIP map" : "map")} <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80><size=80%>({(value * 100):0}%)", value);
+                _loadingSpinner.ShowDownloadingProgress($"Downloading {(queuedSong.IsWip ? "WIP map" : "map")} <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80><size=80%>(<mspace=0.4em>{(value * 100):0}</mspace>%)", value);
             };
 
             try
