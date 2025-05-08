@@ -124,6 +124,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     private static TextMeshProUGUI _detailsNps = null!;
     [UIComponent("detailsNoteJumpSpeed")]
     private static TextMeshProUGUI _detailsNjs = null!;
+    [UIComponent("detailsEstimatedStars")]
+    private static TextMeshProUGUI _detailsEstimatedStars = null!;
     // ReSharper restore FieldCanBeMadeReadOnly.Local
     
     [UIValue("difficultyChoices")]
@@ -174,6 +176,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             _selectDifficultyComponent = GameObject.Find("DRM_SelectDifficultyComponent").GetComponent<CustomCellListTableData>();
             _detailsNps = GameObject.Find("DRM_DetailsNotesPerSecond").GetComponent<TextMeshProUGUI>();
             _detailsNjs = GameObject.Find("DRM_DetailsNoteJumpSpeed").GetComponent<TextMeshProUGUI>();
+            _detailsEstimatedStars = GameObject.Find("DRM_DetailsEstimatedStars").GetComponent<TextMeshProUGUI>();
         }
 
         if (firstActivation)
@@ -210,6 +213,8 @@ internal class QueueViewController : BSMLAutomaticViewController
             {
                 ClearHighlightedCells();
             };
+
+            _detailsEstimatedStars.text = "<color=#FFCC55>\u2605 <color=#FFFFFF>-";
         }
         else
         {
@@ -394,6 +399,35 @@ internal class QueueViewController : BSMLAutomaticViewController
         // tried variables, failed miserably
         _detailsNjs.SetText($"{difficulty.NoteJumpSpeed:0.##} <size=80%><alpha=#AA>NJS");
         _detailsNps.SetText($"{difficulty.NotesPerSecond:0.00} <size=80%><alpha=#AA>NPS");
+
+        NoncontextualizedSong queuedSong = Queue[_queueTableComponent.TableView._selectedCellIdxs.First()];
+        if (queuedSong.IsWip)
+        {
+            _detailsEstimatedStars.text = "<color=#FFCC55>\u2605 <color=#FFFFFF>-";
+        }
+        else
+        {
+            UpdateStarDisplay(difficulty);
+        }
+    }
+
+    private static void UpdateStarDisplay(DifficultyUICellWrapper? difficulty = null)
+    {
+        if (_starsList == null)
+        {
+            Plugin.DebugMessage("_starsList is null");
+            _detailsEstimatedStars.text = "<color=#FFCC55>\u2605 <color=#FFFFFF>-";
+            return;
+        }
+        
+        string diffName = difficulty == null ? _difficultyChoices[_selectDifficultyComponent.TableView._selectedCellIdxs.First()].Name : difficulty.Value.Name;
+            
+        BeatLeaderDifficulty starsObject = _starsList.Find(x =>
+            x.CharacteristicName ==
+            _characteristicChoices[_selectCharacteristicComponent.TableView._selectedCellIdxs.First()].Name &&
+            x.DifficultyName == diffName);
+                
+        _detailsEstimatedStars.text = $"<color=#FFCC55>\u2605 <color=#FFFFFF>{starsObject.Stars:0.00}";
     }
 
     private static void SetHighlightedCellsForUser(int ignoreIndex, NoncontextualizedSong queuedSong)
@@ -447,6 +481,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     private static NoncontextualizedSong _selectedSong = null!;
     private static UnityWebRequest? _webRequest;
     private static CancellationTokenSource _descriptionCancellationToken = new();
+    private static CancellationTokenSource _starEstimateCancellationToken = new();
+    private static List<BeatLeaderDifficulty>? _starsList;
     [UIAction("selectCell")]
     public void SelectCell(TableView tableView, NoncontextualizedSong queuedSong)
     {
@@ -454,6 +490,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         ClearHighlightedCells();
         _basicUIAudioManager.HandleButtonClickEvent();
         YeetTableCells(_queueTableComponent.TableView);
+        _starsList = null;
         
         try
         {
@@ -573,6 +610,22 @@ internal class QueueViewController : BSMLAutomaticViewController
             }
             
             _descriptionCancellationToken.Dispose();
+        });
+        
+        Task.Run(async () =>
+        {
+            if (queuedSong.IsWip)
+            {
+                _detailsEstimatedStars.text = "<color=#FFCC55>\u2605 <color=#FFFFFF>-";
+                return;
+            }
+            
+            _starEstimateCancellationToken = new CancellationTokenSource();
+            
+            Plugin.DebugMessage("(downloading BeatLeader data)");
+            _starsList = await BeatLeaderUtils.Instance.GetStarValueForHash(queuedSong.Hash, _starEstimateCancellationToken.Token);
+
+            UpdateStarDisplay();
         });
         
         UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
