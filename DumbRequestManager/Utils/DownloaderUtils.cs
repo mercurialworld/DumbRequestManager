@@ -65,10 +65,22 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
             Directory.CreateDirectory(customSongsPath);
         }
         
-        Plugin.DebugMessage($"[DownloadUtils] Downloading wip map {beatmap.BsrKey}...");
-        byte[] result = await DownloadZip($"https://catse.net/wips/{beatmap.BsrKey}.zip", token, progress);
+        Plugin.DebugMessage($"[DownloadUtils] Downloading WIP map {beatmap.BsrKey}...");
+        byte[] result = [];
+        try
+        {
+            result = await DownloadZip($"https://catse.net/wips/{beatmap.BsrKey}.zip", token, progress);
+        }
+        catch (Exception exception)
+        {
+            if (exception is TaskCanceledException or OperationCanceledException)
+            {
+                throw new TaskCanceledException(exception.Message, exception);
+            }
+        }
+        
         token.ThrowIfCancellationRequested();
-        Plugin.DebugMessage($"[DownloadUtils] Downloaded {beatmap.BsrKey}");
+        Plugin.DebugMessage($"[DownloadUtils] Downloaded WIP map {beatmap.BsrKey}");
         
         if (result.Length == 0)
         {
@@ -130,7 +142,19 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         }
         
         Plugin.DebugMessage($"[DownloadUtils] Downloading map {beatmap.ID}...");
-        byte[] result = await DownloadZip(beatmap.LatestVersion.DownloadURL, token, progress);
+        byte[] result = [];
+        try
+        {
+            result = await DownloadZip(beatmap.LatestVersion.DownloadURL, token, progress);
+        }
+        catch (Exception exception)
+        {
+            if (exception is TaskCanceledException or OperationCanceledException)
+            {
+                throw new TaskCanceledException(exception.Message, exception);
+            }
+        }
+
         token.ThrowIfCancellationRequested();
         Plugin.DebugMessage($"[DownloadUtils] Downloaded {beatmap.ID}");
 
