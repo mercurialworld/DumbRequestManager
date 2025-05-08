@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,38 +12,6 @@ using Zenject;
 
 namespace DumbRequestManager.Utils;
 
-/*
-[JsonObject(MemberSerialization.OptIn)]
-internal readonly struct BeatLeaderStarsObject
-{
-    [JsonProperty("stars")]
-    public readonly float Stars;
-
-    [JsonProperty("rankedTime")]
-    public readonly int RankedTime;
-    
-    [JsonProperty("difficultyName")]
-    public readonly string RawDifficultyName;
-    
-    [JsonProperty("modeName")]
-    public readonly string RawCharacteristicName;
-    
-    public string DifficultyName => Normalize.GetDifficultyName(RawDifficultyName);
-    public string CharacteristicName => Normalize.GetCharacteristicName(RawCharacteristicName);
-    public bool IsRanked => RankedTime != 0;
-}
-
-internal struct BeatLeaderObject
-{
-    [JsonProperty("difficulties")]
-    public readonly BeatLeaderStarsObject[] Difficulties = [];
-
-    public BeatLeaderObject(string jsonData)
-    {
-        JsonConvert.DeserializeObject<BeatLeaderObject>(data)
-    }
-}
-*/
 [SuppressMessage("ReSharper", "RedundantDefaultMemberInitializer")]
 public class BeatLeaderDifficulty
 { 
@@ -68,13 +37,15 @@ public class BeatLeaderObject
 [UsedImplicitly]
 internal class BeatLeaderUtils(IHttpService httpService) : IInitializable
 {
+    private static readonly string CachePathRoot = Path.Combine(Plugin.UserDataDir, "Cache");
+    private static readonly string CachePath = Path.Combine(CachePathRoot, "BeatLeader");
     private const string BeatLeaderAPI = "https://api.beatleader.com/map/hash/{0}";
-    internal static BeatLeaderUtils Instance = null!;
+    private static BeatLeaderUtils _instance = null!;
     private IHttpService HttpService => httpService;
     
     public void Initialize()
     {
-        Instance = this;
+        _instance = this;
         
         MethodInfo? timeoutMethod = httpService.GetType().GetMethod("set_Timeout");
         
@@ -89,14 +60,50 @@ internal class BeatLeaderUtils(IHttpService httpService) : IInitializable
         }
     }
 
-    public async Task<List<BeatLeaderDifficulty>?> GetStarValueForHash(string hash, CancellationToken token = default)
+    public static async Task<List<BeatLeaderDifficulty>?> GetStarValueForHash(string hash, CancellationToken token = default)
     {
+        if (!Directory.Exists(CachePathRoot))
+        {
+            Directory.CreateDirectory(CachePathRoot);
+        }
+        if (!Directory.Exists(CachePath))
+        {
+            Directory.CreateDirectory(CachePath);
+        }
+
+        string filename = Path.Combine(CachePath, $"{hash}.json");
+
+        if (File.Exists(filename))
+        {
+            Plugin.DebugMessage("[BeatLeaderUtils] Trying cached data first...");
+            
+            bool failed = false;
+            BeatLeaderObject? cachedBeatLeaderObject = null;
+            try
+            {
+                // ReSharper disable once MethodHasAsyncOverloadWithCancellation (synchronous is fine)
+                cachedBeatLeaderObject = JsonConvert.DeserializeObject<BeatLeaderObject>(File.ReadAllText(Path.Combine(CachePath, $"{hash}.json")));
+            }
+            catch (Exception exception)
+            {
+                Plugin.Log.Warn($"[BeatLeaderUtils] Failed to parse cached BeatLeader data: {exception}");
+                Plugin.Log.Warn("[BeatLeaderUtils] Refreshing...");
+                failed = true;
+            }
+
+            if (!failed)
+            {
+                return cachedBeatLeaderObject?.Difficulties;
+            }
+        }
+        
         // guh
-        IHttpResponse response = await Instance.HttpService.GetAsync(string.Format(BeatLeaderAPI, hash));
+        IHttpResponse response = await _instance.HttpService.GetAsync(string.Format(BeatLeaderAPI, hash));
         token.ThrowIfCancellationRequested();
         
         if (!response.Successful)
         {
+            Plugin.Log.Warn($"[BeatLeaderUtils] Failed to parse cached BeatLeader data, HTTP {response.Code}");
             return [];
         }
         
@@ -114,6 +121,8 @@ internal class BeatLeaderUtils(IHttpService httpService) : IInitializable
         {
             Plugin.Log.Warn($"[BeatLeaderUtils] Failed to parse BeatLeader data: {exception}");
         }
+
+        await File.WriteAllTextAsync(filename, data, token);
         
         return beatLeaderObject?.Difficulties;
     }

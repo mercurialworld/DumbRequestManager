@@ -623,7 +623,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             _starEstimateCancellationToken = new CancellationTokenSource();
             
             Plugin.DebugMessage("(downloading BeatLeader data)");
-            _starsList = await BeatLeaderUtils.Instance.GetStarValueForHash(queuedSong.Hash, _starEstimateCancellationToken.Token);
+            _starsList = await BeatLeaderUtils.GetStarValueForHash(queuedSong.Hash, _starEstimateCancellationToken.Token);
 
             UpdateStarDisplay();
         });
