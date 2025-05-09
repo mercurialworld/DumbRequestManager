@@ -403,7 +403,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         NoncontextualizedSong queuedSong = Queue[_queueTableComponent.TableView._selectedCellIdxs.First()];
         if (queuedSong.IsWip)
         {
-            _detailsEstimatedStars.text = "<color=#FFCC55>\u2605 <color=#FFFFFF>-";
+            _detailsEstimatedStars.text = "<size=95%><color=#FFCC55>\u2605</size> <color=#FFFFFF>-";
         }
         else
         {
@@ -416,7 +416,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         if (_starsList == null)
         {
             Plugin.DebugMessage("_starsList is null");
-            _detailsEstimatedStars.text = "<color=#FFCC55>\u2605 <color=#FFFFFF>-";
+            _detailsEstimatedStars.text = "<size=95%><color=#FFCC55>\u2605</size> <color=#FFFFFF>-";
             return;
         }
         
@@ -427,7 +427,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             _characteristicChoices[_selectCharacteristicComponent.TableView._selectedCellIdxs.First()].Name &&
             x.DifficultyName == diffName);
                 
-        _detailsEstimatedStars.text = $"<color=#FFCC55>\u2605 <color=#FFFFFF>{starsObject.Stars:0.00}";
+        _detailsEstimatedStars.text = $"<size=95%><color=#FFCC55>\u2605</size> <color=#FFFFFF>{starsObject.Stars:0.00}";
     }
 
     private static void SetHighlightedCellsForUser(int ignoreIndex, NoncontextualizedSong queuedSong)
