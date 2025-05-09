@@ -7,7 +7,7 @@ function _scriptManifest() {
         description: "Button events for the DumbRequestManager Beat Saber mod",
         author: "TheBlackParrot",
         website: "https://github.com/TheBlackParrot/DumbRequestManager",
-        version: "0.0.3",
+        version: "0.0.4",
         firebotVersion: "5",
         startupOnly: true
     }
@@ -86,6 +86,11 @@ module.exports = {
                     id: `connection-closed`,
                     name: "Connection Closed",
                     description: "When the connection to DRM closes"
+                },
+                {
+                    id: `queue-cleared`,
+                    name: "Queue Cleared",
+                    description: "When the queue is cleared"
                 }
             ]
         });
@@ -198,6 +203,10 @@ module.exports = {
                     case "queueOpen":
                         isBSDRMQueueOpen = event.Data ?? false;
                         eventManager.triggerEvent(SOURCE_ID, "queue-gate-changed");
+                        break;
+                        
+                    case "queueCleared":
+                        eventManager.triggerEvent(SOURCE_ID, "queue-cleared");
                         break;
                 }
             });

@@ -10,11 +10,11 @@ using Zenject;
 namespace DumbRequestManager.Services;
 
 [JsonObject(MemberSerialization.OptIn)]
-internal class Message(string eventType, object obj)
+internal class Message(string eventType, object? obj = null)
 {
     [JsonProperty] private long Timestamp => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
     [JsonProperty] private string EventType => eventType;
-    [JsonProperty] private object Data => obj;
+    [JsonProperty] private object? Data => obj;
 }
 
 [UsedImplicitly]
@@ -24,7 +24,7 @@ internal class SocketApi : IInitializable, IDisposable
     private static WebSocketServer? _webSocketServer;
     private static WebSocketServiceHost? _webSocketServiceHost;
 
-    public static void Broadcast(string eventType, object obj)
+    public static void Broadcast(string eventType, object? obj = null)
     {
         _webSocketServiceHost?.Sessions.Broadcast(JsonConvert.SerializeObject(new Message(eventType, obj)));
     }

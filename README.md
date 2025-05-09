@@ -61,14 +61,15 @@ By default, a WebSocket server is started on `http://localhost:13338`, acting as
 ## Events
 You can use these events in any way you would like to -- the intentions here are listed to explain the intended use of pressing the corresponding in-game button. 
 
-| Event         | Intention                                                        |
-|---------------|------------------------------------------------------------------|
-| `pressedBan`  | Banning/blacklisting a requested map                             |
-| `pressedLink` | Sending a direct link to a requested map                         |
-| `pressedPlay` | Playing a requested map                                          |
-| `pressedPoke` | Mentioning/poking/grabbing attention of the next person in queue |
-| `pressedSkip` | Skipping a requested map                                         |
-| `queueOpen`   | Closing or opening the queue                                     |
+| Event          | Intention                                                        |
+|----------------|------------------------------------------------------------------|
+| `pressedBan`   | Banning/blacklisting a requested map                             |
+| `pressedLink`  | Sending a direct link to a requested map                         |
+| `pressedPlay`  | Playing a requested map                                          |
+| `pressedPoke`  | Mentioning/poking/grabbing attention of the next person in queue |
+| `pressedSkip`  | Skipping a requested map                                         |
+| `queueCleared` | Clearing the queue                                               |
+| `queueOpen`    | Closing or opening the queue                                     |
 
 All `pressed` events follow the same data structure:
 ```json

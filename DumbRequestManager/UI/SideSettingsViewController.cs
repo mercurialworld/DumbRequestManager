@@ -83,6 +83,9 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
         ChatRequestButton.Instance.UseAttentiveButton(false);
         
         confirmClearModal.Hide(true);
+        
+        SocketApi.Broadcast("clearQueue");
+        _ = HookApi.TriggerHook("clearQueue");
     }
     
     [UIAction("showClearModal")]
