@@ -84,6 +84,8 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
         
         confirmClearModal.Hide(true);
         
+        QueueViewController.Instance.ToggleSelectionPanel(false);
+        
         SocketApi.Broadcast("clearQueue");
         _ = HookApi.TriggerHook("clearQueue");
     }

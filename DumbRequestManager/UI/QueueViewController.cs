@@ -321,7 +321,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     // ...erm BeatSaverSharp doesn't, either. wuh oh
     //private void SetMapModsVivifyTag(bool hasVivify) => _tagsVivifyTag.gameObject.SetActive(hasVivify);
 
-    private void ToggleSelectionPanel(bool value)
+    internal void ToggleSelectionPanel(bool value)
     {
         _somethingSelectedPanel.gameObject.SetActive(value);
         _somethingSelectedFarPanel.gameObject.SetActive(value);
