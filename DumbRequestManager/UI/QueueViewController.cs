@@ -616,7 +616,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         {
             if (queuedSong.IsWip)
             {
-                _detailsEstimatedStars.text = "<color=#FFCC55>\u2605 <color=#FFFFFF>-";
+                _detailsEstimatedStars.text = "<size=95%><color=#FFCC55>\u2605</size> <color=#FFFFFF>-";
                 return;
             }
             

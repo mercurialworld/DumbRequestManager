@@ -189,6 +189,7 @@
                             preferred-width="58" horizontal-fit="PreferredSize"
                             pad-left="4" pad-right="4">
                     <horizontal preferred-width="19" horizontal-fit="PreferredSize"
+                                preferred-height="4" vertical-fit="PreferredSize"
                                 child-align="MiddleLeft" child-expand-width="false">
                         <horizontal child-expand-width="false">
                             <image src="#NPSIcon" image-color="#CBADFF" preserve-aspect="true"
@@ -201,6 +202,7 @@
                         </horizontal>
                     </horizontal>
                     <horizontal preferred-width="20" horizontal-fit="PreferredSize"
+                                preferred-height="4" vertical-fit="PreferredSize"
                                 child-align="MiddleCenter" child-expand-width="false">
                         <horizontal child-expand-width="true">
                             <text id="detailsEstimatedStars" name="DRM_DetailsEstimatedStars" text="-"
@@ -210,6 +212,7 @@
                         </horizontal>
                     </horizontal>
                     <horizontal preferred-width="19" horizontal-fit="PreferredSize"
+                                preferred-height="4" vertical-fit="PreferredSize"
                                 child-align="MiddleRight" child-expand-width="false">
                         <horizontal child-expand-width="true">
                             <text id="detailsNoteJumpSpeed" name="DRM_DetailsNoteJumpSpeed" text="-"
