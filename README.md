@@ -19,6 +19,7 @@ Currently only tested on Beat Saber versions 1.39.1 or newer. Versions of the mo
 - BeatSaberMarkupLanguage
 - BeatSaberPlaylistsLib
 - BeatSaverSharp
+- BeatSaverVoting
 - SiraUtil
 - SongCore
 - SongDetailsCache
@@ -149,6 +150,7 @@ All `pressed` events follow the same data structure:
   "BeatLeaderRanked": true,
   "Curated": true,
   "Playlists": [<string (playlist title)>, ...],
+  "VoteStatus": <int (0 = no vote, 1 = upvote, 2 = downvote)>
   "UsesChroma": false,
   "UsesCinema": false,
   "UsesMappingExtensions": false,
