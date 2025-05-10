@@ -13,6 +13,7 @@
     <SongDetailsVersion>1.4.0</SongDetailsVersion>
     <BeatSaverSharpVersion>3.4.5</BeatSaverSharpVersion>
     <BeatSaberPlaylistsLibVersion>1.7.2</BeatSaberPlaylistsLibVersion>
+    <BeatSaverVotingVersion>2.4.6</BeatSaverVotingVersion>
 
     <BSMLFolder>LATEST</BSMLFolder>
   </PropertyGroup>
@@ -22,7 +23,7 @@
     <PluginId>DumbRequestManager</PluginId>
     <PluginName>DumbRequestManager</PluginName>
     <Authors>TheBlackParrot</Authors>
-    <Version>0.2.2+$(GameVersion)</Version>
+    <Version>0.2.3+$(GameVersion)</Version>
     <Description>Beat Saber map request manager that abstracts various functions for use in external applications</Description>
     <ProjectSource>https://github.com/TheBlackParrot/DumbRequestManager</ProjectSource>
     <ProjectHome>https://github.com/TheBlackParrot/DumbRequestManager</ProjectHome>
@@ -38,6 +39,7 @@
     <DependsOn Include="SongDetailsCache" Version="^$(SongDetailsVersion)"/>
     <DependsOn Include="BeatSaverSharp" Version="^$(BeatSaverSharpVersion)"/>
     <DependsOn Include="BeatSaberPlaylistsLib" Version="^$(BeatSaberPlaylistsLibVersion)"/>
+    <DependsOn Include="BeatSaverVoting" Version="^$(BeatSaverVotingVersion)"/>
   </ItemGroup>
   
   <PropertyGroup>
