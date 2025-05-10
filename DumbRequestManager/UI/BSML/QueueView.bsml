@@ -3,13 +3,22 @@
     <horizontal preferred-height="80" vertical-fit="PreferredSize" spacing="1">
         <vertical preferred-width="70" horizontal-fit="PreferredSize" child-expand-width="true"
                   bg="round-rect-panel" bg-color="white">
-            <vertical preferred-height="76" vertical-fit="PreferredSize" 
+            <vertical preferred-height="6" vertical-fit="PreferredSize" pad-top="1"
                       preferred-width="66" horizontal-fit="PreferredSize"
-                      child-expand-width="false" child-control-width="true" child-align="MiddleLeft">
+                      child-expand-width="true" child-control-width="true" child-align="LowerCenter">
+                <tab-selector id="DRMTableSelector" name="DRM_TableSelector"
+                              tab-tag="DRMTables" select-cell="changedTableView">
+                    <tab tags="DRMTables" tab-name="Queue"/>
+                    <tab tags="DRMTables" tab-name="History"/>
+                </tab-selector>
+            </vertical>
+            <vertical preferred-height="67" vertical-fit="PreferredSize" 
+                      preferred-width="66" horizontal-fit="PreferredSize"
+                      child-expand-width="false" child-control-width="true" child-align="UpperLeft">
                 <vertical background="round-rect-panel" bg-color="#000000C0"
                           ignore-layout="true"
                           horizontal-fit="PreferredSize" preferred-width="5"
-                          vertical-fit="PreferredSize" preferred-height="74"
+                          vertical-fit="PreferredSize" preferred-height="65"
                           anchor-min-x="0.94" anchor-max-x="1"
                           anchor-min-y="0" anchor-max-y="1"/>
                 <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" align-to-center="false" list-width="60"

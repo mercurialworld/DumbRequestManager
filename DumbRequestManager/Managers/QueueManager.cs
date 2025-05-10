@@ -24,7 +24,9 @@ public readonly struct PersistentQueueEntry(string key, string? user, bool isWip
 public static class QueueManager
 {
     private static readonly string PersistentQueueFilename = Path.Combine(Plugin.UserDataDir, "queue.json");
+    
     public static readonly List<NoncontextualizedSong> QueuedSongs = [];
+    public static readonly List<NoncontextualizedSong> MapsActedOn = [];
 
     public static async Task<NoncontextualizedSong?> AddKey(string key, string? user = null, bool skipPersistence = false, bool prepend = false)
     {

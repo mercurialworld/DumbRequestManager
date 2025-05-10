@@ -58,6 +58,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     
     [UIValue("queue")]
     private static List<NoncontextualizedSong> Queue => QueueManager.QueuedSongs;
+    private static List<NoncontextualizedSong> MapsActedOn => QueueManager.MapsActedOn;
     
     // ReSharper disable FieldCanBeMadeReadOnly.Local
     [UIComponent("nothingSelectedPanel")]
@@ -143,6 +144,9 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UIComponent("banConfirmationText")]
     public TextMeshProUGUI banConfirmationText = null!;
     
+    [UIComponent("tableSelector")]
+    private static TabSelector _tableSelector = null!;
+    
     private static readonly Sprite BorderSprite = Resources.FindObjectsOfTypeAll<Sprite>().First(x => x.name == "RoundRect10Border");
 
     [Inject]
@@ -177,6 +181,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             _detailsNps = GameObject.Find("DRM_DetailsNotesPerSecond").GetComponent<TextMeshProUGUI>();
             _detailsNjs = GameObject.Find("DRM_DetailsNoteJumpSpeed").GetComponent<TextMeshProUGUI>();
             _detailsEstimatedStars = GameObject.Find("DRM_DetailsEstimatedStars").GetComponent<TextMeshProUGUI>();
+            _tableSelector = GameObject.Find("DRM_TableSelector").GetComponent<TabSelector>();
         }
 
         if (firstActivation)
@@ -218,12 +223,30 @@ internal class QueueViewController : BSMLAutomaticViewController
         }
         else
         {
-            _queueTableComponent.TableView.ClearSelection();
+            _tableSelector.TextSegmentedControl.SelectCellWithNumber(0);
+            ChangedTableView(_tableSelector.TextSegmentedControl, 0);
         }
         
         ToggleSelectionPanel(false);
 
         _queueTableComponent.TableView.ReloadDataKeepingPosition();
+    }
+    
+    [UIAction("changedTableView")]
+    private static void ChangedTableView(TextSegmentedControl _, int index)
+    {
+        Plugin.DebugMessage($"ChangedTableView: {index}");
+        
+        _queueTableComponent.TableView.ClearSelection();
+        Instance.ToggleSelectionPanel(false);
+
+        UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+        {
+            _queueTableComponent.Data = index == 0 ? Queue : MapsActedOn;
+            _queueTableComponent.TableView.ReloadData();
+        });
+        
+        YeetTableCells(_queueTableComponent.TableView);
     }
 
     [UIAction("showBanModal")]
@@ -814,6 +837,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
         
+        MapsActedOn.Insert(0, queuedSong);
+        
         SocketApi.Broadcast("pressedSkip", queuedSong);
         await HookApi.TriggerHook("pressedSkip", queuedSong);
     }
@@ -993,6 +1018,8 @@ internal class QueueViewController : BSMLAutomaticViewController
             _queueTableComponent.TableView.ClearSelection();
             _queueTableComponent.TableView.ReloadData();
         });
+        
+        MapsActedOn.Insert(0, queuedSong);
         
         ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
         
