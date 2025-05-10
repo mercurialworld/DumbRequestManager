@@ -405,20 +405,13 @@ public class NoncontextualizedSong
                 continue;
             }
             
-            string[] requirements = diffData.additionalDifficultyData._requirements;
-            string[] suggestions = diffData.additionalDifficultyData._suggestions;
+            string[] mods = diffData.additionalDifficultyData._requirements.Concat(diffData.additionalDifficultyData._suggestions).ToArray();
             
-            // this is so ugly and i hate it
-            if (requirements.Any(x => x == "Chroma")) { UsesChroma = true; }
-            if (suggestions.Any(x => x == "Chroma")) { UsesChroma = true; }
-            if (requirements.Any(x => x == "Cinema")) { UsesCinema = true; }
-            if (suggestions.Any(x => x == "Cinema")) { UsesCinema = true; }
-            if (requirements.Any(x => x == "Noodle Extensions")) { UsesNoodleExtensions = true; }
-            if (suggestions.Any(x => x == "Noodle Extensions")) { UsesNoodleExtensions = true; }
-            if (requirements.Any(x => x == "Mapping Extensions")) { UsesMappingExtensions = true; }
-            if (suggestions.Any(x => x == "Mapping Extensions")) { UsesMappingExtensions = true; }
-            if (requirements.Any(x => x == "Vivify")) { UsesVivify = true; }
-            if (suggestions.Any(x => x == "Vivify")) { UsesVivify = true; }
+            if (mods.Any(x => x == "Chroma")) { UsesChroma = true; }
+            if (mods.Any(x => x == "Cinema")) { UsesCinema = true; }
+            if (mods.Any(x => x == "Noodle Extensions")) { UsesNoodleExtensions = true; }
+            if (mods.Any(x => x == "Mapping Extensions")) { UsesMappingExtensions = true; }
+            if (mods.Any(x => x == "Vivify")) { UsesVivify = true; }
         }
 
         Song? cachedDetails = SongDetailsManager.GetByMapHash(Hash); // some stuff just isn't available base game
