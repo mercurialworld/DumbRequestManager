@@ -3,7 +3,7 @@
     <horizontal preferred-height="80" vertical-fit="PreferredSize" spacing="1">
         <vertical preferred-width="70" horizontal-fit="PreferredSize" child-expand-width="true"
                   bg="round-rect-panel" bg-color="white">
-            <vertical preferred-height="6" vertical-fit="PreferredSize" pad-top="1"
+            <vertical preferred-height="7" vertical-fit="PreferredSize" pad-top="1"
                       preferred-width="66" horizontal-fit="PreferredSize"
                       child-expand-width="true" child-control-width="true" child-align="LowerCenter">
                 <tab-selector id="DRMTableSelector" name="DRM_TableSelector"
@@ -12,15 +12,15 @@
                     <tab tags="DRMTables" tab-name="History"/>
                 </tab-selector>
             </vertical>
-            <vertical preferred-height="67" vertical-fit="PreferredSize" 
+            <vertical preferred-height="67" vertical-fit="PreferredSize" pad-bottom="1"
                       preferred-width="66" horizontal-fit="PreferredSize"
                       child-expand-width="false" child-control-width="true" child-align="UpperLeft">
                 <vertical background="round-rect-panel" bg-color="#000000C0"
                           ignore-layout="true"
                           horizontal-fit="PreferredSize" preferred-width="5"
-                          vertical-fit="PreferredSize" preferred-height="65"
+                          vertical-fit="PreferredSize" preferred-height="64"
                           anchor-min-x="0.94" anchor-max-x="1"
-                          anchor-min-y="0" anchor-max-y="1"/>
+                          anchor-min-y="0.01" anchor-max-y="1"/>
                 <custom-list clickable-cells="true" list-direction="Vertical" contents="queue" align-to-center="false" list-width="60"
                              id="queueTableComponent" name="QueueTableComponent"
                              show-scrollbar="true" select-cell="selectCell">
@@ -362,7 +362,11 @@
             </vertical>
             
             <vertical preferred-height="16" vertical-fit="PreferredSize" child-expand-width="true">
-                <button text="Skip" on-click="skipButtonPressed"
+                <button text="Skip" id="skipButton" name="DRM_SkipButton" 
+                        on-click="skipButtonPressed"
+                        horizontal-fit="PreferredSize" preferred-width="16"/>
+                <button text="Re-Add" id="reAddButton" name="DRM_ReAddButton"
+                        on-click="reAddButtonPressed"
                         horizontal-fit="PreferredSize" preferred-width="16"/>
                 <primary-button text="Play" on-click="playButtonPressed"
                                 horizontal-fit="PreferredSize" preferred-width="16"/>

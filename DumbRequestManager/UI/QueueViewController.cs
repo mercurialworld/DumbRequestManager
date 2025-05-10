@@ -147,6 +147,14 @@ internal class QueueViewController : BSMLAutomaticViewController
     [UIComponent("tableSelector")]
     private static TabSelector _tableSelector = null!;
     
+    [UIComponent("skipButton")]
+    private static NoTransitionsButton _skipButton = null!;
+    [UIComponent("reAddButton")]
+    private static NoTransitionsButton _reAddButton = null!;
+
+    private static int _activeTableTab;
+    private static List<NoncontextualizedSong> ActiveList => _activeTableTab == 0 ? Queue : MapsActedOn;
+
     private static readonly Sprite BorderSprite = Resources.FindObjectsOfTypeAll<Sprite>().First(x => x.name == "RoundRect10Border");
 
     [Inject]
@@ -182,6 +190,8 @@ internal class QueueViewController : BSMLAutomaticViewController
             _detailsNjs = GameObject.Find("DRM_DetailsNoteJumpSpeed").GetComponent<TextMeshProUGUI>();
             _detailsEstimatedStars = GameObject.Find("DRM_DetailsEstimatedStars").GetComponent<TextMeshProUGUI>();
             _tableSelector = GameObject.Find("DRM_TableSelector").GetComponent<TabSelector>();
+            _skipButton = GameObject.Find("DRM_SkipButton").GetComponent<NoTransitionsButton>();
+            _reAddButton = GameObject.Find("DRM_ReAddButton").GetComponent<NoTransitionsButton>();
         }
 
         if (firstActivation)
@@ -220,6 +230,8 @@ internal class QueueViewController : BSMLAutomaticViewController
             };
 
             _detailsEstimatedStars.text = "<color=#FFCC55>\u2605 <color=#FFFFFF>-";
+            
+            _reAddButton.gameObject.SetActive(false);
         }
         else
         {
@@ -237,12 +249,17 @@ internal class QueueViewController : BSMLAutomaticViewController
     {
         Plugin.DebugMessage($"ChangedTableView: {index}");
         
+        _skipButton.gameObject.SetActive(index == 0);
+        _reAddButton.gameObject.SetActive(index == 1);
+
+        _activeTableTab = index;
+        
         _queueTableComponent.TableView.ClearSelection();
         Instance.ToggleSelectionPanel(false);
 
         UnityMainThreadTaskScheduler.Factory.StartNew(() =>
         {
-            _queueTableComponent.Data = index == 0 ? Queue : MapsActedOn;
+            _queueTableComponent.Data = ActiveList;
             _queueTableComponent.TableView.ReloadData();
         });
         
@@ -254,7 +271,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     private void ShowBanModal()
     {
         int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
-        NoncontextualizedSong queuedSong = Queue[idx];
+        NoncontextualizedSong queuedSong = ActiveList[idx];
 
         banConfirmationText.lineSpacing = -17;
         banConfirmationText.text = $"Are you sure you want to ban map <b>{queuedSong.BsrKey}</b>?";
@@ -267,10 +284,13 @@ internal class QueueViewController : BSMLAutomaticViewController
     private async Task BanSelectedMap()
     {
         int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
-        NoncontextualizedSong queuedSong = Queue[idx];
-        
-        _ = SkipButtonPressed(); // waiting on this doesn't matter
-        
+        NoncontextualizedSong queuedSong = ActiveList[idx];
+
+        if (_activeTableTab == 0)
+        {
+            _ = SkipButtonPressed(); // waiting on this doesn't matter
+        }
+
         SocketApi.Broadcast("pressedBan", queuedSong);
         await HookApi.TriggerHook("pressedBan", queuedSong);
         
@@ -289,7 +309,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     private async Task LinkSelectedMap()
     {
         int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
-        NoncontextualizedSong queuedSong = Queue[idx];
+        NoncontextualizedSong queuedSong = ActiveList[idx];
         
         SocketApi.Broadcast("pressedLink", queuedSong);
         await HookApi.TriggerHook("pressedLink", queuedSong);
@@ -300,7 +320,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     private async Task PokeNextPerson()
     {
         int idx = _queueTableComponent.TableView._selectedCellIdxs.First();
-        NoncontextualizedSong queuedSong = Queue[idx];
+        NoncontextualizedSong queuedSong = ActiveList[idx];
         
         SocketApi.Broadcast("pressedPoke", queuedSong);
         await HookApi.TriggerHook("pressedPoke", queuedSong);
@@ -423,7 +443,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         _detailsNjs.SetText($"{difficulty.NoteJumpSpeed:0.##} <size=80%><alpha=#AA>NJS");
         _detailsNps.SetText($"{difficulty.NotesPerSecond:0.00} <size=80%><alpha=#AA>NPS");
 
-        NoncontextualizedSong queuedSong = Queue[_queueTableComponent.TableView._selectedCellIdxs.First()];
+        NoncontextualizedSong queuedSong = ActiveList[_queueTableComponent.TableView._selectedCellIdxs.First()];
         if (queuedSong.IsWip)
         {
             _detailsEstimatedStars.text = "<size=95%><color=#FFCC55>\u2605</size> <color=#FFFFFF>-";
@@ -457,14 +477,20 @@ internal class QueueViewController : BSMLAutomaticViewController
     {
         TableView tableView = _queueTableComponent.TableView;
         
-        for (int idx = 0; idx < Queue.Count; idx++)
+        for (int idx = 0; idx < ActiveList.Count; idx++)
         {
-            Transform cellTransform = tableView.GetCellAtIndex(idx).transform.FindChildRecursively("CellHighlightBG");
+            TableCell? tableCell = tableView.GetCellAtIndex(idx);
+            Transform? cellTransform = tableCell?.transform.FindChildRecursively("CellHighlightBG");
+
+            if (cellTransform == null)
+            {
+                continue;
+            }
             
             cellTransform.GetComponent<ImageView>().sprite = BorderSprite;
             cellTransform.GetComponent<ImageView>().overrideSprite = BorderSprite;
             
-            cellTransform.gameObject.SetActive(queuedSong.User == Queue[idx].User && ignoreIndex != idx);
+            cellTransform.gameObject.SetActive(queuedSong.User == ActiveList[idx].User && ignoreIndex != idx);
         }
     }
 
@@ -472,10 +498,11 @@ internal class QueueViewController : BSMLAutomaticViewController
     {
         TableView tableView = _queueTableComponent.TableView;
         
-        for (int idx = 0; idx < Queue.Count; idx++)
+        for (int idx = 0; idx < ActiveList.Count; idx++)
         {
-            Transform cellTransform = tableView.GetCellAtIndex(idx).transform.FindChildRecursively("CellHighlightBG");
-            cellTransform.gameObject.SetActive(false);
+            TableCell? tableCell = tableView.GetCellAtIndex(idx);
+            Transform? cellTransform = tableCell?.transform.FindChildRecursively("CellHighlightBG");
+            cellTransform?.gameObject.SetActive(false);
         }
     }
 
@@ -842,6 +869,35 @@ internal class QueueViewController : BSMLAutomaticViewController
         SocketApi.Broadcast("pressedSkip", queuedSong);
         await HookApi.TriggerHook("pressedSkip", queuedSong);
     }
+    
+    [UIAction("reAddButtonPressed")]
+    [UsedImplicitly]
+    private void ReAddButtonPressed()
+    {
+        int index = _queueTableComponent.TableView._selectedCellIdxs.First();
+        if (index == -1)
+        {
+            Plugin.DebugMessage("Nothing selected");
+            return;
+        }
+        
+        Plugin.DebugMessage($"Selected cell: {index}");
+        
+        NoncontextualizedSong selectedMap = MapsActedOn[index];
+        MapsActedOn.RemoveAt(index);
+        Queue.Insert(0, selectedMap);
+        
+#if !DEBUG
+        QueueManager.Save();
+#endif
+        
+        _queueTableComponent.TableView.ClearSelection();
+        _queueTableComponent.TableView.ReloadData();
+        
+        ToggleSelectionPanel(false);
+        
+        ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
+    }
 
     private class DownloadSongHandler(string bsrKey, Beatmap? beatmap, NoncontextualizedSong queuedSong)
     {
@@ -957,7 +1013,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         WaitModal.Show(false);
         
         Plugin.DebugMessage($"Selected cell: {index}");
-        NoncontextualizedSong queuedSong = Queue[index];
+        NoncontextualizedSong queuedSong = ActiveList[index];
         
         Plugin.DebugMessage($"Selected song: {queuedSong.Artist} - {queuedSong.Title} [{queuedSong.Mapper}]");
 
@@ -1012,17 +1068,20 @@ internal class QueueViewController : BSMLAutomaticViewController
             OkGoBack(queuedSong);
         }
 
-        await UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+        if (_activeTableTab == 0)
         {
-            Queue.RemoveAt(index);
-            _queueTableComponent.TableView.ClearSelection();
-            _queueTableComponent.TableView.ReloadData();
-        });
-        
-        MapsActedOn.Insert(0, queuedSong);
-        
-        ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
-        
+            await UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+            {
+                Queue.RemoveAt(index);
+                _queueTableComponent.TableView.ClearSelection();
+                _queueTableComponent.TableView.ReloadData();
+            });
+
+            MapsActedOn.Insert(0, queuedSong);
+
+            ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
+        }
+
         // persistence saving is taken care of in the downloader
         // i don't want it triggering unless everything goes to plan
         
