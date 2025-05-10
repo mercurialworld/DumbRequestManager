@@ -37,7 +37,8 @@
                     <background tags="hovered" background="title-gradient" bg-color="#FFFFFF40"
                                 anchor-min-x="0.01" anchor-max-x="0.99"
                                 anchor-min-y="0.025"/>
-                    <vertical vertical-fit="PreferredSize" preferred-height="11"
+                    <vertical hover-hint="~hoverString"
+                              vertical-fit="PreferredSize" preferred-height="11"
                               horizontal-fit="PreferredSize" preferred-width="50"
                               child-expand-width="true" child-control-width="true"
                               padding="2"

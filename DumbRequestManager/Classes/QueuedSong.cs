@@ -228,6 +228,14 @@ public class NoncontextualizedSong
     
     [JsonProperty] [UIValue("user")]
     public string? User { get; set; }
+    
+    private string HoverStringForMapperDisplay => $"requested by {User}";
+    private string HoverStringForRequesterDisplay => $"mapped by {Mapper}";
+    
+    [UIValue("hoverString")]
+    internal string HoverString => PluginConfig.Instance.ShowRequestersInsteadOfMappers
+        ? HoverStringForRequesterDisplay
+        : HoverStringForMapperDisplay;
 
     [JsonProperty] [UIValue("title")]
     public string Title { get; set; } = string.Empty;
@@ -256,7 +264,9 @@ public class NoncontextualizedSong
     private string SecondaryLineWithRequester => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color=#CBFFAD>{User?.StripTMPTags()}<color=#FFFFFF>]";
     
     [UIValue("displayedSecondaryLine")]
-    public string DisplayedSecondaryLine => PluginConfig.Instance.ShowRequestersInsteadOfMappers ? SecondaryLineWithRequester : SecondaryLineWithMapper;
+    public string DisplayedSecondaryLine => PluginConfig.Instance.ShowRequestersInsteadOfMappers
+        ? SecondaryLineWithRequester
+        : SecondaryLineWithMapper;
 
     [JsonProperty] [UIValue("duration")]
     public uint Duration { get; set; }
