@@ -244,6 +244,36 @@ internal class QueueViewController : BSMLAutomaticViewController
 
         _queueTableComponent.TableView.ReloadDataKeepingPosition();
     }
+
+    internal static void RefreshTableView()
+    {
+        if (_queueTableComponent == null)
+        {
+            return;
+        }
+        if (_queueTableComponent.TableView == null)
+        {
+            return;
+        }
+
+        int index;
+        try
+        {
+            index = _queueTableComponent.TableView._selectedCellIdxs.First();
+        }
+        catch (Exception)
+        {
+            _queueTableComponent.TableView.RefreshCellsContent();
+            YeetTableCells(_queueTableComponent.TableView);
+            return;
+        }
+            
+        NoncontextualizedSong selectedMap = ActiveList[index];
+        _queueTableComponent.TableView.RefreshCellsContent();
+        SetHighlightedCellsForUser(index, selectedMap);
+        
+        YeetTableCells(_queueTableComponent.TableView);
+    }
     
     [UIAction("changedTableView")]
     private static void ChangedTableView(TextSegmentedControl _, int index)
