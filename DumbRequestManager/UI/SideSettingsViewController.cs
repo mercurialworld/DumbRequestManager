@@ -24,7 +24,7 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
         set
         {
             Config.ShowRequestersInsteadOfMappers = value;
-            QueueViewController.Table?.RefreshCellsContent();
+            QueueViewController.RefreshTableView();
         }
     }
     
