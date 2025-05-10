@@ -315,7 +315,7 @@ public class NoncontextualizedSong
         Song song = guh.Value;
         
         BsrKey = song.key;
-        Hash = song.hash;
+        Hash = song.hash.ToLower();
         Title = song.songName;
         CensorTitle = Censor.Check(Title);
         Artist = song.songAuthorName;
@@ -347,7 +347,7 @@ public class NoncontextualizedSong
     public NoncontextualizedSong(Beatmap song, bool skipCoverImage = false)
     {
         BsrKey = song.ID;
-        Hash = song.LatestVersion.Hash;
+        Hash = song.LatestVersion.Hash.ToLower();
         Title = song.Metadata.SongName;
         CensorTitle = Censor.Check(Title);
         SubTitle = song.Metadata.SongSubName;
@@ -380,7 +380,7 @@ public class NoncontextualizedSong
     // Base game + supplemental SDC
     public NoncontextualizedSong(BeatmapLevel level, bool skipCoverImage = false)
     {
-        Hash = level.levelID.Split('_').Last().Split(' ').First();
+        Hash = level.levelID.Split('_').Last().Split(' ').First().ToLower();
         Title = level.songName;
         CensorTitle = Censor.Check(Title);
         SubTitle = level.songSubName;
