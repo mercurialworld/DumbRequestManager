@@ -26,6 +26,8 @@
                   preferred-height="60" vertical-fit="PreferredSize">
             <toggle-setting id="queueOpenToggle" text="Allow requests"
                             value="IsQueueOpen" apply-on-change="true" on-change="setState"/>
+            <toggle-setting id="showRequesterToggle" text="Show requesters instead of mappers"
+                            value="ShowRequestersInsteadOfMappers" apply-on-change="true"/>
         </vertical>
         <vertical child-align="LowerCenter"
                   preferred-height="5" vertical-fit="PreferredSize">

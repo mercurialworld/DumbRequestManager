@@ -26,4 +26,5 @@ internal class PluginConfig
     public virtual bool NeverUseLocalCoverImages { get; set; } = true;
     
     public virtual int MapDownloadTimeout { get; set; } = 300;
+    public virtual bool ShowRequestersInsteadOfMappers { get; set; } = false;
 }

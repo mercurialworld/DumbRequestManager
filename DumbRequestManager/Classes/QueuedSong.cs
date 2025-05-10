@@ -252,8 +252,11 @@ public class NoncontextualizedSong
     [JsonProperty]
     public bool CensorMapper { get; set; }
     
+    private string SecondaryLineWithMapper => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color=#CBADFF>{Mapper.StripTMPTags()}<color=#FFFFFF>]";
+    private string SecondaryLineWithRequester => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color=#CBFFAD>{User?.StripTMPTags()}<color=#FFFFFF>]";
+    
     [UIValue("displayedSecondaryLine")]
-    public string DisplayedSecondaryLine => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color=#CBADFF>{Mapper.StripTMPTags()}<color=#FFFFFF>]";
+    public string DisplayedSecondaryLine => PluginConfig.Instance.ShowRequestersInsteadOfMappers ? SecondaryLineWithRequester : SecondaryLineWithMapper;
 
     [JsonProperty] [UIValue("duration")]
     public uint Duration { get; set; }

@@ -2,6 +2,7 @@
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
+using DumbRequestManager.Configuration;
 using DumbRequestManager.Managers;
 using DumbRequestManager.Services;
 using HMUI;
@@ -15,6 +16,18 @@ namespace DumbRequestManager.UI;
 [HotReload(RelativePathToLayout = "BSML.SideSettings.bsml")]
 internal class SideSettingsViewController : BSMLAutomaticViewController
 {
+    private static PluginConfig Config => PluginConfig.Instance;
+    
+    [UIValue("ShowRequestersInsteadOfMappers")]
+    public bool ShowRequestersInsteadOfMappers {
+        get => Config.ShowRequestersInsteadOfMappers;
+        set
+        {
+            Config.ShowRequestersInsteadOfMappers = value;
+            QueueViewController.Table?.RefreshCellsContent();
+        }
+    }
+    
     [UIValue("IsQueueOpen")]
     public bool IsQueueOpen { get; set; }
     public static SideSettingsViewController Instance { get; private set; } = null!;

@@ -89,6 +89,7 @@ internal class QueueViewController : BSMLAutomaticViewController
     
     [UIComponent("queueTableComponent")]
     private static CustomCellListTableData _queueTableComponent = null!;
+    internal static TableView? Table => _queueTableComponent.TableView;
 
     [UIComponent("waitModal")]
     private ModalView _waitModalActual = null!;
