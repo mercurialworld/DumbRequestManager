@@ -283,6 +283,13 @@ public class NoncontextualizedSong
     [JsonProperty] public bool Curated { get; set; }
 
     [JsonProperty] public string[] Playlists { get; set; } = [];
+
+    [JsonProperty] public int VoteStatus => string.IsNullOrEmpty(Hash) ? 0 : BeatSaverVoting.Plugin.CurrentVoteStatus(Hash) switch
+    {
+        BeatSaverVoting.Plugin.VoteType.Upvote => 1,
+        BeatSaverVoting.Plugin.VoteType.Downvote => 2,
+        _ => 0
+    };
     
     [JsonProperty] public bool UsesChroma { get; set; }
     [JsonProperty] public bool UsesCinema { get; set; }
@@ -296,7 +303,7 @@ public class NoncontextualizedSong
     public byte[]? CoverImage => _coverImageContainer.CoverImage ?? null;
     public Sprite CoverImageSprite => _coverImageContainer.CoverImageSprite;
     // ReSharper restore MemberCanBePrivate.Global
-
+    
     // SongDetailsCache
     public NoncontextualizedSong(Song? guh, bool skipCoverImage = false)
     {
