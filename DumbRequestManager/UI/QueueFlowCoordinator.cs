@@ -11,16 +11,19 @@ internal class QueueFlowCoordinator : FlowCoordinator
     private MainFlowCoordinator _mainFlowCoordinator = null!;
     private QueueViewController _queueViewController = null!;
     private SideSettingsViewController _sideSettingsViewController = null!;
+    private SongPreviewPlayer _songPreviewPlayer = null!;
     
     [Inject]
     [UsedImplicitly]
     private void Construct(MainFlowCoordinator mainFlowCoordinator,
         QueueViewController queueViewController,
-        SideSettingsViewController sideSettingsViewController)
+        SideSettingsViewController sideSettingsViewController,
+        SongPreviewPlayer songPreviewPlayer)
     {
         _mainFlowCoordinator = mainFlowCoordinator;
         _queueViewController = queueViewController;
         _sideSettingsViewController = sideSettingsViewController;
+        _songPreviewPlayer = songPreviewPlayer;
         
         SongCore.Loader.SongsLoadedEvent += EventLoadThing;
     }
@@ -51,6 +54,8 @@ internal class QueueFlowCoordinator : FlowCoordinator
 #if !DEBUG
         QueueManager.Save();
 #endif
+        _songPreviewPlayer.CrossfadeToDefault();
+        
         _mainFlowCoordinator.childFlowCoordinator.DismissFlowCoordinator(this);
     }
 }
