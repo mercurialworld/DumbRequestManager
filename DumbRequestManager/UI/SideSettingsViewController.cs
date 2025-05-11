@@ -99,8 +99,8 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
         
         QueueViewController.Instance.ToggleSelectionPanel(false);
         
-        SocketApi.Broadcast("clearQueue");
-        _ = HookApi.TriggerHook("clearQueue");
+        SocketApi.Broadcast("queueCleared");
+        _ = HookApi.TriggerHook("queueCleared");
     }
     
     [UIAction("showClearModal")]
