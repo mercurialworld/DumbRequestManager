@@ -158,6 +158,9 @@ All `pressed` events follow the same data structure:
   "UsesMappingExtensions": false,
   "UsesNoodleExtensions": false,
   "UsesVivify": false,
+  "DataIsFromLocalMap": <boolean>,
+  "DataIsFromSongDetailsCache": <boolean>,
+  "DataIsFromBeatSaver": <boolean>,
   "Diffs": [
     {
       "Difficulty": "Hard",

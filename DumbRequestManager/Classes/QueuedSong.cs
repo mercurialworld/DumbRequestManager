@@ -309,6 +309,10 @@ public class NoncontextualizedSong
     [JsonProperty] public bool UsesMappingExtensions { get; set; }
     [JsonProperty] public bool UsesNoodleExtensions { get; set; }
     [JsonProperty] public bool UsesVivify { get; set; }
+    
+    [JsonProperty] public bool DataIsFromLocalMap { get; set; }
+    [JsonProperty] public bool DataIsFromSongDetailsCache { get; set; }
+    [JsonProperty] public bool DataIsFromBeatSaver { get; set; }
 
     [JsonProperty] public NoncontextualizedDifficulty[] Diffs { get; set; } = [];
 
@@ -326,6 +330,8 @@ public class NoncontextualizedSong
         }
 
         Song song = guh.Value;
+
+        DataIsFromSongDetailsCache = true;
         
         BsrKey = song.key;
         Hash = song.hash.ToLower();
@@ -359,6 +365,8 @@ public class NoncontextualizedSong
     // BeatSaver
     public NoncontextualizedSong(Beatmap song, bool skipCoverImage = false)
     {
+        DataIsFromBeatSaver = true;
+        
         BsrKey = song.ID;
         Hash = song.LatestVersion.Hash.ToLower();
         Title = song.Metadata.SongName;
@@ -393,6 +401,8 @@ public class NoncontextualizedSong
     // Base game + supplemental SDC
     public NoncontextualizedSong(BeatmapLevel level, bool skipCoverImage = false)
     {
+        DataIsFromLocalMap = true;
+        
         Hash = level.levelID.Split('_').Last().Split(' ').First().ToLower();
         Title = level.songName;
         CensorTitle = Censor.Check(Title);
@@ -428,6 +438,8 @@ public class NoncontextualizedSong
         }
 
         Song? cachedDetails = SongDetailsManager.GetByMapHash(Hash); // some stuff just isn't available base game
+        
+        DataIsFromSongDetailsCache = cachedDetails != null;
 
         BsrKey = cachedDetails?.key ?? string.Empty;
         Votes = [cachedDetails?.upvotes ?? 0, cachedDetails?.downvotes ?? 0];
