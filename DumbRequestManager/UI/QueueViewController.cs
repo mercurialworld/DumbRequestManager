@@ -295,6 +295,9 @@ internal class QueueViewController : BSMLAutomaticViewController
             _queueTableComponent.TableView.ReloadData();
         });
         
+        // wtf
+        Instance._songPreviewPlayer.CrossfadeToDefault();
+        
         YeetTableCells(_queueTableComponent.TableView);
     }
 
@@ -898,6 +901,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         MapsActedOn.Insert(0, queuedSong);
         
+        _songPreviewPlayer.CrossfadeToDefault();
+        
         SocketApi.Broadcast("pressedSkip", queuedSong);
         await HookApi.TriggerHook("pressedSkip", queuedSong);
     }
@@ -927,6 +932,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         _queueTableComponent.TableView.ReloadData();
         
         ToggleSelectionPanel(false);
+        
+        _songPreviewPlayer.CrossfadeToDefault();
         
         SocketApi.Broadcast("mapReAdded", selectedMap);
         _ = HookApi.TriggerHook("mapReAdded", selectedMap);
