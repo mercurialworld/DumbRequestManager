@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
+using DumbRequestManager.Services;
 using DumbRequestManager.UI;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -84,9 +85,14 @@ public static class QueueManager
         QueueViewController.RefreshQueue();
 
         Plugin.Log.Info($"Added map {key}, queue has {QueuedSongs.Count} map(s)");
+        
+        // ReSharper disable once InvertIf
         if (!skipPersistence)
         {
             Save();
+            
+            SocketApi.Broadcast("mapAdded", queuedSong);
+            _ = HookApi.TriggerHook("mapAdded", queuedSong);
         }
 
         return queuedSong;
@@ -116,6 +122,9 @@ public static class QueueManager
         QueueViewController.RefreshQueue();
         
         Plugin.Log.Info($"Added WIP map {key}, queue has {QueuedSongs.Count} map(s)");
+        
+        SocketApi.Broadcast("mapAdded", queuedSong);
+        _ = HookApi.TriggerHook("mapAdded", queuedSong);
         
         return queuedSong;
     }

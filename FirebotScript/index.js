@@ -7,7 +7,7 @@ function _scriptManifest() {
         description: "Button events for the DumbRequestManager Beat Saber mod",
         author: "TheBlackParrot",
         website: "https://github.com/TheBlackParrot/DumbRequestManager",
-        version: "0.0.4",
+        version: "0.0.5",
         firebotVersion: "5",
         startupOnly: true
     }
@@ -91,6 +91,16 @@ module.exports = {
                     id: `queue-cleared`,
                     name: "Queue Cleared",
                     description: "When the queue is cleared"
+                },
+                {
+                    id: `map-added`,
+                    name: "Map Added",
+                    description: "When a map is added to the queue"
+                },
+                {
+                    id: `map-readded`,
+                    name: "Map Re-added",
+                    description: "When a previously actioned map is re-added to the queue"
                 }
             ]
         });
@@ -107,7 +117,9 @@ module.exports = {
                             `${SOURCE_ID}:skip-button-pressed`,
                             `${SOURCE_ID}:ban-button-pressed`,
                             `${SOURCE_ID}:link-button-pressed`,
-                            `${SOURCE_ID}:poke-button-pressed`
+                            `${SOURCE_ID}:poke-button-pressed`,
+                            `${SOURCE_ID}:map-added`,
+                            `${SOURCE_ID}:map-readded`
                         ]
                     },
                     description: "The map information attached to the button press, see https://github.com/TheBlackParrot/DumbRequestManager#map-data for map data keys",
@@ -207,6 +219,14 @@ module.exports = {
                         
                     case "queueCleared":
                         eventManager.triggerEvent(SOURCE_ID, "queue-cleared");
+                        break;
+
+                    case "mapAdded":
+                        eventManager.triggerEvent(SOURCE_ID, "map-added", event.Data);
+                        break;
+
+                    case "mapReAdded":
+                        eventManager.triggerEvent(SOURCE_ID, "map-readded", event.Data);
                         break;
                 }
             });

@@ -64,6 +64,8 @@ You can use these events in any way you would like to -- the intentions here are
 
 | Event          | Intention                                                        |
 |----------------|------------------------------------------------------------------|
+| `mapAdded`     | A map was added to the queue                                     |
+| `mapReAdded`   | A previously actioned map was re-added to the queue              |
 | `pressedBan`   | Banning/blacklisting a requested map                             |
 | `pressedLink`  | Sending a direct link to a requested map                         |
 | `pressedPlay`  | Playing a requested map                                          |
@@ -72,7 +74,7 @@ You can use these events in any way you would like to -- the intentions here are
 | `queueCleared` | Clearing the queue                                               |
 | `queueOpen`    | Closing or opening the queue                                     |
 
-All `pressed` events follow the same data structure:
+All `pressed` events and `map` events follow the same data structure:
 ```json
 {
   "Timestamp": 1745374880148,

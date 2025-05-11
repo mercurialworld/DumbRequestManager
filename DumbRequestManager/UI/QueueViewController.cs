@@ -928,6 +928,9 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         ToggleSelectionPanel(false);
         
+        SocketApi.Broadcast("mapReAdded", selectedMap);
+        _ = HookApi.TriggerHook("mapReAdded", selectedMap);
+        
         ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
     }
 
