@@ -227,6 +227,7 @@ internal class QueueViewController : BSMLAutomaticViewController
 
             _queueTableComponent.TableView.didDeselectCellWithIdxEvent += (_, _) =>
             {
+                _songPreviewPlayer.CrossfadeToDefault();
                 ClearHighlightedCells();
             };
 
