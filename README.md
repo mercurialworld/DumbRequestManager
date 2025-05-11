@@ -131,82 +131,53 @@ All `pressed` events follow the same data structure:
 > > (Also of note, Twitch viewers/users with the Moderator status do not have any AutoMod rulesets applied to them. If your bot is a moderator in your channel, responses will be allowed through verbatim.)
 ```json
 {
-  "BsrKey": "1ad3b",
-  "Hash": "A2EE3D6E6C82B89B10B9395BEBF47CF05F316B10",
+  "BsrKey": <string (BeatSaver map key)>,
+  "Hash": <string (40 character hash)>,
   "User": <string | null>,
-  "Title": "Megalovania",
+  "Title": <string>,
   "CensorTitle": <boolean>,
-  "SubTitle": "",
+  "SubTitle": <string>,
   "CensorSubTitle": <boolean>,
-  "Artist": "Toby Fox",
+  "Artist": <string>,
   "CensorArtist": <boolean>,
-  "Mapper": "Joshabi & Olaf",
+  "Mapper": <string>,
   "CensorMapper": <boolean>,
   "Duration": <int (seconds)>,
   "Votes": [<int (upvotes)>, <int (downvotes)>],
   "Rating": <float (0-1)>,
   "UploadTime": <int (unix timestmap (seconds))>,
   "Cover": <string (image URL, jpg format)>,
-  "Automapped": false,
-  "ScoreSaberRanked": true,
-  "BeatLeaderRanked": true,
-  "Curated": true,
+  "Automapped": <boolean>,
+  "ScoreSaberRanked": <boolean>,
+  "BeatLeaderRanked": <boolean>,
+  "Curated": <boolean>,
   "Playlists": [<string (playlist title)>, ...],
   "VoteStatus": <int (0 = no vote, 1 = upvote, 2 = downvote)>
-  "UsesChroma": false,
-  "UsesCinema": false,
-  "UsesMappingExtensions": false,
-  "UsesNoodleExtensions": false,
-  "UsesVivify": false,
+  "UsesChroma": <boolean>,
+  "UsesCinema": <boolean>,
+  "UsesMappingExtensions": <boolean>,
+  "UsesNoodleExtensions": <boolean>,
+  "UsesVivify": <boolean>,
   "DataIsFromLocalMap": <boolean>,
   "DataIsFromSongDetailsCache": <boolean>,
   "DataIsFromBeatSaver": <boolean>,
   "Diffs": [
     {
-      "Difficulty": "Hard",
-      "Characteristic": "Standard",
-      "NoteJumpSpeed": 17,
-      "NotesPerSecond": 5.929539,
+      "Difficulty": <string (Easy, Normal, Hard, Expert, ExpertPlus)>,
+      "Characteristic": <string>,
+      "NoteJumpSpeed": <float>,
+      "NotesPerSecond": <float>,
       "MapMods": {
-        "Chroma": false,
-        "Cinema": false,
-        "MappingExtensions": false,
-        "NoodleExtensions": false,
-        "Vivify": false
+        "Chroma": <boolean>,
+        "Cinema": <boolean>,
+        "MappingExtensions": <boolean>,
+        "NoodleExtensions": <boolean>,
+        "Vivify": <boolean>
       },
-      "ScoreSaberStars": 5.34,
-      "BeatLeaderStars": 6.8
+      "ScoreSaberStars": <float>,
+      "BeatLeaderStars": <float>
     },
-    {
-      "Difficulty": "Expert",
-      "Characteristic": "Standard",
-      "NoteJumpSpeed": 20,
-      "NotesPerSecond": 7.601626,
-      "MapMods": {
-        "Chroma": false,
-        "Cinema": false,
-        "MappingExtensions": false,
-        "NoodleExtensions": false,
-        "Vivify": false
-      },
-      "ScoreSaberStars": 6.67,
-      "BeatLeaderStars": 8.6
-    },
-    {
-      "Difficulty": "ExpertPlus",
-      "Characteristic": "Standard",
-      "NoteJumpSpeed": 22,
-      "NotesPerSecond": 10.1300812,
-      "MapMods": {
-        "Chroma": false,
-        "Cinema": false,
-        "MappingExtensions": false,
-        "NoodleExtensions": false,
-        "Vivify": false
-      },
-      "ScoreSaberStars": 9.68,
-      "BeatLeaderStars": 10.43
-    }
+    ...
   ]
 }
 ```
@@ -215,7 +186,7 @@ All `pressed` events follow the same data structure:
 ## Queue position data
 ```json
 {
-  "Spot": 1,
+  "Spot": <int>,
   "QueueItem": <map data>
 }
 ```
@@ -233,6 +204,6 @@ All `pressed` events follow the same data structure:
 ## Message
 ```json
 {
-  "message": "Message text"
+  "message": <string>
 }
 ```
