@@ -164,7 +164,7 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
             return;
         }
 
-        string folderName = $"{beatmap.ID} ({beatmap.Metadata.SongName} - {beatmap.Metadata.LevelAuthorName})";
+        string folderName = $"{beatmap.ID} ({beatmap.Metadata.SongName} - {beatmap.Metadata.LevelAuthorName})".StripSomeControlCharacters();
         Plugin.DebugMessage($"[DownloadUtils] Folder name before: {folderName}...");
         Path.GetInvalidFileNameChars().Concat(Path.GetInvalidPathChars()).Aggregate(folderName,
             (current, invalidCharacter) => current.Replace(invalidCharacter.ToString(), string.Empty));

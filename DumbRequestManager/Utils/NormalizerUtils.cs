@@ -1,6 +1,6 @@
 ﻿namespace DumbRequestManager.Utils;
 
-internal abstract class Normalize
+internal static class Normalize
 {
     public static string GetCharacteristicIcon(string characteristic)
     {
@@ -80,6 +80,31 @@ internal abstract class Normalize
             default:
                 return "Expert+";
         }
+    }
+
+    // https://stackoverflow.com/a/62596727
+    public static string StripSomeControlCharacters(this string text)
+    {
+        char[] chars = new char[text.Length];
+        int outputIndex = 0;
+
+        foreach (char character in text)
+        {
+            switch(character)
+            {
+                case '\\':
+                case '\r':
+                case '\n':
+                case '\t':
+                    break;
+
+                default:
+                    chars[outputIndex++] = character;
+                    break;
+            }
+        }
+        
+        return new string(chars, 0, outputIndex);
     }
 }
 
