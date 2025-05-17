@@ -624,43 +624,54 @@ internal class QueueViewController : BSMLAutomaticViewController
         _selectCharacteristicComponent.TableView.ClearSelection();
         _selectDifficultyComponent.TableView.ClearSelection();
         Plugin.DebugMessage("Cleared characteristics/difficulties");
-        
-        List<string> characteristics = [];
-        foreach (NoncontextualizedDifficulty diff in queuedSong.Diffs)
-        {
-            if (characteristics.Contains(diff.Characteristic))
-            {
-                continue;
-            }
-            characteristics.Add(diff.Characteristic);
-        }
-        Plugin.DebugMessage($"Got {characteristics.Count} unique characteristics");
-        _characteristicChoices = characteristics.Select(x => new CharacteristicUICellWrapper(x, Normalize.GetCharacteristicIcon(x))).ToList();
-        Plugin.DebugMessage("Updated characteristic choices");
-        _difficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic == _characteristicChoices[0].Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
-        Plugin.DebugMessage($"Got {_difficultyChoices.Count} unique difficulties");
-        
-        UnityMainThreadTaskScheduler.Factory.StartNew(() =>
-        {
-            _selectCharacteristicComponent.Data = _characteristicChoices;
-            _selectCharacteristicComponent.TableView.ReloadData();
-            _selectCharacteristicComponent.TableView.SelectCellWithIdx(0, true);
-        });
 
-        // this fixes stuff not centering on the first selected map in the session
-        // cursed, i know. this is why it's not aligned to the center in the BSML file
-        if (!_selectCharacteristicComponent.TableView._alignToCenter)
+        if (queuedSong.IsWip)
         {
-            UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
-            {
-                await Task.Delay(1);
-                _selectCharacteristicComponent.TableView._alignToCenter = true;
-                _selectCharacteristicComponent.TableView.RefreshCellsContent();
-            });
+            _selectCharacteristicComponent.gameObject.SetActive(false);
+            _selectDifficultyComponent.gameObject.SetActive(false);
         }
+        else
+        {
+            _selectCharacteristicComponent.gameObject.SetActive(true);
+            _selectDifficultyComponent.gameObject.SetActive(true);
+            
+            List<string> characteristics = [];
+            foreach (NoncontextualizedDifficulty diff in queuedSong.Diffs)
+            {
+                if (characteristics.Contains(diff.Characteristic))
+                {
+                    continue;
+                }
+                characteristics.Add(diff.Characteristic);
+            }
+            Plugin.DebugMessage($"Got {characteristics.Count} unique characteristics");
+            _characteristicChoices = characteristics.Select(x => new CharacteristicUICellWrapper(x, Normalize.GetCharacteristicIcon(x))).ToList();
+            Plugin.DebugMessage("Updated characteristic choices");
+            _difficultyChoices = queuedSong.Diffs.Where(x => x.Characteristic == _characteristicChoices[0].Name).Select(x => new DifficultyUICellWrapper(x)).ToList();
+            Plugin.DebugMessage($"Got {_difficultyChoices.Count} unique difficulties");
         
-        YeetTableCells(_selectCharacteristicComponent.TableView);
-        YeetTableCells(_selectDifficultyComponent.TableView);
+            UnityMainThreadTaskScheduler.Factory.StartNew(() =>
+            {
+                _selectCharacteristicComponent.Data = _characteristicChoices;
+                _selectCharacteristicComponent.TableView.ReloadData();
+                _selectCharacteristicComponent.TableView.SelectCellWithIdx(0, true);
+            });
+
+            // this fixes stuff not centering on the first selected map in the session
+            // cursed, i know. this is why it's not aligned to the center in the BSML file
+            if (!_selectCharacteristicComponent.TableView._alignToCenter)
+            {
+                UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
+                {
+                    await Task.Delay(1);
+                    _selectCharacteristicComponent.TableView._alignToCenter = true;
+                    _selectCharacteristicComponent.TableView.RefreshCellsContent();
+                });
+            }
+        
+            YeetTableCells(_selectCharacteristicComponent.TableView);
+            YeetTableCells(_selectDifficultyComponent.TableView);
+        }
 
         detailsDescriptionScrollView.ScrollTo(0, false);
         detailsDescription.color = StandardColor;
