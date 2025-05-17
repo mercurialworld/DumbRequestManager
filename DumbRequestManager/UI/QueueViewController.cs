@@ -612,10 +612,10 @@ internal class QueueViewController : BSMLAutomaticViewController
         detailsMapper.text = queuedSong.Mapper;
         detailsRequester.text = queuedSong.User ?? "someone";
         
-        detailsBsrKey.text = $"<alpha=#AA>!bsr <alpha=#FF>{queuedSong.BsrKey}";
+        detailsBsrKey.text = $"<alpha=#AA>!{(queuedSong.IsWip ? "wip" : "bsr")} <alpha=#FF>{queuedSong.BsrKey}";
         
         DateTimeOffset uploadOffset = DateTimeOffset.FromUnixTimeSeconds(queuedSong.UploadTime);
-        detailsUploadDate.text = uploadOffset.LocalDateTime.ToString("d MMM yyyy");
+        detailsUploadDate.text = queuedSong.IsWip ? "" : uploadOffset.LocalDateTime.ToString("d MMM yyyy");
 
         detailsUpvotes.text = queuedSong.Votes[0].ToString("N0");
         detailsDownvotes.text = queuedSong.Votes[1].ToString("N0");
@@ -629,6 +629,9 @@ internal class QueueViewController : BSMLAutomaticViewController
         {
             _selectCharacteristicComponent.gameObject.SetActive(false);
             _selectDifficultyComponent.gameObject.SetActive(false);
+            
+            _detailsNjs.SetText("- <size=80%><alpha=#AA>NJS");
+            _detailsNps.SetText("- <size=80%><alpha=#AA>NPS");
         }
         else
         {
