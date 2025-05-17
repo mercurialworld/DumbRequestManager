@@ -121,6 +121,8 @@ internal class QueueViewController : BSMLAutomaticViewController
     public TextMeshProUGUI detailsDownvotes = null!;
     [UIComponent("detailsDescription")]
     public TextMeshProUGUI detailsDescription = null!;
+    [UIComponent("detailsDescriptionScrollView")]
+    public ScrollView detailsDescriptionScrollView = null!;
     
     [UIComponent("detailsNotesPerSecond")]
     private static TextMeshProUGUI _detailsNps = null!;
@@ -660,6 +662,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         YeetTableCells(_selectCharacteristicComponent.TableView);
         YeetTableCells(_selectDifficultyComponent.TableView);
 
+        detailsDescriptionScrollView.ScrollTo(0, false);
         detailsDescription.color = StandardColor;
         detailsDescription.text = "Loading description...";
         

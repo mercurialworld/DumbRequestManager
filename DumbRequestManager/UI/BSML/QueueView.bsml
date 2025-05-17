@@ -183,7 +183,8 @@
                 <vertical preferred-height="30" vertical-fit="PreferredSize"
                           preferred-width="56" horizontal-fit="PreferredSize"
                           background="round-rect-panel" bg-color="grey">
-                    <scroll-view preferred-height="30" child-control-height="true" child-expand-height="false"
+                    <scroll-view id="detailsDescriptionScrollView"
+                                 preferred-height="30" child-control-height="true" child-expand-height="false"
                                  preferred-width="56" child-control-width="true" child-expand-width="false"
                                  child-alignment="UpperLeft" padding="0">
                         <vertical horizontal-fit="PreferredSize" preferred-width="44"
