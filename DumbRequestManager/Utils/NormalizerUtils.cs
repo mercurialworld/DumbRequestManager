@@ -96,6 +96,7 @@ internal static class Normalize
                 case '\r':
                 case '\n':
                 case '\t':
+                case '\"':
                     break;
 
                 default:
