@@ -321,6 +321,22 @@ public class NoncontextualizedSong
     public Sprite CoverImageSprite => _coverImageContainer.CoverImageSprite;
     // ReSharper restore MemberCanBePrivate.Global
     
+    // https://github.com/TheBlackParrot/DumbRequestManager/issues/7#issue-3072545753 (ty Lack)
+    private static float CalculateRating(uint upvotes = 0, uint downvotes = 0)
+    {
+        uint votes = upvotes + downvotes;
+        if (votes == 0)
+        {
+            return 0.5f;
+        }
+
+        float reviewScore = (float)upvotes / votes;
+        float adjustment = (reviewScore - 0.5f) * Mathf.Pow(2, -(Mathf.Log10(votes / 2f + 1) / Mathf.Log10(3)));
+        float rating = reviewScore - adjustment;
+
+        return rating;
+    }
+    
     // SongDetailsCache
     public NoncontextualizedSong(Song? guh, bool skipCoverImage = false)
     {
@@ -343,7 +359,7 @@ public class NoncontextualizedSong
         CensorMapper = Censor.Check(Mapper);
         Duration = song.songDurationSeconds;
         Votes = [song.upvotes, song.downvotes];
-        Rating = song.rating;
+        Rating = CalculateRating(song.upvotes, song.downvotes);
         UploadTime = song.uploadTimeUnix; // SDC returns the wrong value, you'll have to skip SDC if you want the real upload time
         LastUpdated = song.uploadTimeUnix;
         Cover = song.coverURL;
@@ -443,7 +459,7 @@ public class NoncontextualizedSong
 
         BsrKey = cachedDetails?.key ?? string.Empty;
         Votes = [cachedDetails?.upvotes ?? 0, cachedDetails?.downvotes ?? 0];
-        Rating = cachedDetails?.rating ?? 0;
+        Rating = cachedDetails == null ? 0.5f : CalculateRating(cachedDetails.Value.upvotes, cachedDetails.Value.downvotes);
         LastUpdated = cachedDetails?.uploadTimeUnix ?? (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // it's *probably* very new if the null check triggers
         UploadTime = cachedDetails?.uploadTimeUnix ?? (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // it's *probably* very new if the null check triggers
         Cover = cachedDetails?.coverURL ?? string.Empty;
