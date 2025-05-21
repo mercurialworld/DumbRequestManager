@@ -16,6 +16,7 @@ internal class AppInstaller : Installer
         Container.BindInterfacesTo<HttpApi>().AsSingle();
         Container.BindInterfacesTo<SocketApi>().AsSingle();
         
+        Container.BindInterfacesTo<MapCacheManager>().AsSingle();
         Container.BindInterfacesTo<SongDetailsManager>().AsSingle();
     }
 }

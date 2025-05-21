@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using DumbRequestManager.Classes;
 using DumbRequestManager.Configuration;
 using DumbRequestManager.Installers;
 using IPA;
