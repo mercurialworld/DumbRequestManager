@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
@@ -75,8 +76,8 @@ internal class HttpApi : IInitializable
         NameValueCollection urlQuery = System.Web.HttpUtility.ParseQueryString(context.Request.Url.Query);
         
         Plugin.DebugMessage($"path: {string.Join(", ", path)}");
-
-        byte[] failedData = "{\"message\": \"Not implemented\"}"u8.ToArray();
+        
+        byte[] failedData = Encoding.Default.GetBytes("{\"message\": \"Not implemented\"}");
         byte[] data = failedData;
         int statusCode = 501;
         
@@ -95,7 +96,7 @@ internal class HttpApi : IInitializable
                 else
                 {
                     statusCode = 400;
-                    data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                    data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
                 }
                 break;
             
@@ -103,7 +104,7 @@ internal class HttpApi : IInitializable
                 if (path.Length <= 2)
                 {
                     statusCode = 400;
-                    data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                    data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
                     break;
                 }
                 
@@ -119,7 +120,7 @@ internal class HttpApi : IInitializable
                 else
                 {
                     statusCode = 400;
-                    data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                    data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
                 }
                 break;
             
@@ -127,7 +128,7 @@ internal class HttpApi : IInitializable
                 if (path.Length <= 2)
                 {
                     statusCode = 400;
-                    data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                    data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
                     break;
                 }
 
@@ -157,21 +158,21 @@ internal class HttpApi : IInitializable
                             QueueViewController.RefreshQueue();
                             ChatRequestButton.Instance.UseAttentiveButton(false);
                             
-                            data = "{\"message\": \"Queue cleared\"}"u8.ToArray();
+                            data = Encoding.Default.GetBytes("{\"message\": \"Queue cleared\"}");
                             break;
                         
                         case "open":
                             if (path.Length <= 3)
                             {
                                 statusCode = 400;
-                                data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                                data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
                                 break;
                             }
 
                             if (bool.TryParse(path[3].Replace("/", string.Empty), out bool openResult))
                             {
                                 statusCode = 200;
-                                data = "{\"message\": \"Queue gate changed\"}"u8.ToArray();
+                                data = Encoding.Default.GetBytes("{\"message\": \"Queue gate changed\"}");
                                 await SideSettingsViewController.Instance.SetState(openResult);
                             }
                             break;
@@ -180,7 +181,7 @@ internal class HttpApi : IInitializable
                             if (path.Length != 5)
                             {
                                 statusCode = 400;
-                                data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                                data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
                                 break;
                             }
                             
@@ -190,7 +191,7 @@ internal class HttpApi : IInitializable
                             if (!int.TryParse(path[3].Replace("/", string.Empty), out int targetedIndex))
                             {
                                 statusCode = 400;
-                                data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                                data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
                                 break;
                             }
                             targetedIndex--;
@@ -198,7 +199,7 @@ internal class HttpApi : IInitializable
                             if (!int.TryParse(path[4].Replace("/", string.Empty), out int newIndex))
                             {
                                 statusCode = 400;
-                                data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                                data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
                                 break;
                             }
                             newIndex--;
@@ -206,7 +207,7 @@ internal class HttpApi : IInitializable
                             if (targetedIndex < min || targetedIndex > max || newIndex < min || newIndex > max)
                             {
                                 statusCode = 400;
-                                data = "{\"message\": \"Invalid request\"}"u8.ToArray();
+                                data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
                                 break;
                             }
                             
@@ -217,12 +218,12 @@ internal class HttpApi : IInitializable
                             QueueViewController.RefreshQueue();
                             
                             statusCode = 200;
-                            data = "{\"message\": \"Moved entry\"}"u8.ToArray();
+                            data = Encoding.Default.GetBytes("{\"message\": \"Moved entry\"}");
                             break;
                         
                         case "shuffle":
                             statusCode = 200;
-                            data = "{\"message\": \"Queue shuffled\"}"u8.ToArray();
+                            data = Encoding.Default.GetBytes("{\"message\": \"Queue shuffled\"}");
                             
                             QueueManager.Shuffle();
                             break;
@@ -282,7 +283,7 @@ internal class HttpApi : IInitializable
 
         HistorySpotItem[] historyItems = keys.Select(timestamp => new HistorySpotItem(timestamp, SessionHistoryManager.SessionHistory[timestamp])).ToArray();
         
-        return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(historyItems));
+        return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(historyItems));
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -307,19 +308,17 @@ internal class HttpApi : IInitializable
             }
         });
         
-        return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(relevantQueueItems));
+        return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(relevantQueueItems));
     }
 
-    private static byte[] GetEncodedQueue => System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(QueueManager.QueuedSongs));
+    private static byte[] GetEncodedQueue => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(QueueManager.QueuedSongs));
 
     private static async Task<byte[]?> AddKey(string key, string? user = null, bool prepend = false)
     {
         Plugin.Log.Info($"Adding key {key}...");
         NoncontextualizedSong? queuedSong = await QueueManager.AddKey(key, user, false, prepend);
         
-        return queuedSong == null
-            ? null
-            : System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
+        return queuedSong == null ? null : Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
     }
 
     private static byte[] AddWip(string key, string? user = null, bool prepend = true)
@@ -327,7 +326,7 @@ internal class HttpApi : IInitializable
         Plugin.Log.Info($"Adding wip {key}...");
         NoncontextualizedSong queuedSong = QueueManager.AddWip(key, user, prepend);
         
-        return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
+        return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
     }
 
     private static async Task<byte[]?> QuerySkipCache(string key)
@@ -335,13 +334,13 @@ internal class HttpApi : IInitializable
         Plugin.Log.Info($"Querying key {key} (directly)...");
         
         Beatmap? beatmap = await SongDetailsManager.GetDirectByKey(key);
-        if (beatmap == null)
+        if (beatmap != null)
         {
-            Plugin.Log.Info($"No beatmap found for key {key}");
-            return null;
+            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NoncontextualizedSong(beatmap)));
         }
-        
-        return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NoncontextualizedSong(beatmap)));
+
+        Plugin.Log.Info($"No beatmap found for key {key}");
+        return null;
     }
 
     private static async Task<byte[]?> Query(string key)
@@ -384,6 +383,6 @@ internal class HttpApi : IInitializable
             }
         }
 
-        return System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queriedSong));
+        return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queriedSong));
     }
 }
