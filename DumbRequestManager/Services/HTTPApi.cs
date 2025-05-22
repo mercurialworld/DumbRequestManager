@@ -25,7 +25,6 @@ internal class HttpApi : IInitializable
     private static PluginConfig Config => PluginConfig.Instance;
 
     private static HttpListener? _httpListener;
-    //private static readonly BeatSaver BeatSaverInstance = new(nameof(DumbRequestManager), Assembly.GetExecutingAssembly().GetName().Version);
     
     [SuppressMessage("ReSharper", "FunctionNeverReturns")]
     public void Initialize()

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading.Tasks;
 using BeatSaverSharp;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using JetBrains.Annotations;
-using Zenject;
 
 namespace DumbRequestManager.Managers;
 
