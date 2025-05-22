@@ -61,7 +61,7 @@ public static class QueueManager
             }
             else
             {
-                Plugin.DebugMessage("Using SongDetailsCache method");
+                Plugin.DebugMessage("Using protobuf cache method");
                 queuedSong = new NoncontextualizedSong(song);
             }
         }

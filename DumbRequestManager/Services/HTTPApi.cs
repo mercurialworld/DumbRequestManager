@@ -377,7 +377,7 @@ internal class HttpApi : IInitializable
             }
             else
             {
-                Plugin.DebugMessage("Using SongDetailsCache method");
+                Plugin.DebugMessage("Using protobuf cache method");
                 queriedSong = new NoncontextualizedSong(song);
             }
         }

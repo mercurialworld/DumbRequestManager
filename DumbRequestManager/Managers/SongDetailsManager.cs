@@ -5,7 +5,6 @@ using BeatSaverSharp;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using JetBrains.Annotations;
-//using SongDetailsCache.Structs;
 using Zenject;
 
 namespace DumbRequestManager.Managers;
