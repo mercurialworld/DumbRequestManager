@@ -398,10 +398,6 @@ internal class QueueViewController : BSMLAutomaticViewController
         _tagsCuratedTag.GetComponent<HoverHint>().enabled = song.Curated;
         _tagsCuratedTag.GetComponent<HoverHint>().text = $"curated by {song.CuratorName}";
     }
-    
-    // SDC doesn't cache Vivify yet, so i'm grabbing that data when we fetch the description
-    // ...erm BeatSaverSharp doesn't, either. wuh oh
-    //private void SetMapModsVivifyTag(bool hasVivify) => _tagsVivifyTag.gameObject.SetActive(hasVivify);
 
     internal void ToggleSelectionPanel(bool value)
     {
@@ -508,8 +504,9 @@ internal class QueueViewController : BSMLAutomaticViewController
             x.CharacteristicName ==
             _characteristicChoices[_selectCharacteristicComponent.TableView._selectedCellIdxs.First()].Name &&
             x.DifficultyName == diffName);
-                
-        _detailsEstimatedStars.text = $"<size=95%><color=#FFCC55>\u2605</size> <color=#FFFFFF>{starsObject.Stars:0.00}";
+
+        _detailsEstimatedStars.text =
+            "<size=95%><color=#FFCC55>\u2605</size> <color=#FFFFFF>" + (starsObject.Stars == null ? "-" : $"{starsObject.Stars:0.00}");
     }
 
     private static void SetHighlightedCellsForUser(int ignoreIndex, NoncontextualizedSong queuedSong)
