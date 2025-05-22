@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using DumbRequestManager.Classes;
+using DumbRequestManager.Configuration;
 using JetBrains.Annotations;
 using ProtoBuf;
 using SiraUtil.Web;
@@ -14,11 +15,12 @@ namespace DumbRequestManager.Managers;
 [UsedImplicitly]
 internal class MapCacheManager(IHttpService httpService) : IInitializable
 {
+    private static PluginConfig Config => PluginConfig.Instance;
     private static readonly Dictionary<uint, CachedMap> CachedMaps = new();
     private static readonly Dictionary<string, CachedMap> CachedMapsByHash = new();
 
     private static readonly string CacheFilename = Path.Combine(Plugin.UserDataDir, "cached.proto");
-    private const string CacheURL = "https://theblackparrot.me/DumbRequestManager/cache.proto.gz";
+    private static readonly string CacheURL = Config.ProtobufCacheURL;
 
     internal static MapCacheManager? Instance;
     

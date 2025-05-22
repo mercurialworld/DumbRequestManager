@@ -27,4 +27,6 @@ internal class PluginConfig
     
     public virtual int MapDownloadTimeout { get; set; } = 300;
     public virtual bool ShowRequestersInsteadOfMappers { get; set; } = false;
+    
+    public virtual string ProtobufCacheURL { get; set; } = "https://theblackparrot.me/DumbRequestManager/cache.proto.gz";
 }
