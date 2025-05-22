@@ -4,7 +4,6 @@ using System.Linq;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using JetBrains.Annotations;
-using SongDetailsCache.Structs;
 using Zenject;
 
 namespace DumbRequestManager.Managers;
@@ -49,7 +48,7 @@ internal class StartMapEvent(GameplayCoreSceneSetupData gameplayCoreSceneSetupDa
         
         NoncontextualizedSong queuedSong;
         
-        Song? song = SongDetailsManager.GetByMapHash(hash);
+        CachedMap? song = SongDetailsManager.GetByMapHash(hash);
         if (song == null)
         {
             Beatmap? beatmap = SongDetailsManager.GetDirectByHash(hash).Result; 

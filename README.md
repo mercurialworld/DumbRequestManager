@@ -20,9 +20,9 @@ Currently only tested on Beat Saber versions 1.39.1 or newer. Versions of the mo
 - BeatSaberPlaylistsLib
 - BeatSaverSharp
 - BeatSaverVoting
+- protobuf-net
 - SiraUtil
 - SongCore
-- SongDetailsCache
 - websocket-sharp
 ----
 
@@ -38,8 +38,8 @@ As this is really only a web server, you can test any of these endpoints in any 
 
 | Endpoint   | Sub-command | Description/Example                                                                                                                                                                                                                                                                                                                                     | Returns                                            |
 |------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
-| `/query`   |             | Queries SongDetailsCache (and then BeatSaver if map data hasn't been cached yet) for map information.<br/>`/query/25f`                                                                                                                                                                                                                                  | [Map Data](#map-data-type)                         |
-|            | `/nocache`  | Queries BeatSaver directly, skipping SongDetailsCache.<br/>`/query/nocache/25f`                                                                                                                                                                                                                                                                         | [Map Data](#map-data-type)                         |
+| `/query`   |             | Queries a local cache (and then BeatSaver if map data hasn't been cached yet) for map information.<br/>`/query/25f`                                                                                                                                                                                                                                     | [Map Data](#map-data-type)                         |
+|            | `/nocache`  | Queries BeatSaver directly, skipping the local cache.<br/>`/query/nocache/25f`                                                                                                                                                                                                                                                                          | [Map Data](#map-data-type)                         |
 | `/addKey`  |             | Adds a map to the queue.<br/>- User identifiers can be tacked on with a `user` query parameter. Internally this is set as a string, anything can be used so long as it's unique.<br/>- Maps can be prepended to the list instead of appended by tacking on the `prepend` query parameter.<br/>`/addKey/25f?user=TheBlackParrot&prepend=true`            | [Map Data](#map-data-type)                         |
 | `/addWip`  |             | Adds a WIP map to the top of the queue (via [CatseTheCat's WIP map service](https://catse.net/wip))<br/>- User identifiers can be tacked on with a `user` query parameter.<br/>- Maps can be appended to the list instead of prepended by tacking on the `prepend` query parameter and setting it to `false`.<br/>`/addWip/0c93790?user=TheBlackParrot` | [Map Data](#map-data-type)                         |
 | `/queue`   |             | Get maps currently in the queue.<br/>`/queue`                                                                                                                                                                                                                                                                                                           | (Array) [Map Data](#map-data-type)                 |
@@ -159,7 +159,7 @@ All `pressed` events follow the same data structure:
   "UsesNoodleExtensions": <boolean>,
   "UsesVivify": <boolean>,
   "DataIsFromLocalMap": <boolean>,
-  "DataIsFromSongDetailsCache": <boolean>,
+  "DataIsFromLocalCache": <boolean>,
   "DataIsFromBeatSaver": <boolean>,
   "Diffs": [
     {

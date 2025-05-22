@@ -11,7 +11,6 @@ using DumbRequestManager.Utils;
 using IPA.Utilities.Async;
 using Newtonsoft.Json;
 using SongCore.Data;
-using SongDetailsCache.Structs;
 using UnityEngine;
 
 namespace DumbRequestManager.Classes;
@@ -21,11 +20,11 @@ public class CoverImageContainer
     public byte[]? CoverImage;
     public Sprite CoverImageSprite = SongCore.Loader.defaultCoverImage;
 
-    public CoverImageContainer(Song song)
+    public CoverImageContainer(CachedMap song)
     {
         try
         {
-            _ = Get(song.coverURL);
+            _ = Get($"https://cdn.beatsaver.com/{song.Hash}.jpg");
         }
         catch (Exception e)
         {
@@ -83,20 +82,19 @@ public class CoverImageContainer
 [JsonObject(MemberSerialization.OptIn)]
 public readonly struct QueuedSongMapMods
 {
-    // Vivify isn't cached in SDC yet
     [JsonProperty] public readonly bool Chroma;
     [JsonProperty] public readonly bool Cinema;
     [JsonProperty] public readonly bool MappingExtensions;
     [JsonProperty] public readonly bool NoodleExtensions;
     [JsonProperty] public readonly bool Vivify;
 
-    public QueuedSongMapMods(MapMods mapMods, bool hasVivify = false)
+    public QueuedSongMapMods(CachedMapMods mapMods)
     {
-        Chroma = mapMods.HasFlag(MapMods.Chroma);
-        Cinema = mapMods.HasFlag(MapMods.Cinema);
-        MappingExtensions = mapMods.HasFlag(MapMods.MappingExtensions);
-        NoodleExtensions = mapMods.HasFlag(MapMods.NoodleExtensions);
-        Vivify = hasVivify;
+        Chroma = mapMods.HasFlag(CachedMapMods.Chroma);
+        Cinema = mapMods.HasFlag(CachedMapMods.Cinema);
+        MappingExtensions = mapMods.HasFlag(CachedMapMods.MappingExtensions);
+        NoodleExtensions = mapMods.HasFlag(CachedMapMods.NoodleExtensions);
+        Vivify = mapMods.HasFlag(CachedMapMods.Vivify);
     }
 
     public QueuedSongMapMods(ReadOnlyCollection<BeatSaverSharp.Models.BeatmapDifficulty> difficulties, bool hasVivify = false)
@@ -123,16 +121,16 @@ public class NoncontextualizedDifficulty
     [JsonProperty] public float ScoreSaberStars { get; set; }
     [JsonProperty] public float BeatLeaderStars { get; set; }
 
-    // SongDetailsCache
-    public NoncontextualizedDifficulty(SongDifficulty difficulty)
+    // Local cache
+    public NoncontextualizedDifficulty(CachedMapDifficulty difficulty, CachedMap map)
     {
-        Difficulty = difficulty.difficulty.ToString();
-        Characteristic = difficulty.characteristic.ToString();
-        NoteJumpSpeed = difficulty.njs;
-        NotesPerSecond = difficulty.notes / (float)difficulty.song.songDurationSeconds;
-        MapMods = new QueuedSongMapMods(difficulty.mods);
-        ScoreSaberStars = difficulty.stars;
-        BeatLeaderStars = difficulty.starsBeatleader;
+        Difficulty = difficulty.Difficulty;
+        Characteristic = difficulty.Characteristic;
+        NoteJumpSpeed = difficulty.JumpSpeed;
+        NotesPerSecond = difficulty.Notes / (float)map.Duration;
+        MapMods = new QueuedSongMapMods(difficulty.Mods);
+        ScoreSaberStars = difficulty.RankedStatus.ScoreSaber.IsRanked ? difficulty.RankedStatus.ScoreSaber.Stars : 0;
+        BeatLeaderStars = difficulty.RankedStatus.BeatLeader.IsRanked ? difficulty.RankedStatus.BeatLeader.Stars : 0;
     }
     
     // BeatSaver
@@ -142,23 +140,26 @@ public class NoncontextualizedDifficulty
         Characteristic = difficulty.Characteristic.ToString();
         NoteJumpSpeed = difficulty.NJS;
         NotesPerSecond = (float)difficulty.NPS;
-        int mods = (difficulty.NoodleExtensions ? (int)SongDetailsCache.Structs.MapMods.NoodleExtensions : 0) +
-                   (difficulty.MappingExtensions ? (int)SongDetailsCache.Structs.MapMods.MappingExtensions : 0) +
-                   (difficulty.Chroma ? (int)SongDetailsCache.Structs.MapMods.Chroma : 0) +
-                   (difficulty.Cinema ? (int)SongDetailsCache.Structs.MapMods.Cinema : 0);
-        MapMods = new QueuedSongMapMods((MapMods)mods);
+        int mods = (difficulty.NoodleExtensions ? (int)CachedMapMods.NoodleExtensions : 0) +
+                   (difficulty.MappingExtensions ? (int)CachedMapMods.MappingExtensions : 0) +
+                   (difficulty.Chroma ? (int)CachedMapMods.Chroma : 0) +
+                   (difficulty.Cinema ? (int)CachedMapMods.Cinema : 0);
+        // vivify would go here, i should put a little more pressure on getting BS# updated i think
+        MapMods = new QueuedSongMapMods((CachedMapMods)mods);
         ScoreSaberStars = difficulty.Stars ?? 0;
+        // same with beatleader stars
     }
     
     // Base game
     private static readonly Dictionary<string, int> ModValues = new()
     {
-        { "Noodle Extensions", (int)SongDetailsCache.Structs.MapMods.NoodleExtensions },
-        { "Mapping Extensions", (int)SongDetailsCache.Structs.MapMods.MappingExtensions },
-        { "Chroma", (int)SongDetailsCache.Structs.MapMods.Chroma },
-        { "Cinema", (int)SongDetailsCache.Structs.MapMods.Cinema }
+        { "Noodle Extensions", (int)CachedMapMods.NoodleExtensions },
+        { "Mapping Extensions", (int)CachedMapMods.MappingExtensions },
+        { "Chroma", (int)CachedMapMods.Chroma },
+        { "Cinema", (int)CachedMapMods.Cinema },
+        { "Vivify", (int)CachedMapMods.Vivify }
     };
-    public NoncontextualizedDifficulty(BeatmapLevel level, BeatmapKey key, BeatmapBasicData mapData, Song? cachedDetails)
+    public NoncontextualizedDifficulty(BeatmapLevel level, BeatmapKey key, BeatmapBasicData mapData, CachedMap? cachedDetails)
     {
         ExtraSongData.DifficultyData? diffData = SongCore.Collections.RetrieveDifficultyData(level, key);
         
@@ -171,7 +172,7 @@ public class NoncontextualizedDifficulty
             mods += requirements.Sum(requirement => ModValues.GetValueOrDefault(requirement, 0));
             mods += suggestions.Sum(suggestion => ModValues.GetValueOrDefault(suggestion, 0));
 
-            MapMods = new QueuedSongMapMods((MapMods)mods);
+            MapMods = new QueuedSongMapMods((CachedMapMods)mods);
         }
         
         Difficulty = key.difficulty.ToString();
@@ -181,22 +182,20 @@ public class NoncontextualizedDifficulty
         {
             return;
         }
-        
-        // using SDC for now, look at StandardLevelDetailView.CalculateAndSetContentAsync
-        SongDifficulty? cachedDiff = cachedDetails.Value.difficulties.First(x =>
+
+        CachedMapDifficulty? cachedDiff;
+        try
         {
-            Plugin.DebugMessage($"SDC diff name:  {x.difficulty.ToString()}");
-            Plugin.DebugMessage($"Base diff name: {key.difficulty.ToString()}");
-            Plugin.DebugMessage($"SDC characteristic name:  {x.characteristic.ToString()}");
-            Plugin.DebugMessage($"Base characteristic name: {key.beatmapCharacteristic.serializedName}");
-            
-            return Normalize.GetDifficultyName(x.difficulty.ToString()) == Normalize.GetDifficultyName(key.difficulty.ToString()) &&
-                   Normalize.GetCharacteristicName(x.characteristic.ToString()) == Normalize.GetCharacteristicName(key.beatmapCharacteristic.serializedName);
-        });
-        NotesPerSecond = cachedDiff?.notes / level.songDuration ?? 0;
-        
-        //Plugin.DebugMessage($"{mapData.notesCount} / {level.songDuration}");
-        //NotesPerSecond = mapData.notesCount / level.songDuration;
+            cachedDiff = cachedDetails.Difficulties
+                .First(x => Normalize.GetDifficultyName(x.Difficulty) == Normalize.GetDifficultyName(key.difficulty.ToString()) &&
+                                             Normalize.GetCharacteristicName(x.Characteristic) == Normalize.GetCharacteristicName(key.beatmapCharacteristic.serializedName));
+        }
+        catch (InvalidOperationException)
+        {
+            cachedDiff = null;
+        }
+
+        NotesPerSecond = cachedDiff?.Notes / level.songDuration ?? 0;
     }
 }
 
@@ -311,7 +310,7 @@ public class NoncontextualizedSong
     [JsonProperty] public bool UsesVivify { get; set; }
     
     [JsonProperty] public bool DataIsFromLocalMap { get; set; }
-    [JsonProperty] public bool DataIsFromSongDetailsCache { get; set; }
+    [JsonProperty] public bool DataIsFromLocalCache { get; set; }
     [JsonProperty] public bool DataIsFromBeatSaver { get; set; }
 
     [JsonProperty] public NoncontextualizedDifficulty[] Diffs { get; set; } = [];
@@ -337,41 +336,42 @@ public class NoncontextualizedSong
         return rating;
     }
     
-    // SongDetailsCache
-    public NoncontextualizedSong(Song? guh, bool skipCoverImage = false)
+    // Local cache
+    public NoncontextualizedSong(CachedMap? song, bool skipCoverImage = false)
     {
-        if (guh == null)
+        if (song == null)
         {
             return;
         }
 
-        Song song = guh.Value;
-
-        DataIsFromSongDetailsCache = true;
+        DataIsFromLocalCache = true;
         
-        BsrKey = song.key;
-        Hash = song.hash.ToLower();
-        Title = song.songName;
+        BsrKey = song.Key.ToString("x");
+        Hash = song.Hash;
+        Title = song.SongName ?? string.Empty;
         CensorTitle = Censor.Check(Title);
-        Artist = song.songAuthorName;
+        SubTitle = song.SongSubName ?? string.Empty;
+        CensorSubTitle = Censor.Check(SubTitle);
+        Artist = song.SongAuthorName ?? string.Empty;
         CensorArtist = Censor.Check(Artist);
-        Mapper = song.levelAuthorName;
+        Mapper = song.LevelAuthorName ?? string.Empty;
         CensorMapper = Censor.Check(Mapper);
-        Duration = song.songDurationSeconds;
-        Votes = [song.upvotes, song.downvotes];
-        Rating = CalculateRating(song.upvotes, song.downvotes);
-        UploadTime = song.uploadTimeUnix; // SDC returns the wrong value, you'll have to skip SDC if you want the real upload time
-        LastUpdated = song.uploadTimeUnix;
-        Cover = song.coverURL;
-        BeatLeaderRanked = (song.rankedStates & RankedStates.BeatleaderRanked) != 0;
-        ScoreSaberRanked = (song.rankedStates & RankedStates.ScoresaberRanked) != 0;
-        Curated = (song.uploadFlags & UploadFlags.Curated) != 0;
-        UsesChroma = song.difficulties.Any(x => x.mods.HasFlag(MapMods.Chroma));
-        UsesCinema = song.difficulties.Any(x => x.mods.HasFlag(MapMods.Cinema));
-        UsesMappingExtensions = song.difficulties.Any(x => x.mods.HasFlag(MapMods.MappingExtensions));
-        UsesNoodleExtensions = song.difficulties.Any(x => x.mods.HasFlag(MapMods.NoodleExtensions));
-        // (SDC doesn't cache automapped maps, always false)
-        Diffs = song.difficulties.Select(x => new NoncontextualizedDifficulty(x)).ToArray();
+        Duration = song.Duration;
+        Votes = [song.Votes.Up, song.Votes.Down];
+        Rating = CalculateRating(song.Votes.Up, song.Votes.Down);
+        UploadTime = song.UploadTimestamp;
+        LastUpdated = song.LastUpdateTimestamp;
+        Cover = $"https://cdn.beatsaver.com/{song.Hash}.jpg";
+        BeatLeaderRanked = song.Difficulties.Any(x => x.RankedStatus.BeatLeader.IsRanked);
+        ScoreSaberRanked = song.Difficulties.Any(x => x.RankedStatus.ScoreSaber.IsRanked);
+        Curated = song.Curator != null;
+        UsesChroma = song.Mods.HasFlag(CachedMapMods.Chroma);
+        UsesCinema = song.Mods.HasFlag(CachedMapMods.Cinema);
+        UsesMappingExtensions = song.Mods.HasFlag(CachedMapMods.MappingExtensions);
+        UsesNoodleExtensions = song.Mods.HasFlag(CachedMapMods.NoodleExtensions);
+        UsesVivify = song.Mods.HasFlag(CachedMapMods.Vivify);
+        // (Local cache doesn't cache automapped maps, always false)
+        Diffs = song.Difficulties.Select(x => new NoncontextualizedDifficulty(x, song)).ToArray();
         if (!skipCoverImage)
         {
             _coverImageContainer = new CoverImageContainer(song);
@@ -414,7 +414,7 @@ public class NoncontextualizedSong
         }
     }
     
-    // Base game + supplemental SDC
+    // Base game + supplemental cache values
     public NoncontextualizedSong(BeatmapLevel level, bool skipCoverImage = false)
     {
         DataIsFromLocalMap = true;
@@ -453,19 +453,19 @@ public class NoncontextualizedSong
             if (mods.Any(x => x == "Vivify")) { UsesVivify = true; }
         }
 
-        Song? cachedDetails = SongDetailsManager.GetByMapHash(Hash); // some stuff just isn't available base game
+        CachedMap? cachedDetails = MapCacheManager.Instance?.GetMapByHash(Hash); // some stuff just isn't available base game
         
-        DataIsFromSongDetailsCache = cachedDetails != null;
+        DataIsFromLocalCache = cachedDetails != null;
 
-        BsrKey = cachedDetails?.key ?? string.Empty;
-        Votes = [cachedDetails?.upvotes ?? 0, cachedDetails?.downvotes ?? 0];
-        Rating = cachedDetails == null ? 0.5f : CalculateRating(cachedDetails.Value.upvotes, cachedDetails.Value.downvotes);
-        LastUpdated = cachedDetails?.uploadTimeUnix ?? (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // it's *probably* very new if the null check triggers
-        UploadTime = cachedDetails?.uploadTimeUnix ?? (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // it's *probably* very new if the null check triggers
-        Cover = cachedDetails?.coverURL ?? string.Empty;
-        BeatLeaderRanked = (cachedDetails?.rankedStates & RankedStates.BeatleaderRanked) != 0;
-        ScoreSaberRanked = (cachedDetails?.rankedStates & RankedStates.ScoresaberRanked) != 0;
-        Curated = (cachedDetails?.uploadFlags & UploadFlags.Curated) != 0;
+        BsrKey = cachedDetails?.Key.ToString("x") ?? string.Empty;
+        Votes = [cachedDetails?.Votes.Up ?? 0, cachedDetails?.Votes.Down ?? 0];
+        Rating = cachedDetails == null ? 0.5f : CalculateRating(cachedDetails.Votes.Up, cachedDetails.Votes.Down);
+        LastUpdated = cachedDetails?.LastUpdateTimestamp ?? (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // it's *probably* very new if the null check triggers
+        UploadTime = cachedDetails?.UploadTimestamp ?? (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // it's *probably* very new if the null check triggers
+        Cover = cachedDetails == null ? string.Empty : $"https://cdn.beatsaver.com/{cachedDetails.Hash}.jpg";
+        BeatLeaderRanked = cachedDetails?.Difficulties.Any(x => x.RankedStatus.BeatLeader.IsRanked) ?? false;
+        ScoreSaberRanked = cachedDetails?.Difficulties.Any(x => x.RankedStatus.ScoreSaber.IsRanked) ?? false;
+        Curated = cachedDetails?.Curator != null;
         
         Diffs = level.GetBeatmapKeys().Select(key =>
         {

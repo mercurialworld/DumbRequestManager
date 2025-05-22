@@ -3,7 +3,7 @@ using ProtoBuf;
 
 namespace DumbRequestManager.Classes;
 
-internal enum CachedMapMods
+public enum CachedMapMods
 {
     Cinema = 1,
     MappingExtensions = 2,
@@ -13,7 +13,21 @@ internal enum CachedMapMods
 };
 
 [ProtoContract]
-internal class CachedMapDifficulty
+internal class CachedMapRankValues
+{
+    [ProtoMember(1)] public bool IsRanked { get; set; }
+    [ProtoMember(2)] public uint Stars { get; set; }
+}
+
+[ProtoContract]
+internal class CachedMapRankStatus
+{
+    [ProtoMember(1)] public CachedMapRankValues ScoreSaber { get; set; } = null!;
+    [ProtoMember(2)] public CachedMapRankValues BeatLeader { get; set; } = null!;
+}
+
+[ProtoContract]
+public class CachedMapDifficulty
 {
     [ProtoMember(1)] internal float JumpSpeed { get; set; }
     [ProtoMember(2)] internal uint Notes { get; set; }
@@ -21,6 +35,7 @@ internal class CachedMapDifficulty
     [ProtoMember(4)] internal string Difficulty { get; set; } = string.Empty;
     [ProtoMember(5)] internal CachedMapMods Mods { get; set; }
     [ProtoMember(6)] internal string Environment { get; set; } = string.Empty;
+    [ProtoMember(7)] internal CachedMapRankStatus RankedStatus { get; set; } = null!;
 }
 
 [ProtoContract]
@@ -31,7 +46,7 @@ internal class CachedMapVotes
 }
 
 [ProtoContract]
-internal class CachedMap
+public class CachedMap
 {
     [ProtoMember(1)] internal uint Key { get; set; }
     [ProtoMember(2)] internal string Hash { get; set; } = string.Empty;

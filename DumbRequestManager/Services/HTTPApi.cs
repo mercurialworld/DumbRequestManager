@@ -14,7 +14,6 @@ using DumbRequestManager.Managers;
 using DumbRequestManager.UI;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using SongDetailsCache.Structs;
 using Zenject;
 using PluginConfig = DumbRequestManager.Configuration.PluginConfig;
 
@@ -349,7 +348,7 @@ internal class HttpApi : IInitializable
 
         NoncontextualizedSong queriedSong;
         
-        Song? song = SongDetailsManager.GetByKey(key);
+        CachedMap? song = SongDetailsManager.GetByKey(key);
         if (song == null)
         {
             Beatmap? beatmap = await SongDetailsManager.GetDirectByKey(key); 
@@ -366,7 +365,7 @@ internal class HttpApi : IInitializable
         }
         else
         {
-            string hash = song.Value.hash.ToLower();
+            string hash = song.Hash.ToLower();
             Plugin.DebugMessage($"Checking SongCore for hash {hash}");
             if (SongCore.Collections.songWithHashPresent(hash))
             {

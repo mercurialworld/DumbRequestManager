@@ -8,7 +8,6 @@ using DumbRequestManager.Services;
 using DumbRequestManager.UI;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using SongDetailsCache.Structs;
 using UnityEngine;
 
 namespace DumbRequestManager.Managers;
@@ -33,7 +32,7 @@ public static class QueueManager
     {
         NoncontextualizedSong queuedSong;
         
-        Song? song = SongDetailsManager.GetByKey(key);
+        CachedMap? song = SongDetailsManager.GetByKey(key);
         if (song == null)
         {
             Beatmap? beatmap = await SongDetailsManager.GetDirectByKey(key); 
@@ -50,7 +49,7 @@ public static class QueueManager
         }
         else
         {
-            string hash = song.Value.hash.ToLower();
+            string hash = song.Hash.ToLower();
             Plugin.DebugMessage($"Checking SongCore for hash {hash}");
             if (SongCore.Collections.songWithHashPresent(hash))
             {
