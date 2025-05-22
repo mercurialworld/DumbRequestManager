@@ -395,6 +395,8 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         _tagsCuratedTag.GetComponent<ImageView>().color = song.Curated ? CuratedColor : Color.black;
         _tagsCuratedTag.GetComponentInChildren<TextMeshProUGUI>().color = song.Curated ? Color.white : InactiveColor;
+        _tagsCuratedTag.GetComponent<HoverHint>().enabled = song.Curated;
+        _tagsCuratedTag.GetComponent<HoverHint>().text = $"curated by {song.CuratorName}";
     }
     
     // SDC doesn't cache Vivify yet, so i'm grabbing that data when we fetch the description

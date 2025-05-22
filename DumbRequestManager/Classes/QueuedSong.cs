@@ -293,6 +293,7 @@ public class NoncontextualizedSong
     [JsonProperty] public bool ScoreSaberRanked { get; set; }
     [JsonProperty] public bool BeatLeaderRanked { get; set; }
     [JsonProperty] public bool Curated { get; set; }
+    [JsonProperty] public string CuratorName { get; set; } = string.Empty;
 
     [JsonProperty] public string[] Playlists { get; set; } = [];
 
@@ -365,6 +366,7 @@ public class NoncontextualizedSong
         BeatLeaderRanked = song.Difficulties.Any(x => x.RankedStatus.BeatLeader.IsRanked);
         ScoreSaberRanked = song.Difficulties.Any(x => x.RankedStatus.ScoreSaber.IsRanked);
         Curated = song.Curator != null;
+        CuratorName = song.Curator ?? string.Empty;
         UsesChroma = song.Mods.HasFlag(CachedMapMods.Chroma);
         UsesCinema = song.Mods.HasFlag(CachedMapMods.Cinema);
         UsesMappingExtensions = song.Mods.HasFlag(CachedMapMods.MappingExtensions);
@@ -403,6 +405,7 @@ public class NoncontextualizedSong
         BeatLeaderRanked = false; // BeatSaverSharp doesn't have BL rank tags yet
         ScoreSaberRanked = song.Ranked;
         Curated = song.BeatmapCurator != null;
+        CuratorName = song.BeatmapCurator?.Name ?? string.Empty;
         UsesChroma = song.LatestVersion.Difficulties.Any(x => x.Chroma);
         UsesCinema = song.LatestVersion.Difficulties.Any(x => x.Cinema);
         UsesMappingExtensions = song.LatestVersion.Difficulties.Any(x => x.MappingExtensions);
@@ -466,6 +469,7 @@ public class NoncontextualizedSong
         BeatLeaderRanked = cachedDetails?.Difficulties.Any(x => x.RankedStatus.BeatLeader.IsRanked) ?? false;
         ScoreSaberRanked = cachedDetails?.Difficulties.Any(x => x.RankedStatus.ScoreSaber.IsRanked) ?? false;
         Curated = cachedDetails?.Curator != null;
+        CuratorName = cachedDetails?.Curator ?? string.Empty;
         
         Diffs = level.GetBeatmapKeys().Select(key =>
         {

@@ -337,7 +337,7 @@
             <vertical preferred-width="16" horizontal-fit="PreferredSize"
                       preferred-height="12" min-height="12" vertical-fit="PreferredSize"
                       spacing="1" child-align="UpperCenter">
-                <horizontal id="tagsCurated"
+                <horizontal id="tagsCurated" hover-hint="the j"
                             preferred-width="16" horizontal-fit="PreferredSize"
                             preferred-height="4" vertical-fit="PreferredSize"
                             background="round-rect-panel" bg-color="black">

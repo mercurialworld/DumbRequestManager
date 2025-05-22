@@ -151,6 +151,7 @@ All `pressed` events follow the same data structure:
   "ScoreSaberRanked": <boolean>,
   "BeatLeaderRanked": <boolean>,
   "Curated": <boolean>,
+  "CuratorName": <string>,
   "Playlists": [<string (playlist title)>, ...],
   "VoteStatus": <int (0 = no vote, 1 = upvote, 2 = downvote)>
   "UsesChroma": <boolean>,
