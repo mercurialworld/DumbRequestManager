@@ -16,10 +16,9 @@ namespace DumbRequestManager.Managers;
 internal class MapCacheManager(IHttpService httpService) : IInitializable
 {
     private static PluginConfig Config => PluginConfig.Instance;
-    private static readonly Dictionary<uint, CachedMap> CachedMaps = new();
-    private static readonly Dictionary<string, CachedMap> CachedMapsByHash = new();
+    private static readonly Dictionary<dynamic, CachedMap> CachedMaps = new();
 
-    private static readonly string CacheFilename = Path.Combine(Plugin.UserDataDir, "cached.proto");
+    private static readonly string CacheFilename = Path.Combine(Plugin.UserDataDir, "cached.proto.gz");
     private static readonly string CacheURL = Config.ProtobufCacheURL;
 
     internal static MapCacheManager? Instance;
@@ -38,7 +37,7 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
             if (DateTime.UtcNow < File.GetLastWriteTimeUtc(CacheFilename).AddHours(12))
             {
                 Plugin.Log.Info("Cache was obtained less than 12 hours ago, not refreshing");
-                LoadProtoCache();
+                await LoadProtoCache();
                 return;
             }
         }
@@ -49,23 +48,24 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
         if (!response.Successful)
         {
             Plugin.Log.Warn($"Couldn't download the cache (HTTP {response.Code})");
-            LoadProtoCache();
+            await LoadProtoCache();
             return;
         }
         
-        Plugin.Log.Info($"Grabbed cache from {CacheURL}, decompressing...");
-        
-        Stream result = response.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+        Plugin.Log.Info($"Grabbed cache from {CacheURL}, saving...");
+
+        await File.WriteAllBytesAsync(CacheFilename, await response.ReadAsByteArrayAsync());
+        /*Stream result = await response.ReadAsStreamAsync();
         await using FileStream outputFileStream = File.Create(CacheFilename);
         await using GZipStream decompressor = new(result, CompressionMode.Decompress);
-        await decompressor.CopyToAsync(outputFileStream);
+        await decompressor.CopyToAsync(outputFileStream);*/
         
         Plugin.Log.Info($"Saved cache to {CacheFilename}");
         
-        LoadProtoCache();
+        await LoadProtoCache();
     }
 
-    private static void LoadProtoCache()
+    private static async Task LoadProtoCache()
     {
         if (!File.Exists(CacheFilename))
         {
@@ -73,13 +73,16 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
             return;
         }
 
-        using FileStream file = File.OpenRead(CacheFilename);
-        CachedMapList mapList = Serializer.Deserialize<CachedMapList>(file);
+        Plugin.Log.Info($"Decompressing and loading cache from {CacheFilename}...");
+        await using FileStream file = File.OpenRead(CacheFilename);
+        await using GZipStream decompressor = new(file, CompressionMode.Decompress);
+        CachedMapList mapList = Serializer.Deserialize<CachedMapList>(decompressor);
+        Plugin.Log.Info("Loaded cache");
 
         foreach (CachedMap cachedMap in mapList.Maps)
         {
             CachedMaps.Add(cachedMap.Key, cachedMap);
-            CachedMapsByHash.Add(cachedMap.Hash, cachedMap);
+            CachedMaps.Add(cachedMap.Hash, cachedMap);
         }
         
         Plugin.Log.Info($"{mapList.Maps.Length} maps are in the protobuf cache");
@@ -103,7 +106,7 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
     {
         try
         {
-            return CachedMapsByHash[hash];
+            return CachedMaps[hash];
         }
         catch (Exception)
         {
