@@ -55,10 +55,6 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
         Plugin.Log.Info($"Grabbed cache from {CacheURL}, saving...");
 
         await File.WriteAllBytesAsync(CacheFilename, await response.ReadAsByteArrayAsync());
-        /*Stream result = await response.ReadAsStreamAsync();
-        await using FileStream outputFileStream = File.Create(CacheFilename);
-        await using GZipStream decompressor = new(result, CompressionMode.Decompress);
-        await decompressor.CopyToAsync(outputFileStream);*/
         
         Plugin.Log.Info($"Saved cache to {CacheFilename}");
         
