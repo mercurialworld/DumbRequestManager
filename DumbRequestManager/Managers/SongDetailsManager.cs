@@ -10,17 +10,9 @@ using Zenject;
 namespace DumbRequestManager.Managers;
 
 [UsedImplicitly]
-public class SongDetailsManager : IInitializable, IDisposable
+public static class SongDetailsManager
 {
     internal static readonly BeatSaver BeatSaverInstance = new(nameof(DumbRequestManager), Assembly.GetExecutingAssembly().GetName().Version);
-
-    public void Initialize()
-    {
-    }
-
-    public void Dispose()
-    {
-    }
 
     public static async Task<Beatmap?> GetDirectByKey(string key)
     {
