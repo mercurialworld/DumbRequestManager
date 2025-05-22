@@ -1,5 +1,6 @@
-﻿using System.IO;
+﻿using JetBrains.Annotations;
 using ProtoBuf;
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace DumbRequestManager.Classes;
 
@@ -13,58 +14,63 @@ public enum CachedMapMods
 };
 
 [ProtoContract]
-internal class CachedMapRankValues
+[UsedImplicitly]
+public class CachedMapRankValues
 {
-    [ProtoMember(1)] public bool IsRanked { get; set; }
-    [ProtoMember(2)] public uint Stars { get; set; }
+    [ProtoMember(1)] public bool IsRanked { get; private set; }
+    [ProtoMember(2)] public uint Stars { get; private set; }
 }
 
 [ProtoContract]
-internal class CachedMapRankStatus
+[UsedImplicitly]
+public class CachedMapRankStatus
 {
-    [ProtoMember(1)] public CachedMapRankValues ScoreSaber { get; set; } = null!;
-    [ProtoMember(2)] public CachedMapRankValues BeatLeader { get; set; } = null!;
+    [ProtoMember(1)] public CachedMapRankValues ScoreSaber { get; private set; } = null!;
+    [ProtoMember(2)] public CachedMapRankValues BeatLeader { get; private set; } = null!;
 }
 
 [ProtoContract]
+[UsedImplicitly]
 public class CachedMapDifficulty
 {
-    [ProtoMember(1)] internal float JumpSpeed { get; set; }
-    [ProtoMember(2)] internal uint Notes { get; set; }
-    [ProtoMember(3)] internal string Characteristic { get; set; } = string.Empty;
-    [ProtoMember(4)] internal string Difficulty { get; set; } = string.Empty;
-    [ProtoMember(5)] internal CachedMapMods Mods { get; set; }
-    [ProtoMember(6)] internal string Environment { get; set; } = string.Empty;
-    [ProtoMember(7)] internal CachedMapRankStatus RankedStatus { get; set; } = null!;
+    [ProtoMember(1)] public float JumpSpeed { get; private set; }
+    [ProtoMember(2)] public uint Notes { get; private set; }
+    [ProtoMember(3)] public string Characteristic { get; private set; } = string.Empty;
+    [ProtoMember(4)] public string Difficulty { get; private set; } = string.Empty;
+    [ProtoMember(5)] public CachedMapMods Mods { get; private set; }
+    [ProtoMember(6)] public string Environment { get; private set; } = string.Empty;
+    [ProtoMember(7)] public CachedMapRankStatus RankedStatus { get; private set; } = null!;
 }
 
 [ProtoContract]
-internal class CachedMapVotes
+[UsedImplicitly]
+public class CachedMapVotes
 {
-    [ProtoMember(1)] internal uint Up { get; set; }
-    [ProtoMember(2)] internal uint Down { get; set; }
+    [ProtoMember(1)] public uint Up { get; private set; }
+    [ProtoMember(2)] public uint Down { get; private set; }
 }
 
 [ProtoContract]
+[UsedImplicitly]
 public class CachedMap
 {
-    [ProtoMember(1)] internal uint Key { get; set; }
-    [ProtoMember(2)] internal string Hash { get; set; } = string.Empty;
-    [ProtoMember(3)] internal string? SongName { get; set; }
-    [ProtoMember(4)] internal string? SongSubName { get; set; }
-    [ProtoMember(5)] internal string? SongAuthorName { get; set; }
-    [ProtoMember(6)] internal string? LevelAuthorName { get; set; }
-    [ProtoMember(7)] internal uint Duration { get; set; }
-    [ProtoMember(8)] internal uint UploadTimestamp { get; set; }
-    [ProtoMember(9)] internal uint LastUpdateTimestamp { get; set; }
-    [ProtoMember(10)] internal CachedMapMods Mods { get; set; }
-    [ProtoMember(11)] internal string? Curator { get; set; }
-    [ProtoMember(12)] internal CachedMapVotes Votes { get; set; } = null!;
-    [ProtoMember(13)] internal CachedMapDifficulty[] Difficulties { get; set; } = null!;
+    [ProtoMember(1)] public uint Key { get; private set; }
+    [ProtoMember(2)] public string Hash { get; private set; } = string.Empty;
+    [ProtoMember(3)] public string? SongName { get; private set; }
+    [ProtoMember(4)] public string? SongSubName { get; private set; }
+    [ProtoMember(5)] public string? SongAuthorName { get; private set; }
+    [ProtoMember(6)] public string? LevelAuthorName { get; private set; }
+    [ProtoMember(7)] public uint Duration { get; private set; }
+    [ProtoMember(8)] public uint UploadTimestamp { get; private set; }
+    [ProtoMember(9)] public uint LastUpdateTimestamp { get; private set; }
+    [ProtoMember(10)] public CachedMapMods Mods { get; private set; }
+    [ProtoMember(11)] public string? Curator { get; private set; }
+    [ProtoMember(12)] public CachedMapVotes Votes { get; private set; } = null!;
+    [ProtoMember(13)] public CachedMapDifficulty[] Difficulties { get; private set; } = null!;
 }
 
 [ProtoContract]
-internal class CachedMapList
+public class CachedMapList
 {
-    [ProtoMember(1)] internal CachedMap[] Maps { get; set; } = null!;
+    [ProtoMember(1)] public CachedMap[] Maps { get; private set; } = null!;
 }
