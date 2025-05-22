@@ -1,4 +1,7 @@
-﻿namespace DumbRequestManager.Utils;
+﻿using System.IO;
+using System.Linq;
+
+namespace DumbRequestManager.Utils;
 
 internal static class Normalize
 {
@@ -88,21 +91,11 @@ internal static class Normalize
         char[] chars = new char[text.Length];
         int outputIndex = 0;
 
-        foreach (char character in text)
+        foreach (char character in text.Where(character =>
+                         !Path.GetInvalidPathChars().Contains(character) &&
+                         !Path.GetInvalidFileNameChars().Contains(character)))
         {
-            switch(character)
-            {
-                case '\\':
-                case '\r':
-                case '\n':
-                case '\t':
-                case '\"':
-                    break;
-
-                default:
-                    chars[outputIndex++] = character;
-                    break;
-            }
+            chars[outputIndex++] = character;
         }
         
         return new string(chars, 0, outputIndex);
