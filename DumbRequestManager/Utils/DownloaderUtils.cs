@@ -165,10 +165,6 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         }
 
         string folderName = $"{beatmap.ID} ({beatmap.Metadata.SongName} - {beatmap.Metadata.LevelAuthorName})";
-        /*Plugin.DebugMessage($"[DownloadUtils] Folder name before: {folderName}...");
-        Path.GetInvalidFileNameChars().Concat(Path.GetInvalidPathChars()).Aggregate(folderName,
-            (current, invalidCharacter) => current.Replace(invalidCharacter.ToString(), string.Empty));
-        Plugin.DebugMessage($"[DownloadUtils] Folder name after: {folderName}...");*/
         
         string fullFolderPath = Path.Combine(customSongsPath, folderName.StripSomeControlCharacters());
         if (!Directory.Exists(fullFolderPath))
