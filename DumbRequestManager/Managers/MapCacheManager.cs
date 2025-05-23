@@ -75,13 +75,13 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
         CachedMapList mapList = Serializer.Deserialize<CachedMapList>(decompressor);
         Plugin.Log.Info("Loaded cache");
 
-        foreach (CachedMap cachedMap in mapList.Maps)
+        foreach (KeyValuePair<string, CachedMap> cachedMap in mapList.Maps)
         {
-            CachedMaps.Add(cachedMap.Key, cachedMap);
-            CachedMaps.Add(cachedMap.Hash, cachedMap);
+            CachedMaps.Add(cachedMap.Value.Key, cachedMap.Value);
+            CachedMaps.Add(cachedMap.Value.Hash, cachedMap.Value);
         }
         
-        Plugin.Log.Info($"{mapList.Maps.Length} maps are in the protobuf cache");
+        Plugin.Log.Info($"{mapList.Maps.Count} maps are in the protobuf cache");
     }
 
     public CachedMap? GetMapById(string id)

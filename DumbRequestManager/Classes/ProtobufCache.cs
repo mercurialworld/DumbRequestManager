@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using ProtoBuf;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
@@ -72,5 +73,5 @@ public class CachedMap
 [ProtoContract]
 public class CachedMapList
 {
-    [ProtoMember(1)] public CachedMap[] Maps { get; private set; } = null!;
+    [ProtoMember(1), ProtoMap] public Dictionary<string, CachedMap> Maps { get; private set; } = null!;
 }
