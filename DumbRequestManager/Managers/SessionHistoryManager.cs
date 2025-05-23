@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using JetBrains.Annotations;
 using Zenject;
@@ -46,25 +45,7 @@ internal class StartMapEvent(GameplayCoreSceneSetupData gameplayCoreSceneSetupDa
             return;
         }
         
-        NoncontextualizedSong queuedSong;
-        
-        CachedMap? song = SongDetailsManager.GetByMapHash(hash);
-        if (song == null)
-        {
-            Beatmap? beatmap = SongDetailsManager.GetDirectByHash(hash).Result; 
-            if (beatmap != null)
-            {
-                queuedSong = new NoncontextualizedSong(beatmap, true);
-            }
-            else
-            {
-                return;
-            }
-        }
-        else
-        {
-            queuedSong = new NoncontextualizedSong(song, true);
-        }
+        NoncontextualizedSong queuedSong = new(originalMap, true);
         
         Plugin.DebugMessage($"Adding {queuedSong.Title} to session history...");
         SessionHistoryManager.AddToSession(queuedSong);

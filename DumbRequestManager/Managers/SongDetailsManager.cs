@@ -14,14 +14,14 @@ public static class SongDetailsManager
 
     public static async Task<Beatmap?> GetDirectByKey(string key)
     {
-        return await BeatSaverInstance.Beatmap(key);
+        return await BeatSaverInstance.Beatmap(key.ToLower());
     }
 
-    public static async Task<Beatmap?> GetDirectByHash(string hash)
+    /*public static async Task<Beatmap?> GetDirectByHash(string hash)
     {
-        return await BeatSaverInstance.BeatmapByHash(hash);
-    }
+        return await BeatSaverInstance.BeatmapByHash(hash.ToLower());
+    }*/
 
-    public static CachedMap? GetByKey(string key) => MapCacheManager.Instance?.GetMapById(key);
-    public static CachedMap? GetByMapHash(string hash) => MapCacheManager.Instance?.GetMapByHash(hash);
+    public static CachedMap? GetByKey(string key) => MapCacheManager.Instance?.GetMapById(key.ToLower());
+    //public static CachedMap? GetByMapHash(string hash) => MapCacheManager.Instance?.GetMapByHash(hash.ToLower());
 }
