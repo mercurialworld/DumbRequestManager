@@ -28,7 +28,7 @@ internal abstract class SessionHistoryManager
         }
 
         SessionHistory.Add(DateTimeOffset.UtcNow.ToUnixTimeSeconds(), song);
-        Plugin.DebugMessage($"Added {song.Title} to session history...");
+        Plugin.DebugMessage($"Added {song.Title} to session history");
     }
 }
 
@@ -44,10 +44,17 @@ internal class StartMapEvent(GameplayCoreSceneSetupData gameplayCoreSceneSetupDa
             Plugin.Log.Info($"Hash was not of expected length (40): ${hash}");
             return;
         }
-        
-        NoncontextualizedSong queuedSong = new(originalMap, true);
-        
-        Plugin.DebugMessage($"Adding {queuedSong.Title} to session history...");
-        SessionHistoryManager.AddToSession(queuedSong);
+
+        try
+        {
+            NoncontextualizedSong queuedSong = new(originalMap, true);
+
+            Plugin.DebugMessage($"Adding {queuedSong.Title} to session history...");
+            SessionHistoryManager.AddToSession(queuedSong);
+        }
+        catch (Exception)
+        {
+            // do nothing
+        }
     }
 }
