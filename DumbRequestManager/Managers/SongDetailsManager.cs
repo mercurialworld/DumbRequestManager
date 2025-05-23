@@ -17,10 +17,10 @@ public static class SongDetailsManager
         return await BeatSaverInstance.Beatmap(key.ToLower());
     }
 
-    /*public static async Task<Beatmap?> GetDirectByHash(string hash)
+    public static async Task<Beatmap?> GetDirectByHash(string hash)
     {
         return await BeatSaverInstance.BeatmapByHash(hash.ToLower());
-    }*/
+    }
 
     public static CachedMap? GetByKey(string key) => MapCacheManager.Instance?.GetMapById(key.ToLower());
     //public static CachedMap? GetByMapHash(string hash) => MapCacheManager.Instance?.GetMapByHash(hash.ToLower());

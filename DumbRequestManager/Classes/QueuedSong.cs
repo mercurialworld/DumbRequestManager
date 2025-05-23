@@ -456,21 +456,42 @@ public class NoncontextualizedSong
             if (mods.Any(x => x == "Vivify")) { UsesVivify = true; }
         }
 
-        CachedMap? cachedDetails = MapCacheManager.Instance?.GetMapByHash(Hash); // some stuff just isn't available base game
-        
-        DataIsFromLocalCache = cachedDetails != null;
+        CachedMap? cachedDetails = MapCacheManager.Instance?.GetMapByHash(Hash);
+        if (cachedDetails != null)
+        {
+            DataIsFromLocalCache = true;
 
-        BsrKey = cachedDetails?.Key.ToString("x") ?? string.Empty;
-        Votes = [cachedDetails?.Votes.Up ?? 0, cachedDetails?.Votes.Down ?? 0];
-        Rating = cachedDetails == null ? 0.5f : CalculateRating(cachedDetails.Votes.Up, cachedDetails.Votes.Down);
-        LastUpdated = cachedDetails?.LastUpdateTimestamp ?? (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // it's *probably* very new if the null check triggers
-        UploadTime = cachedDetails?.UploadTimestamp ?? (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // it's *probably* very new if the null check triggers
-        Cover = cachedDetails == null ? string.Empty : $"https://cdn.beatsaver.com/{cachedDetails.Hash}.jpg";
-        BeatLeaderRanked = cachedDetails?.Difficulties.Any(x => x.RankedStatus.BeatLeader.IsRanked) ?? false;
-        ScoreSaberRanked = cachedDetails?.Difficulties.Any(x => x.RankedStatus.ScoreSaber.IsRanked) ?? false;
-        Curated = cachedDetails?.Curator != null;
-        CuratorName = cachedDetails?.Curator ?? string.Empty;
-        
+            BsrKey = cachedDetails.Key.ToString("x") ?? string.Empty;
+            Votes = [cachedDetails.Votes.Up, cachedDetails.Votes.Down];
+            Rating = CalculateRating(cachedDetails.Votes.Up, cachedDetails.Votes.Down);
+            LastUpdated = cachedDetails.LastUpdateTimestamp;
+            UploadTime = cachedDetails.UploadTimestamp;
+            Cover = $"https://cdn.beatsaver.com/{cachedDetails.Hash}.jpg";
+            BeatLeaderRanked = cachedDetails.Difficulties.Any(x => x.RankedStatus.BeatLeader.IsRanked);
+            ScoreSaberRanked = cachedDetails.Difficulties.Any(x => x.RankedStatus.ScoreSaber.IsRanked);
+            Curated = cachedDetails.Curator != null;
+            CuratorName = cachedDetails.Curator ?? string.Empty;
+        }
+        else
+        {
+            Beatmap? beatsaverDetails = SongDetailsManager.GetDirectByHash(Hash).ConfigureAwait(true).GetAwaiter().GetResult();
+            if (beatsaverDetails != null)
+            {
+                DataIsFromBeatSaver = true;
+
+                BsrKey = beatsaverDetails.ID;
+                Votes = [(uint)beatsaverDetails.Stats.Upvotes, (uint)beatsaverDetails.Stats.Downvotes];
+                Rating = beatsaverDetails.Stats.Score;
+                LastUpdated = (uint)beatsaverDetails.LatestVersion.CreatedAt.Subtract(DateTime.UnixEpoch).TotalSeconds;
+                UploadTime = (uint)beatsaverDetails.Uploaded.Subtract(DateTime.UnixEpoch).TotalSeconds;
+                Cover = beatsaverDetails.LatestVersion.CoverURL;
+                BeatLeaderRanked = false; // BeatSaverSharp doesn't have BL rank tags yet
+                ScoreSaberRanked = beatsaverDetails.Ranked;
+                Curated = beatsaverDetails.BeatmapCurator != null;
+                CuratorName = beatsaverDetails.BeatmapCurator?.Name ?? string.Empty;
+            }
+        }
+
         Diffs = level.GetBeatmapKeys().Select(key =>
         {
             BeatmapBasicData? diff = level.GetDifficultyBeatmapData(key.beatmapCharacteristic, key.difficulty);
