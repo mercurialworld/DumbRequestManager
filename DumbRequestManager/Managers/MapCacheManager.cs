@@ -34,9 +34,9 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
     {
         if (File.Exists(CacheFilename))
         {
-            if (DateTime.UtcNow < File.GetLastWriteTimeUtc(CacheFilename).AddHours(3))
+            if (DateTime.UtcNow < File.GetLastWriteTimeUtc(CacheFilename).AddHours(1))
             {
-                Plugin.Log.Info("Cache was obtained less than 3 hours ago, not refreshing");
+                Plugin.Log.Info("Cache was obtained less than an hour ago, not refreshing");
                 await LoadProtoCache();
                 return;
             }
