@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using DumbRequestManager.Classes;
 
 namespace DumbRequestManager.Utils;
 
@@ -100,8 +102,45 @@ internal abstract class Censor
         return AgePhrases.Any(agePhrase => normalized.Contains(agePhrase));
     }
 
+    private static bool SongContainsSplicedPhrase(string[] parts)
+    {
+        if (CensorWords.Count == 0)
+        {
+            InitializeCensorWords();
+        }
+        
+        Regex onlyAlphanumeric = new (@"[^a-zA-Z0-9 \s]");
+
+        List<string> inputs = [];
+        // ReSharper disable once LoopCanBeConvertedToQuery
+        for (int i = 0; i < parts.Length; i++)
+        {
+            inputs.Add(onlyAlphanumeric.Replace(
+                $"{parts[i % parts.Length]}{parts[(i + 1) % parts.Length]}{parts[(i + 2) % parts.Length]}{parts[(i + 3) % parts.Length]}"
+                    .ToLowerInvariant().RemoveDiacritics().Replace(" ", string.Empty), string.Empty));
+        }
+
+        foreach (string input in inputs)
+        {
+            Plugin.DebugMessage($"Checking for stuff in {input}");
+            foreach ((string word, bool aggressive) in CensorWords)
+            {
+                if (aggressive && input.Contains(word))
+                {
+                    return true;
+                }
+            }   
+        }
+        
+        return false;
+    }
+
     public static bool Check(string input)
     {
         return StringContainsCensoredWord(input) || StringContainsAgePhrase(input);
+    }
+    public static bool Check(string[] parts)
+    {
+        return SongContainsSplicedPhrase(parts);
     }
 }

@@ -142,6 +142,7 @@ All `pressed` events follow the same data structure:
   "CensorArtist": <boolean>,
   "Mapper": <string>,
   "CensorMapper": <boolean>,
+  "MetaDataHasSplicedCensor": <boolean>,
   "Duration": <int (seconds)>,
   "Votes": [<int (upvotes)>, <int (downvotes)>],
   "Rating": <float (0-1)>,
@@ -180,8 +181,10 @@ All `pressed` events follow the same data structure:
     },
     ...
   ]
-}
+} 
 ```
+`MetadataHasSplicedCensor` is a boolean indicating if an aggressively censored word was found spliced between multiple metadata fields.
+> (ex. if "apple" is censored aggressively, and *"c**ap**"* is the song title and *"**ple**ase"* is the artist, this will return `true`)
 
 <a name="queue-data-type"></a>
 ## Queue position data

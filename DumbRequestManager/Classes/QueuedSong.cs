@@ -258,6 +258,8 @@ public class NoncontextualizedSong
     public string Mapper { get; set; } = string.Empty;
     [JsonProperty]
     public bool CensorMapper { get; set; }
+    [JsonProperty]
+    public bool MetadataHasSplicedCensor { get; set; }
     
     private string SecondaryLineWithMapper => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color=#CBADFF>{Mapper.StripTMPTags()}<color=#FFFFFF>]";
     private string SecondaryLineWithRequester => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color=#CBFFAD>{User?.StripTMPTags()}<color=#FFFFFF>]";
@@ -357,6 +359,7 @@ public class NoncontextualizedSong
         CensorArtist = Censor.Check(Artist);
         Mapper = song.LevelAuthorName ?? string.Empty;
         CensorMapper = Censor.Check(Mapper);
+        MetadataHasSplicedCensor = Censor.Check([Title, SubTitle, Artist, Mapper]);
         Duration = song.Duration;
         Votes = [song.Votes.Up, song.Votes.Down];
         Rating = CalculateRating(song.Votes.Up, song.Votes.Down);
@@ -395,6 +398,7 @@ public class NoncontextualizedSong
         CensorArtist = Censor.Check(Artist);
         Mapper = song.Metadata.LevelAuthorName;
         CensorMapper = Censor.Check(Mapper);
+        MetadataHasSplicedCensor = Censor.Check([Title, SubTitle, Artist, Mapper]);
         Duration = (uint)song.Metadata.Duration;
         Votes = [(uint)song.Stats.Upvotes, (uint)song.Stats.Downvotes];
         Rating = song.Stats.Score;
@@ -431,6 +435,7 @@ public class NoncontextualizedSong
         CensorArtist = Censor.Check(Artist);
         Mapper = string.Join(", ", level.allMappers);
         CensorMapper = Censor.Check(Mapper);
+        MetadataHasSplicedCensor = Censor.Check([Title, SubTitle, Artist, Mapper]);
         Duration = (uint)level.songDuration;
 
         UsesChroma = false;
