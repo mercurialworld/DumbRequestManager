@@ -128,7 +128,7 @@ public class NoncontextualizedDifficulty
         Characteristic = difficulty.Characteristic;
         NoteJumpSpeed = difficulty.JumpSpeed;
         NotesPerSecond = difficulty.Notes / (float)map.Duration;
-        MapMods = new QueuedSongMapMods(difficulty.Mods);
+        MapMods = new QueuedSongMapMods((CachedMapMods)difficulty.Mods);
         ScoreSaberStars = difficulty.RankedStatus.ScoreSaber.IsRanked ? difficulty.RankedStatus.ScoreSaber.Stars : 0;
         BeatLeaderStars = difficulty.RankedStatus.BeatLeader.IsRanked ? difficulty.RankedStatus.BeatLeader.Stars : 0;
     }
@@ -367,11 +367,11 @@ public class NoncontextualizedSong
         ScoreSaberRanked = song.Difficulties.Any(x => x.RankedStatus.ScoreSaber.IsRanked);
         Curated = song.Curator != null;
         CuratorName = song.Curator ?? string.Empty;
-        UsesChroma = song.Mods.HasFlag(CachedMapMods.Chroma);
-        UsesCinema = song.Mods.HasFlag(CachedMapMods.Cinema);
-        UsesMappingExtensions = song.Mods.HasFlag(CachedMapMods.MappingExtensions);
-        UsesNoodleExtensions = song.Mods.HasFlag(CachedMapMods.NoodleExtensions);
-        UsesVivify = song.Mods.HasFlag(CachedMapMods.Vivify);
+        UsesChroma = ((CachedMapMods)song.Mods).HasFlag(CachedMapMods.Chroma);
+        UsesCinema = ((CachedMapMods)song.Mods).HasFlag(CachedMapMods.Cinema);
+        UsesMappingExtensions = ((CachedMapMods)song.Mods).HasFlag(CachedMapMods.MappingExtensions);
+        UsesNoodleExtensions = ((CachedMapMods)song.Mods).HasFlag(CachedMapMods.NoodleExtensions);
+        UsesVivify = ((CachedMapMods)song.Mods).HasFlag(CachedMapMods.Vivify);
         // (Local cache doesn't cache automapped maps, always false)
         Diffs = song.Difficulties.Select(x => new NoncontextualizedDifficulty(x, song)).ToArray();
         if (!skipCoverImage)

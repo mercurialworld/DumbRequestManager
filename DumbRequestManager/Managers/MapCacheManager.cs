@@ -72,7 +72,16 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
         Plugin.Log.Info($"Decompressing and loading cache from {CacheFilename}...");
         await using FileStream file = File.OpenRead(CacheFilename);
         await using GZipStream decompressor = new(file, CompressionMode.Decompress);
-        CachedMapList mapList = Serializer.Deserialize<CachedMapList>(decompressor);
+        CachedMapList mapList;
+        try
+        {
+            mapList = Serializer.Deserialize<CachedMapList>(decompressor);
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.Error(e);
+            throw;
+        }
         Plugin.Log.Info("Loaded cache");
 
         foreach (KeyValuePair<string, CachedMap> cachedMap in mapList.Maps)
