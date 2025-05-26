@@ -439,6 +439,7 @@ internal class QueueViewController : BSMLAutomaticViewController
 
         UnityMainThreadTaskScheduler.Factory.StartNew(() =>
         {
+            _selectDifficultyComponent.TableView.DeleteCells(0, _selectDifficultyComponent.TableView.numberOfCells);
             _selectDifficultyComponent.Data = _difficultyChoices;
 
             _selectDifficultyComponent.TableView.ReloadData();
@@ -558,7 +559,7 @@ internal class QueueViewController : BSMLAutomaticViewController
                 
                 if (!cell.gameObject.activeSelf)
                 {
-                    Destroy(cell.gameObject);
+                    DestroyImmediate(cell.gameObject);
                 }
             }
         } 
@@ -654,6 +655,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         
             UnityMainThreadTaskScheduler.Factory.StartNew(() =>
             {
+                _selectCharacteristicComponent.TableView.DeleteCells(0, _selectCharacteristicComponent.TableView.numberOfCells);
                 _selectCharacteristicComponent.Data = _characteristicChoices;
                 _selectCharacteristicComponent.TableView.ReloadData();
                 _selectCharacteristicComponent.TableView.SelectCellWithIdx(0, true);
