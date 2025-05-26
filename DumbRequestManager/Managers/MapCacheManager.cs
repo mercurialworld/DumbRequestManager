@@ -18,7 +18,7 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
     private static PluginConfig Config => PluginConfig.Instance;
     private static readonly Dictionary<dynamic, CachedMap> CachedMaps = new();
 
-    private static readonly string CacheFilename = Path.Combine(Plugin.UserDataDir, "cached.proto.gz");
+    private static readonly string CacheFilename = Path.Combine(Plugin.UserDataDir, "cache.proto.gz");
     private static readonly string CacheURL = Config.ProtobufCacheURL;
 
     internal static MapCacheManager? Instance;
