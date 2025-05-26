@@ -147,6 +147,7 @@ All `pressed` events follow the same data structure:
   "Votes": [<int (upvotes)>, <int (downvotes)>],
   "Rating": <float (0-1)>,
   "UploadTime": <int (unix timestmap (seconds))>,
+  "LastUpdated": <int (unix timestmap (seconds))>,
   "Cover": <string (image URL, jpg format)>,
   "Automapped": <boolean>,
   "ScoreSaberRanked": <boolean>,
