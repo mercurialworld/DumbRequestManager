@@ -179,11 +179,20 @@ internal class HttpApi : IInitializable
                 }
                 targetedIndex--;
 
-                if (!int.TryParse(path[4].Replace("/", string.Empty), out int newIndex))
+                int newIndex;
+                if (!int.TryParse(path[4].Replace("/", string.Empty), out int newerIndex))
                 {
-                    break;
+                    switch (path[4].Replace("/", string.Empty).ToLower())
+                    {
+                        case "top": newIndex = 0; break;
+                        case "bottom": newIndex = max; break;
+                        default: goto finalResponse;
+                    }
                 }
-                newIndex--;
+                else
+                {
+                    newIndex = newerIndex - 1;
+                }
                             
                 if (targetedIndex < min || targetedIndex > max || newIndex < min || newIndex > max)
                 {
