@@ -392,12 +392,11 @@ internal class HttpApi : IInitializable
         {
             string hash = song.Hash.ToLower();
             Plugin.DebugMessage($"Checking SongCore for hash {hash}");
-            if (SongCore.Collections.songWithHashPresent(hash))
+            
+            BeatmapLevel? beatmapLevel = SongCore.Loader.GetLevelByHash(hash);
+            if (beatmapLevel != null)
             {
                 Plugin.DebugMessage("Using local map method");
-                
-                // can't be null here
-                BeatmapLevel beatmapLevel = SongCore.Loader.GetLevelByHash(hash)!;
                 queriedSong = new NoncontextualizedSong(beatmapLevel);
             }
             else
