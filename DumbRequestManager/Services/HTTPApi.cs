@@ -65,6 +65,12 @@ internal class HttpApi : IInitializable
         int code = 400;
         byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
         
+        if (!int.TryParse(path.Last().Replace("/", string.Empty).ToLower(), NumberStyles.HexNumber,
+                CultureInfo.InvariantCulture, out int _))
+        {
+            goto finalResponse;
+        }
+        
         byte[]? queryResponse = path[2][..^1] == "nocache"
             ? await QuerySkipCache(path.Last().Replace("/", string.Empty))
             : await Query(path.Last().Replace("/", string.Empty));
@@ -76,7 +82,8 @@ internal class HttpApi : IInitializable
             response = queryResponse;
         }
         
-        return new KeyValuePair<int, byte[]>(code, response);
+        finalResponse:
+            return new KeyValuePair<int, byte[]>(code, response);
     }
 
     private static async Task<KeyValuePair<int, byte[]>> HandleAddKeyContext(string[] path,
