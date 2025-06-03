@@ -228,7 +228,7 @@ internal class HttpApi : IInitializable
         
         Plugin.DebugMessage($"path: {string.Join(", ", path)}");
         
-        KeyValuePair<int, byte[]> response = new (501, Encoding.Default.GetBytes("{\"message\": \"Not implemented\"}"));
+        KeyValuePair<int, byte[]> response;
         
         switch (path[1].Replace("/", string.Empty))
         {
@@ -250,6 +250,10 @@ internal class HttpApi : IInitializable
             
             case "history":
                 response = new KeyValuePair<int, byte[]>(200, GetSessionHistory(int.Parse(urlQuery.Get("limit") ?? "0")));
+                break;
+            
+            default:
+                response = new KeyValuePair<int, byte[]>(501, Encoding.Default.GetBytes("{\"message\": \"Not implemented\"}"));
                 break;
         }
         
