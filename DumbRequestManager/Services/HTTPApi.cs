@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -59,6 +60,158 @@ internal class HttpApi : IInitializable
         });
     }
 
+    private static async Task<KeyValuePair<int, byte[]>> HandleQueryContext(string[] path)
+    {
+        int code = 400;
+        byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
+        
+        byte[]? queryResponse = path[2][..^1] == "nocache"
+            ? await QuerySkipCache(path.Last().Replace("/", string.Empty))
+            : await Query(path.Last().Replace("/", string.Empty));
+                
+        // ReSharper disable once InvertIf
+        if (queryResponse != null)
+        {
+            code = 200;
+            response = queryResponse;
+        }
+        
+        return new KeyValuePair<int, byte[]>(code, response);
+    }
+
+    private static async Task<KeyValuePair<int, byte[]>> HandleAddKeyContext(string[] path,
+        NameValueCollection urlQuery, bool isWip = false)
+    {
+        int code = 400;
+        byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
+
+        if (path.Length <= 2)
+        {
+            goto finalResponse;
+        }
+
+        if (!int.TryParse(path.Last().Replace("/", string.Empty).ToLower(), NumberStyles.HexNumber,
+                CultureInfo.InvariantCulture, out int _))
+        {
+            goto finalResponse;
+        }
+
+        byte[]? keyResponse;
+        if (isWip)
+        {
+            keyResponse = AddWip(path.Last().Replace("/", string.Empty),
+                urlQuery.Get("user"),
+                bool.Parse(urlQuery.Get("prepend") ?? "true"));
+        }
+        else
+        {
+            keyResponse = await AddKey(path.Last().Replace("/", string.Empty),
+                urlQuery.Get("user"),
+                bool.Parse(urlQuery.Get("prepend") ?? "false"));
+        }
+
+        if (keyResponse != null)
+        {
+            code = 200;
+            response = keyResponse;
+        }
+
+        finalResponse:
+            return new KeyValuePair<int, byte[]>(code, response);
+    }
+
+    private static async Task<KeyValuePair<int, byte[]>> HandleQueueContext(string[] path)
+    {
+        int code = 400;
+        byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
+
+        if (path.Length <= 2)
+        {
+            code = 200;
+            response = GetEncodedQueue;
+            goto finalResponse;
+        }
+
+        switch (path[2].Replace("/", string.Empty))
+        {
+            case "where":
+                code = 200;
+                response = GetPositionsInQueue(path.Last().Replace("/", string.Empty));
+                break;
+                        
+            case "clear":
+                code = 200;
+                            
+                QueueManager.QueuedSongs.Clear();
+                            
+                QueueViewController.RefreshQueue();
+                ChatRequestButton.Instance.UseAttentiveButton(false);
+                            
+                response = Encoding.Default.GetBytes("{\"message\": \"Queue cleared\"}");
+                break;
+                        
+            case "open":
+                if (path.Length <= 3)
+                {
+                    break;
+                }
+
+                if (bool.TryParse(path[3].Replace("/", string.Empty), out bool openResult))
+                {
+                    code = 200;
+                    response = Encoding.Default.GetBytes("{\"message\": \"Queue gate changed\"}");
+                    await SideSettingsViewController.Instance.SetState(openResult);
+                }
+                break;
+                        
+            case "move":
+                if (path.Length != 5)
+                {
+                    break;
+                }
+                            
+                const int min = 0;
+                int max = QueueManager.QueuedSongs.Count - 1;
+
+                if (!int.TryParse(path[3].Replace("/", string.Empty), out int targetedIndex))
+                {
+                    break;
+                }
+                targetedIndex--;
+
+                if (!int.TryParse(path[4].Replace("/", string.Empty), out int newIndex))
+                {
+                    break;
+                }
+                newIndex--;
+                            
+                if (targetedIndex < min || targetedIndex > max || newIndex < min || newIndex > max)
+                {
+                    break;
+                }
+                            
+                NoncontextualizedSong oldSong = QueueManager.QueuedSongs[targetedIndex];
+                QueueManager.QueuedSongs.RemoveAt(targetedIndex);
+                QueueManager.QueuedSongs.Insert(newIndex, oldSong);
+
+                QueueViewController.RefreshQueue();
+                            
+                code = 200;
+                response = Encoding.Default.GetBytes("{\"message\": \"Moved entry\"}");
+                break;
+                        
+            case "shuffle":
+                code = 200;
+                response = Encoding.Default.GetBytes("{\"message\": \"Queue shuffled\"}");
+                            
+                QueueManager.Shuffle();
+                break;
+        }
+        
+        finalResponse:
+            return new KeyValuePair<int, byte[]>(code, response);
+    }
+
     private static async Task HandleContext(HttpListenerContext context)
     {
         string[] path = context.Request.Url.Segments;
@@ -75,178 +228,38 @@ internal class HttpApi : IInitializable
         
         Plugin.DebugMessage($"path: {string.Join(", ", path)}");
         
-        byte[] failedData = Encoding.Default.GetBytes("{\"message\": \"Not implemented\"}");
-        byte[] data = failedData;
-        int statusCode = 501;
+        KeyValuePair<int, byte[]> response = new (501, Encoding.Default.GetBytes("{\"message\": \"Not implemented\"}"));
         
         switch (path[1].Replace("/", string.Empty))
         {
             case "query":
-                byte[]? queryResponse = path[2][..^1] == "nocache"
-                    ? await QuerySkipCache(path.Last().Replace("/", string.Empty))
-                    : await Query(path.Last().Replace("/", string.Empty));
-                
-                if (queryResponse != null)
-                {
-                    statusCode = 200;
-                    data = queryResponse;
-                }
-                else
-                {
-                    statusCode = 400;
-                    data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-                }
+                response = await HandleQueryContext(path);
                 break;
             
             case "addKey":
-                if (path.Length <= 2)
-                {
-                    statusCode = 400;
-                    data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-                    break;
-                }
-                
-                byte[]? keyResponse = await AddKey(path.Last().Replace("/", string.Empty),
-                    urlQuery.Get("user"),
-                    bool.Parse(urlQuery.Get("prepend") ?? "false"));
-                
-                if (keyResponse != null)
-                {
-                    statusCode = 200;
-                    data = keyResponse;
-                }
-                else
-                {
-                    statusCode = 400;
-                    data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-                }
+                response = await HandleAddKeyContext(path, urlQuery);
                 break;
             
             case "addWip":
-                if (path.Length <= 2)
-                {
-                    statusCode = 400;
-                    data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-                    break;
-                }
-
-                byte[] wipResponse = AddWip(path.Last().Replace("/", string.Empty),
-                    urlQuery.Get("user"),
-                    bool.Parse(urlQuery.Get("prepend") ?? "true"));
-                
-                statusCode = 200;
-                data = wipResponse;
+                response = await HandleAddKeyContext(path, urlQuery, true);
                 break;
             
             case "queue":
-                if (path.Length > 2)
-                {
-                    switch (path[2].Replace("/", string.Empty))
-                    {
-                        case "where":
-                            statusCode = 200;
-                            data = GetPositionsInQueue(path.Last().Replace("/", string.Empty));
-                            break;
-                        
-                        case "clear":
-                            statusCode = 200;
-                            
-                            QueueManager.QueuedSongs.Clear();
-                            
-                            QueueViewController.RefreshQueue();
-                            ChatRequestButton.Instance.UseAttentiveButton(false);
-                            
-                            data = Encoding.Default.GetBytes("{\"message\": \"Queue cleared\"}");
-                            break;
-                        
-                        case "open":
-                            if (path.Length <= 3)
-                            {
-                                statusCode = 400;
-                                data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-                                break;
-                            }
-
-                            if (bool.TryParse(path[3].Replace("/", string.Empty), out bool openResult))
-                            {
-                                statusCode = 200;
-                                data = Encoding.Default.GetBytes("{\"message\": \"Queue gate changed\"}");
-                                await SideSettingsViewController.Instance.SetState(openResult);
-                            }
-                            break;
-                        
-                        case "move":
-                            if (path.Length != 5)
-                            {
-                                statusCode = 400;
-                                data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-                                break;
-                            }
-                            
-                            int min = 0;
-                            int max = QueueManager.QueuedSongs.Count - 1;
-
-                            if (!int.TryParse(path[3].Replace("/", string.Empty), out int targetedIndex))
-                            {
-                                statusCode = 400;
-                                data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-                                break;
-                            }
-                            targetedIndex--;
-
-                            if (!int.TryParse(path[4].Replace("/", string.Empty), out int newIndex))
-                            {
-                                statusCode = 400;
-                                data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-                                break;
-                            }
-                            newIndex--;
-                            
-                            if (targetedIndex < min || targetedIndex > max || newIndex < min || newIndex > max)
-                            {
-                                statusCode = 400;
-                                data = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-                                break;
-                            }
-                            
-                            NoncontextualizedSong oldSong = QueueManager.QueuedSongs[targetedIndex];
-                            QueueManager.QueuedSongs.RemoveAt(targetedIndex);
-                            QueueManager.QueuedSongs.Insert(newIndex, oldSong);
-
-                            QueueViewController.RefreshQueue();
-                            
-                            statusCode = 200;
-                            data = Encoding.Default.GetBytes("{\"message\": \"Moved entry\"}");
-                            break;
-                        
-                        case "shuffle":
-                            statusCode = 200;
-                            data = Encoding.Default.GetBytes("{\"message\": \"Queue shuffled\"}");
-                            
-                            QueueManager.Shuffle();
-                            break;
-                    }
-                }
-                else
-                {
-                    statusCode = 200;
-                    data = GetEncodedQueue;
-                }
+                response = await HandleQueueContext(path);
                 break;
             
             case "history":
-                statusCode = 200;
-                data = GetSessionHistory(int.Parse(urlQuery.Get("limit") ?? "0"));
+                response = new KeyValuePair<int, byte[]>(200, GetSessionHistory(int.Parse(urlQuery.Get("limit") ?? "0")));
                 break;
         }
         
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = statusCode;
+        context.Response.StatusCode = response.Key;
         context.Response.KeepAlive = false;
-        context.Response.ContentLength64 = data.Length;
+        context.Response.ContentLength64 = response.Value.Length;
         
         Stream outputStream = context.Response.OutputStream;
-        await outputStream.WriteAsync(data, 0, data.Length);
+        await outputStream.WriteAsync(response.Value, 0, response.Value.Length);
         
         outputStream.Close();
         context.Response.Close();
