@@ -15,8 +15,6 @@
     <BeatSaverVotingVersion>2.4.6</BeatSaverVotingVersion>
     <ProtobufVersion>3.0.102</ProtobufVersion>
     <WebsocketVersion>1.0.4</WebsocketVersion>
-
-    <BSMLFolder>LATEST</BSMLFolder>
   </PropertyGroup>
 
   <!-- Plugin Metadata -->

@@ -2,6 +2,6 @@
 <Project>
   <PropertyGroup>
 		<!-- Change this path if necessary. Make sure it ends with a backslash. -->
-		<BeatSaberDir>D:/bs-manager/BSManager/BSInstances/1.39.1</BeatSaberDir>
+		<BeatSaberDir>D:/bs-manager/BSManager/BSInstances/$(GameVersion)</BeatSaberDir>
   </PropertyGroup>
 </Project>
