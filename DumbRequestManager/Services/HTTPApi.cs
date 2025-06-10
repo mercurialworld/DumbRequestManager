@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -27,7 +26,6 @@ internal class HttpApi : IInitializable
 
     private static HttpListener? _httpListener;
     
-    [SuppressMessage("ReSharper", "FunctionNeverReturns")]
     public void Initialize()
     {
         if (_httpListener != null)
@@ -67,6 +65,8 @@ internal class HttpApi : IInitializable
                     Plugin.Log.Error(e);
                 }
             }
+            // ReSharper disable once FunctionNeverReturns
+            // this is an intentional infinite loop
         });
     }
 
@@ -81,7 +81,7 @@ internal class HttpApi : IInitializable
             goto finalResponse;
         }
         
-        byte[]? queryResponse = path[2][..^1] == "nocache"
+        byte[]? queryResponse = path[2][..^1].ToLower() == "nocache"
             ? await QuerySkipCache(path.Last().Replace("/", string.Empty))
             : await Query(path.Last().Replace("/", string.Empty));
                 
@@ -149,7 +149,7 @@ internal class HttpApi : IInitializable
             goto finalResponse;
         }
 
-        switch (path[2].Replace("/", string.Empty))
+        switch (path[2].Replace("/", string.Empty).ToLower())
         {
             case "where":
                 code = 200;
@@ -256,17 +256,17 @@ internal class HttpApi : IInitializable
         
         KeyValuePair<int, byte[]> response;
         
-        switch (path[1].Replace("/", string.Empty))
+        switch (path[1].Replace("/", string.Empty).ToLower())
         {
             case "query":
                 response = await HandleQueryContext(path);
                 break;
             
-            case "addKey":
+            case "addkey":
                 response = await HandleAddKeyContext(path, urlQuery);
                 break;
             
-            case "addWip":
+            case "addwip":
                 response = await HandleAddKeyContext(path, urlQuery, true);
                 break;
             
