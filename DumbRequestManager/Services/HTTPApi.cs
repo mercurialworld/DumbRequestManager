@@ -38,6 +38,16 @@ internal class HttpApi : IInitializable
         {
             Prefixes = { $"http://{Config.HttpAddress}:{Config.HttpPort}/" }
         };
+
+        switch (Config.HttpAddress)
+        {
+            case "localhost":
+                _httpListener.Prefixes.Add($"http://127.0.0.1:{Config.HttpPort}/");
+                break;
+            case "127.0.0.1":
+                _httpListener.Prefixes.Add($"http://localhost:{Config.HttpPort}/");
+                break;
+        }
         
         _httpListener.Start();
         Plugin.Log.Info("HttpApi started");
