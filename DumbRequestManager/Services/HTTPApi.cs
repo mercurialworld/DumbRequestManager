@@ -255,34 +255,43 @@ internal class HttpApi : IInitializable
         Plugin.DebugMessage($"path: {string.Join(", ", path)}");
         
         KeyValuePair<int, byte[]> response;
-        
-        switch (path[1].Replace("/", string.Empty).ToLower())
+
+        if (path.Length < 1)
         {
-            case "query":
-                response = await HandleQueryContext(path);
-                break;
-            
-            case "addkey":
-                response = await HandleAddKeyContext(path, urlQuery);
-                break;
-            
-            case "addwip":
-                response = await HandleAddKeyContext(path, urlQuery, true);
-                break;
-            
-            case "queue":
-                response = await HandleQueueContext(path);
-                break;
-            
-            case "history":
-                response = new KeyValuePair<int, byte[]>(200, GetSessionHistory(int.Parse(urlQuery.Get("limit") ?? "0")));
-                break;
-            
-            default:
-                response = new KeyValuePair<int, byte[]>(501, Encoding.Default.GetBytes("{\"message\": \"Not implemented\"}"));
-                break;
+            response = new KeyValuePair<int, byte[]>(200, Encoding.Default.GetBytes("{\"message\": \"Hello!\"}"));
         }
-        
+        else
+        {
+            switch (path[1].Replace("/", string.Empty).ToLower())
+            {
+                case "query":
+                    response = await HandleQueryContext(path);
+                    break;
+
+                case "addkey":
+                    response = await HandleAddKeyContext(path, urlQuery);
+                    break;
+
+                case "addwip":
+                    response = await HandleAddKeyContext(path, urlQuery, true);
+                    break;
+
+                case "queue":
+                    response = await HandleQueueContext(path);
+                    break;
+
+                case "history":
+                    response = new KeyValuePair<int, byte[]>(200,
+                        GetSessionHistory(int.Parse(urlQuery.Get("limit") ?? "0")));
+                    break;
+
+                default:
+                    response = new KeyValuePair<int, byte[]>(501,
+                        Encoding.Default.GetBytes("{\"message\": \"Not implemented\"}"));
+                    break;
+            }
+        }
+
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = response.Key;
         context.Response.KeepAlive = false;
