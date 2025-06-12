@@ -241,14 +241,6 @@ internal class HttpApi : IInitializable
     private static async Task HandleContext(HttpListenerContext context)
     {
         string[] path = context.Request.Url.Segments;
-        if (path[1] == "favicon.ico")
-        {
-            context.Response.StatusCode = 404;
-            context.Response.KeepAlive = false;
-            context.Response.ContentLength64 = 0;
-            context.Response.Close();
-            return;
-        }
         
         NameValueCollection urlQuery = System.Web.HttpUtility.ParseQueryString(context.Request.Url.Query);
         
@@ -264,6 +256,13 @@ internal class HttpApi : IInitializable
         {
             switch (path[1].Replace("/", string.Empty).ToLower())
             {
+                case "favicon.ico":
+                    context.Response.StatusCode = 404;
+                    context.Response.KeepAlive = false;
+                    context.Response.ContentLength64 = 0;
+                    context.Response.Close();
+                    return;
+                
                 case "query":
                     response = await HandleQueryContext(path);
                     break;
