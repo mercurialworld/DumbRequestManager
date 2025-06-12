@@ -50,9 +50,16 @@ internal class SocketApi : IInitializable, IDisposable
         {
             _webSocketServiceHost = webSocketServiceHost;
         }
-        
-        _webSocketServer.Start();
-        Plugin.DebugMessage("WebSocket server started");
+
+        try
+        {
+            _webSocketServer.Start();
+            Plugin.Log.Info("WebSocket firehose started");
+        }
+        catch (InvalidOperationException)
+        {
+            Plugin.Log.Warn($"Unable to start WebSocket firehose on {Config.WebSocketAddress}:{Config.WebSocketPort}. More than likely, this port is already being used on this address.");
+        }
     }
 
     public void Dispose()

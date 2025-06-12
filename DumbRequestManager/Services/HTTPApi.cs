@@ -48,9 +48,18 @@ internal class HttpApi : IInitializable
                 _httpListener.Prefixes.Add($"http://localhost:{Config.HttpPort}/");
                 break;
         }
-        
-        _httpListener.Start();
-        Plugin.Log.Info("HttpApi started");
+
+        try
+        {
+            _httpListener.Start();
+        }
+        catch (System.Net.Sockets.SocketException)
+        {
+            Plugin.Log.Warn($"Unable to start HTTP server on {Config.HttpAddress}:{Config.HttpPort}. More than likely, this port is already being used on this address.");
+            return;
+        }
+
+        Plugin.Log.Info("HTTP server started");
         _ = Task.Run(async () =>
         {
             while (true)
