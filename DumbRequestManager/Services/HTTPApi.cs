@@ -252,7 +252,7 @@ internal class HttpApi : IInitializable
         string[] path = context.Request.Url.Segments;
         NameValueCollection urlQuery = System.Web.HttpUtility.ParseQueryString(context.Request.Url.Query);
         
-        Plugin.DebugMessage($"path: {string.Join(", ", path)}");
+        Plugin.Log.Info($"GET request path: {string.Join(", ", path)}");
         
         KeyValuePair<int, byte[]> response;
 
