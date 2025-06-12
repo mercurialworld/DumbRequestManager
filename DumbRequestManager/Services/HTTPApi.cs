@@ -241,14 +241,13 @@ internal class HttpApi : IInitializable
     private static async Task HandleContext(HttpListenerContext context)
     {
         string[] path = context.Request.Url.Segments;
-        
         NameValueCollection urlQuery = System.Web.HttpUtility.ParseQueryString(context.Request.Url.Query);
         
         Plugin.DebugMessage($"path: {string.Join(", ", path)}");
         
         KeyValuePair<int, byte[]> response;
 
-        if (path.Length < 1)
+        if (path.Length <= 1)
         {
             response = new KeyValuePair<int, byte[]>(200, Encoding.Default.GetBytes("{\"message\": \"Hello!\"}"));
         }
