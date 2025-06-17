@@ -130,7 +130,7 @@ public class NoncontextualizedDifficulty
         NotesPerSecond = difficulty.Notes / (float)map.Duration;
         MapMods = new QueuedSongMapMods((CachedMapMods)difficulty.Mods);
         ScoreSaberStars = difficulty.RankedStatus.ScoreSaber.IsRanked ? difficulty.RankedStatus.ScoreSaber.Stars : 0;
-        BeatLeaderStars = difficulty.RankedStatus.BeatLeader.IsRanked ? difficulty.RankedStatus.BeatLeader.Stars : 0;
+        BeatLeaderStars = difficulty.RankedStatus.BeatLeader.Stars;
     }
     
     // BeatSaver
@@ -195,6 +195,7 @@ public class NoncontextualizedDifficulty
             cachedDiff = null;
         }
 
+        BeatLeaderStars = cachedDiff?.RankedStatus.BeatLeader.Stars ?? 0;
         NotesPerSecond = cachedDiff?.Notes / level.songDuration ?? 0;
     }
 }

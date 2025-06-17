@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading.Tasks;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Configuration;
+using IPA.Utilities.Async;
 using JetBrains.Annotations;
 using ProtoBuf;
 using SiraUtil.Web;
 using Zenject;
+using InvalidOperationException = System.InvalidOperationException;
 
 namespace DumbRequestManager.Managers;
 
@@ -19,7 +22,9 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
     private static readonly Dictionary<dynamic, CachedMap> CachedMaps = new();
 
     private static readonly string CacheFilename = Path.Combine(Plugin.UserDataDir, "cache.proto.gz");
+    private static readonly string BeatLeaderCacheFilename = Path.Combine(Plugin.UserDataDir, "blcache.proto.gz");
     private static readonly string CacheURL = Config.ProtobufCacheURL;
+    private const string BeatLeaderCacheURL = "https://api.beatleader.com/map/allstars";
 
     internal static MapCacheManager? Instance;
     
@@ -27,7 +32,11 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
     {
         Instance = this;
 
-        _ = SetupCacheStuff();
+        UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
+        {
+            await SetupCacheStuff();
+            await SetupBeatLeaderCacheStuff();
+        });
     }
 
     private async Task SetupCacheStuff()
@@ -61,6 +70,37 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
         await LoadProtoCache();
     }
 
+    private async Task SetupBeatLeaderCacheStuff()
+    {
+        if (File.Exists(BeatLeaderCacheFilename))
+        {
+            if (DateTime.UtcNow < File.GetLastWriteTimeUtc(CacheFilename).AddDays(1))
+            {
+                Plugin.Log.Info("BeatLeader cache was obtained less than 24 hours ago, not refreshing");
+                await LoadBeatLeaderCache();
+                return;
+            }
+        }
+        
+        Plugin.Log.Info($"Grabbing the BeatLeader star value cache from {BeatLeaderCacheURL}...");
+        IHttpResponse response = await httpService.GetAsync(BeatLeaderCacheURL).ConfigureAwait(false);
+        
+        if (!response.Successful)
+        {
+            Plugin.Log.Warn($"Couldn't download the BeatLeader star value cache (HTTP {response.Code})");
+            await LoadBeatLeaderCache();
+            return;
+        }
+        
+        Plugin.Log.Info($"Grabbed cache from {BeatLeaderCacheURL}, saving...");
+
+        await File.WriteAllBytesAsync(BeatLeaderCacheFilename, await response.ReadAsByteArrayAsync());
+        
+        Plugin.Log.Info($"Saved cache to {BeatLeaderCacheFilename}");
+        
+        await LoadBeatLeaderCache();
+    }
+
     private static async Task LoadProtoCache()
     {
         if (!File.Exists(CacheFilename))
@@ -91,6 +131,42 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
         }
         
         Plugin.Log.Info($"{mapList.Maps.Count} maps are in the protobuf cache");
+    }
+
+    private static async Task LoadBeatLeaderCache()
+    {
+        await using FileStream testFile = File.OpenRead(Path.Combine(Plugin.UserDataDir, "Testfile"));
+        BeatLeaderStarsCache testCache = Serializer.Deserialize<BeatLeaderStarsCache>(testFile);
+        Plugin.DebugMessage($"{testCache.Items.Length} items in the BeatLeader cache");
+
+        foreach (BeatLeaderStarsCacheItem item in testCache.Items)
+        {
+            string hash = item.Hash.ToLower();
+            if (!CachedMaps.TryGetValue(hash, out CachedMap? foundMap))
+            {
+                continue;
+            }
+
+            try
+            {
+                if (item.Mode.Contains("Inverted") || item.Mode.Contains("Inverse") || item.Mode.Contains("Vertical") || item.Mode.Contains("Horizontal") ||
+                    item.Mode.Contains("RhythmGame", StringComparison.InvariantCultureIgnoreCase) ||
+                    item.Mode.Contains("Generated") ||
+                    item.Mode.Contains("Ghost") || item.Mode.Contains("OldDots") ||
+                    item.Mode.Contains("Controllable") ||
+                    item.Mode.Contains("BL_BS"))
+                {
+                    // these are generated diffs, we don't care
+                    continue;
+                }
+                
+                foundMap.Difficulties.First(x => x.Difficulty + x.Characteristic == item.Mode).RankedStatus.BeatLeader.Stars = item.Stars;
+            }
+            catch (InvalidOperationException)
+            {
+                Plugin.DebugMessage($"Could not find {item.Mode} in {hash}");
+            }
+        }
     }
 
     public CachedMap? GetMapById(string id)

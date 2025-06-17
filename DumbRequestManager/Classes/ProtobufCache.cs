@@ -19,7 +19,7 @@ public enum CachedMapMods
 public class CachedMapRankValues
 {
     [ProtoMember(1)] public bool IsRanked { get; private set; }
-    [ProtoMember(2)] public float Stars { get; private set; }
+    [ProtoMember(2)] public float Stars { get; internal set; }
 }
 
 [ProtoContract]
