@@ -187,7 +187,7 @@ All `pressed` events follow the same data structure:
 ### (additional notes)
 - `MetadataHasSplicedCensor` is a boolean indicating if an aggressively censored word was found spliced between multiple metadata fields.
    > (ex. if "apple" is censored aggressively, and *"c**ap**"* is the song title and *"**ple**ase"* is the artist, this will return `true`)
-- `Diffs[x].BeatLeaderStars` will only be `0` if BeatLeader could not determine a star rating for a map. This will pull values from their own cached data, created every 24 hours.
+- `Diffs[x].BeatLeaderStars` will only be `0` if BeatLeader could not determine a star rating for a map, or if the map has been updated very recently. This will pull values from their own cached data, created every 24 hours.
 
 <a name="queue-data-type"></a>
 ## Queue position data
