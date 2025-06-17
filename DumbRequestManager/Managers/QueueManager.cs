@@ -28,7 +28,7 @@ public static class QueueManager
     public static readonly List<NoncontextualizedSong> QueuedSongs = [];
     public static readonly List<NoncontextualizedSong> MapsActedOn = [];
 
-    public static async Task<NoncontextualizedSong?> AddKey(string key, string? user = null, bool skipPersistence = false, bool prepend = false)
+    public static async Task<NoncontextualizedSong?> AddKey(string key, string? user = null, bool skipPersistence = false, bool prepend = false, string? service = null)
     {
         NoncontextualizedSong queuedSong;
         
@@ -71,6 +71,11 @@ public static class QueueManager
             queuedSong.User = user;
         }
 
+        if (service != null)
+        {
+            queuedSong.Service = service;
+        }
+
         if (prepend)
         {
             QueuedSongs.Insert(0, queuedSong);
@@ -97,7 +102,7 @@ public static class QueueManager
         return queuedSong;
     }
 
-    public static NoncontextualizedSong AddWip(string key, string? user = null, bool prepend = true)
+    public static NoncontextualizedSong AddWip(string key, string? user = null, bool prepend = true, string? service = null)
     {
         NoncontextualizedSong queuedSong = new()
         {
@@ -107,6 +112,11 @@ public static class QueueManager
             Artist = "N/A",
             Mapper = user ?? "unknown"
         };
+        
+        if (service != null)
+        {
+            queuedSong.Service = service;
+        }
         
         if (prepend)
         {

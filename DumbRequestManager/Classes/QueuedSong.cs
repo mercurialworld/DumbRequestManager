@@ -228,6 +228,8 @@ public class NoncontextualizedSong
     [JsonProperty] [UIValue("user")]
     public string? User { get; set; }
     
+    [JsonProperty] public string? Service { get; set; }
+    
     private string HoverStringForMapperDisplay => $"requested by {User}";
     private string HoverStringForRequesterDisplay => $"mapped by {Mapper}";
     

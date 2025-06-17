@@ -127,13 +127,15 @@ internal class HttpApi : IInitializable
         {
             keyResponse = AddWip(path.Last().Replace("/", string.Empty),
                 urlQuery.Get("user"),
-                bool.Parse(urlQuery.Get("prepend") ?? "true"));
+                bool.Parse(urlQuery.Get("prepend") ?? "true"),
+                urlQuery.Get("user"));
         }
         else
         {
             keyResponse = await AddKey(path.Last().Replace("/", string.Empty),
                 urlQuery.Get("user"),
-                bool.Parse(urlQuery.Get("prepend") ?? "false"));
+                bool.Parse(urlQuery.Get("prepend") ?? "false"),
+                urlQuery.Get("service"));
         }
 
         if (keyResponse != null)
@@ -370,18 +372,18 @@ internal class HttpApi : IInitializable
 
     private static byte[] GetEncodedQueue => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(QueueManager.QueuedSongs));
 
-    private static async Task<byte[]?> AddKey(string key, string? user = null, bool prepend = false)
+    private static async Task<byte[]?> AddKey(string key, string? user = null, bool prepend = false, string? service = null)
     {
         Plugin.Log.Info($"Adding key {key}...");
-        NoncontextualizedSong? queuedSong = await QueueManager.AddKey(key, user, false, prepend);
+        NoncontextualizedSong? queuedSong = await QueueManager.AddKey(key, user, false, prepend, service);
         
         return queuedSong == null ? null : Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
     }
 
-    private static byte[] AddWip(string key, string? user = null, bool prepend = true)
+    private static byte[] AddWip(string key, string? user = null, bool prepend = true, string? service = null)
     {
         Plugin.Log.Info($"Adding wip {key}...");
-        NoncontextualizedSong queuedSong = QueueManager.AddWip(key, user, prepend);
+        NoncontextualizedSong queuedSong = QueueManager.AddWip(key, user, prepend, service);
         
         return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
     }
