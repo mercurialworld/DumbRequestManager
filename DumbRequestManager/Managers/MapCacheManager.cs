@@ -135,11 +135,14 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
 
     private static async Task LoadBeatLeaderCache()
     {
-        await using FileStream testFile = File.OpenRead(Path.Combine(Plugin.UserDataDir, "Testfile"));
-        BeatLeaderStarsCache testCache = Serializer.Deserialize<BeatLeaderStarsCache>(testFile);
-        Plugin.DebugMessage($"{testCache.Items.Length} items in the BeatLeader cache");
+        Plugin.Log.Info($"Decompressing and loading BeatLeader star value cache from {BeatLeaderCacheFilename}...");
+        await using FileStream file = File.OpenRead(BeatLeaderCacheFilename);
+        await using GZipStream decompressor = new(file, CompressionMode.Decompress);
+        
+        BeatLeaderStarsCache beatLeaderStarsCache = Serializer.Deserialize<BeatLeaderStarsCache>(decompressor);
+        Plugin.DebugMessage($"{beatLeaderStarsCache.Items.Length} items in the BeatLeader star value cache");
 
-        foreach (BeatLeaderStarsCacheItem item in testCache.Items)
+        foreach (BeatLeaderStarsCacheItem item in beatLeaderStarsCache.Items)
         {
             string hash = item.Hash.ToLower();
             if (!CachedMaps.TryGetValue(hash, out CachedMap? foundMap))
