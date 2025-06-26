@@ -46,18 +46,6 @@ internal class BeatLeaderUtils(IHttpService httpService) : IInitializable
     public void Initialize()
     {
         _instance = this;
-        
-        MethodInfo? timeoutMethod = httpService.GetType().GetMethod("set_Timeout");
-        
-        if (timeoutMethod == null)
-        {
-            Plugin.Log.Info("[BeatLeaderUtils] Timeout value cannot be set, doesn't exist in SiraUtil yet.");
-        }
-        else
-        {
-            timeoutMethod.Invoke(httpService, [5]);
-            Plugin.Log.Info($"[BeatLeaderUtils] Set timeout value to 5 seconds.");
-        }
     }
 
     public static async Task<List<BeatLeaderDifficulty>?> GetStarValueForHash(string hash, CancellationToken token = default)
@@ -97,7 +85,6 @@ internal class BeatLeaderUtils(IHttpService httpService) : IInitializable
             }
         }
         
-        // guh
         IHttpResponse response = await _instance.HttpService.GetAsync(string.Format(BeatLeaderAPI, hash));
         token.ThrowIfCancellationRequested();
         

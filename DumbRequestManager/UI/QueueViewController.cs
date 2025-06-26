@@ -989,6 +989,12 @@ internal class QueueViewController : BSMLAutomaticViewController
             }
             catch (Exception exception)
             {
+                if (exception is TaskCanceledException)
+                {
+                    WaitModal.Hide(true);
+                    return;
+                }
+
                 WaitModal.Hide(true, () => Instance.ShowMessageModal(exception.Message));
                 throw;
             }
