@@ -1026,8 +1026,16 @@ internal class QueueViewController : BSMLAutomaticViewController
         public void Cancel()
         {
             Plugin.Log.Info("Download cancelled");
-            TokenSource.Cancel();
-            TokenSource.Dispose();
+            
+            try
+            {
+                TokenSource.Cancel();
+                TokenSource.Dispose();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
     }
 
