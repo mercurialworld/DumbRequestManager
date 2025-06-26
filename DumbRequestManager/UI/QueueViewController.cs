@@ -984,15 +984,9 @@ internal class QueueViewController : BSMLAutomaticViewController
             }
             catch (Exception exception)
             {
-                if (exception is TaskCanceledException)
-                {
-                    Plugin.DebugMessage("exception is TaskCanceledException");
-                
-                    WaitModal.Hide(false);
-                    return;
-                }
-
                 Plugin.Log.Error(exception);
+                WaitModal.Hide(false);
+                return;
             }
             
             SongCore.Loader.SongsLoadedEvent += LoaderOnSongsLoadedEvent;

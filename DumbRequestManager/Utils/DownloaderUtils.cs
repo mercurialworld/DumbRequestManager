@@ -19,6 +19,14 @@ using Zenject;
 
 namespace DumbRequestManager.Utils;
 
+[Serializable]
+public class MapDownloadFailedException : Exception
+{
+    public MapDownloadFailedException () {}
+    public MapDownloadFailedException (string message) : base(message) {}
+    public MapDownloadFailedException (string message, Exception innerException) : base (message, innerException) {} 
+}
+
 [UsedImplicitly]
 internal class DownloaderUtils(IHttpService httpService) : IInitializable
 {
@@ -48,10 +56,11 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         
         if (!response.Successful)
         {
+            Plugin.Log.Warn(await response.Error() ?? "Response not successful");
             return [];
         }
 
-        byte[] result = response.ReadAsByteArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+        byte[] result = await response.ReadAsByteArrayAsync();
         token.ThrowIfCancellationRequested();
 
         return result;
@@ -66,7 +75,7 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         }
         
         Plugin.DebugMessage($"[DownloadUtils] Downloading WIP map {beatmap.BsrKey}...");
-        byte[] result = [];
+        byte[] result;
         try
         {
             result = await DownloadZip($"https://catse.net/wips/{beatmap.BsrKey}.zip", token, progress);
@@ -77,6 +86,8 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
             {
                 throw new TaskCanceledException(exception.Message, exception);
             }
+            
+            throw new MapDownloadFailedException("Map download failed", exception);
         }
         
         token.ThrowIfCancellationRequested();
@@ -84,8 +95,7 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         
         if (result.Length == 0)
         {
-            Plugin.Log.Warn("[DownloadUtils] Map download was empty");
-            return;
+            throw new MapDownloadFailedException("Map download was empty");
         }
         
         string folderName = $"WIP-{beatmap.BsrKey}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
@@ -142,7 +152,7 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         }
         
         Plugin.DebugMessage($"[DownloadUtils] Downloading map {beatmap.ID}...");
-        byte[] result = [];
+        byte[] result;
         try
         {
             result = await DownloadZip(beatmap.LatestVersion.DownloadURL, token, progress);
@@ -153,6 +163,8 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
             {
                 throw new TaskCanceledException(exception.Message, exception);
             }
+            
+            throw new MapDownloadFailedException("Map download failed", exception);
         }
 
         token.ThrowIfCancellationRequested();
@@ -160,8 +172,7 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
 
         if (result.Length == 0)
         {
-            Plugin.Log.Warn("[DownloadUtils] Map download was empty");
-            return;
+            throw new MapDownloadFailedException("Map download was empty");
         }
 
         string folderName = $"{beatmap.ID} ({beatmap.Metadata.SongName} - {beatmap.Metadata.LevelAuthorName})";
