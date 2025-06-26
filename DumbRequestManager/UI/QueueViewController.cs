@@ -989,7 +989,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             }
             catch (Exception exception)
             {
-                WaitModal.Hide(true, () => Instance.ShowMessageModal($"{exception.GetType().Name}: {exception.Message}"));
+                WaitModal.Hide(true, () => Instance.ShowMessageModal(exception.Message));
                 throw;
             }
             
@@ -999,7 +999,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             {
                 Plugin.DebugMessage("TokenSource.IsCancellationRequested");
                 
-                WaitModal.Hide(false);
+                WaitModal.Hide(true);
                 return;
             }
             
@@ -1076,7 +1076,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             return;
         }
         
-        WaitModal.Show(false);
+        WaitModal.Show(true);
         
         Plugin.DebugMessage($"Selected cell: {index}");
         NoncontextualizedSong queuedSong = ActiveList[index];
