@@ -130,6 +130,11 @@ internal class QueueViewController : BSMLAutomaticViewController
     private static TextMeshProUGUI _detailsNjs = null!;
     [UIComponent("detailsEstimatedStars")]
     private static TextMeshProUGUI _detailsEstimatedStars = null!;
+    
+    [UIComponent("messageModal")]
+    private ModalView _messageModal = null!;
+    [UIComponent("messageForMessageModal")]
+    private TextMeshProUGUI _messageForMessageModal = null!;
     // ReSharper restore FieldCanBeMadeReadOnly.Local
     
     [UIValue("difficultyChoices")]
@@ -984,9 +989,8 @@ internal class QueueViewController : BSMLAutomaticViewController
             }
             catch (Exception exception)
             {
-                Plugin.Log.Error(exception);
-                WaitModal.Hide(false);
-                return;
+                WaitModal.Hide(true, () => Instance.ShowMessageModal($"{exception.GetType().Name}: {exception.Message}"));
+                throw;
             }
             
             SongCore.Loader.SongsLoadedEvent += LoaderOnSongsLoadedEvent;
@@ -1160,5 +1164,11 @@ internal class QueueViewController : BSMLAutomaticViewController
                 _queueTableComponent.TableView.ReloadData();
             });
         }
+    }
+
+    private void ShowMessageModal(string message)
+    {
+        _messageForMessageModal.SetText(message);
+        _messageModal.Show(true, true);
     }
 }
