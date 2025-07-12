@@ -24,7 +24,7 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
     private static readonly string CacheFilename = Path.Combine(Plugin.UserDataDir, "cache.proto.gz");
     private static readonly string BeatLeaderCacheFilename = Path.Combine(Plugin.UserDataDir, "blcache.proto.gz");
     private static readonly string CacheURL = Config.ProtobufCacheURL;
-    private const string BeatLeaderCacheURL = "https://api.beatleader.com/map/allstars";
+    private const string BEAT_LEADER_CACHE_URL = "https://api.beatleader.com/map/allstars";
 
     internal static MapCacheManager? Instance;
     
@@ -82,8 +82,8 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
             }
         }
         
-        Plugin.Log.Info($"Grabbing the BeatLeader star value cache from {BeatLeaderCacheURL}...");
-        IHttpResponse response = await httpService.GetAsync(BeatLeaderCacheURL).ConfigureAwait(false);
+        Plugin.Log.Info($"Grabbing the BeatLeader star value cache from {BEAT_LEADER_CACHE_URL}...");
+        IHttpResponse response = await httpService.GetAsync(BEAT_LEADER_CACHE_URL).ConfigureAwait(false);
         
         if (!response.Successful)
         {
@@ -92,7 +92,7 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
             return;
         }
         
-        Plugin.Log.Info($"Grabbed cache from {BeatLeaderCacheURL}, saving...");
+        Plugin.Log.Info($"Grabbed cache from {BEAT_LEADER_CACHE_URL}, saving...");
 
         await File.WriteAllBytesAsync(BeatLeaderCacheFilename, await response.ReadAsByteArrayAsync());
         

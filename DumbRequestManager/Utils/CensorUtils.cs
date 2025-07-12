@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using DumbRequestManager.Classes;
 
 namespace DumbRequestManager.Utils;
 
@@ -15,7 +13,7 @@ internal static class Extensions
     public static string RemoveDiacritics(this string s)
     {
         string normalizedString = s.Normalize(NormalizationForm.FormD);
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new();
 
         foreach (char c in normalizedString.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark))
         {
