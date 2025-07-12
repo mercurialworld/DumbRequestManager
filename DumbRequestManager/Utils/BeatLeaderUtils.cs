@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using DumbRequestManager.Classes;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using SiraUtil.Web;
@@ -26,6 +26,17 @@ public class BeatLeaderDifficulty
     
     [JsonProperty("stars")] 
     public double? Stars;
+    
+    [JsonConstructor]
+    public BeatLeaderDifficulty() {}
+
+    public BeatLeaderDifficulty(NoncontextualizedDifficulty diff)
+    {
+        _rawDifficultyName = diff.Difficulty;
+        _rawCharacteristicName = diff.Characteristic;
+        Status = diff.BeatLeaderStars > 0 ? 1 : 0;
+        Stars = diff.BeatLeaderStars;
+    }
 }
 
 public class BeatLeaderObject
@@ -39,7 +50,7 @@ internal class BeatLeaderUtils(IHttpService httpService) : IInitializable
 {
     private static readonly string CachePathRoot = Path.Combine(Plugin.UserDataDir, "Cache");
     private static readonly string CachePath = Path.Combine(CachePathRoot, "BeatLeader");
-    private const string BeatLeaderAPI = "https://api.beatleader.com/map/hash/{0}";
+    private const string BEAT_LEADER_API = "https://api.beatleader.com/map/hash/{0}";
     private static BeatLeaderUtils _instance = null!;
     private IHttpService HttpService => httpService;
     
@@ -85,7 +96,7 @@ internal class BeatLeaderUtils(IHttpService httpService) : IInitializable
             }
         }
         
-        IHttpResponse response = await _instance.HttpService.GetAsync(string.Format(BeatLeaderAPI, hash));
+        IHttpResponse response = await _instance.HttpService.GetAsync(string.Format(BEAT_LEADER_API, hash));
         token.ThrowIfCancellationRequested();
         
         if (!response.Successful)

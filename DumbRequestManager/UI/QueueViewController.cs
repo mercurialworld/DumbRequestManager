@@ -727,11 +727,19 @@ internal class QueueViewController : BSMLAutomaticViewController
                 _detailsEstimatedStars.text = "<size=95%><color=#FFCC55>\u2605</size> <color=#FFFFFF>-";
                 return;
             }
+
+            // if any diffs have a star value at this point, it's using cached BL data. no reason to grab it again
+            if (queuedSong.Diffs.Any(x => x.BeatLeaderStars > 0))
+            {
+                _starsList = queuedSong.Diffs.Select(x => new BeatLeaderDifficulty(x)).ToList();
+            }
+            else
+            {
+                _starEstimateCancellationToken = new CancellationTokenSource();
             
-            _starEstimateCancellationToken = new CancellationTokenSource();
-            
-            Plugin.DebugMessage("(downloading BeatLeader data)");
-            _starsList = await BeatLeaderUtils.GetStarValueForHash(queuedSong.Hash, _starEstimateCancellationToken.Token);
+                Plugin.DebugMessage("(downloading BeatLeader data)");
+                _starsList = await BeatLeaderUtils.GetStarValueForHash(queuedSong.Hash, _starEstimateCancellationToken.Token);
+            }
 
             UpdateStarDisplay();
         });
