@@ -102,13 +102,13 @@ public static class QueueManager
         return queuedSong;
     }
 
-    public static NoncontextualizedSong AddWip(string key, string? user = null, bool prepend = true, string? service = null)
+    public static NoncontextualizedSong AddWip(string url, string? user = null, bool prepend = true, string? service = null)
     {
         NoncontextualizedSong queuedSong = new()
         {
-            BsrKey = key,
+            BsrKey = url,
             User = user,
-            Title = $"WIP Map {key}",
+            Title = "WIP Map",
             Artist = "N/A",
             Mapper = user ?? "unknown"
         };
@@ -130,7 +130,7 @@ public static class QueueManager
         ChatRequestButton.Instance.UseAttentiveButton(true);
         QueueViewController.RefreshQueue();
         
-        Plugin.Log.Info($"Added WIP map {key}, queue has {QueuedSongs.Count} map(s)");
+        Plugin.Log.Info($"Added WIP map {url}, queue has {QueuedSongs.Count} map(s)");
         
         SocketApi.Broadcast("mapAdded", queuedSong);
         _ = HookApi.TriggerHook("mapAdded", queuedSong);

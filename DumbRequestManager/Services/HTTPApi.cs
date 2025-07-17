@@ -147,6 +147,30 @@ internal class HttpApi : IInitializable
         finalResponse:
             return new KeyValuePair<int, byte[]>(code, response);
     }
+    
+    private static KeyValuePair<int, byte[]> HandleAddLinkContext(string url, NameValueCollection urlQuery)
+    {
+        int code = 400;
+        byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
+
+        bool isValidURL = Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) 
+                      && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+        if (!isValidURL)
+        {
+            goto finalResponse;
+        }
+
+        byte[] keyResponse = AddWip(url,
+            urlQuery.Get("user"),
+            bool.Parse(urlQuery.Get("prepend") ?? "true"),
+            urlQuery.Get("service"));
+
+        code = 200;
+        response = keyResponse;
+
+        finalResponse:
+            return new KeyValuePair<int, byte[]>(code, response);
+    }
 
     private static async Task<KeyValuePair<int, byte[]>> HandleQueueContext(string[] path)
     {
@@ -282,7 +306,12 @@ internal class HttpApi : IInitializable
                     break;
 
                 case "addwip":
-                    response = await HandleAddKeyContext(path, urlQuery, true);
+                    response = new KeyValuePair<int, byte[]>(400, Encoding.Default.GetBytes("{\"message\": \"Please use POST for this endpoint.\"}"));
+                    if (context.Request.HttpMethod == "POST")
+                    {
+                        using StreamReader reader = new(context.Request.InputStream, context.Request.ContentEncoding);
+                        response = HandleAddLinkContext(await reader.ReadToEndAsync(), urlQuery);
+                    }
                     break;
 
                 case "queue":
@@ -380,10 +409,10 @@ internal class HttpApi : IInitializable
         return queuedSong == null ? null : Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
     }
 
-    private static byte[] AddWip(string key, string? user = null, bool prepend = true, string? service = null)
+    private static byte[] AddWip(string url, string? user = null, bool prepend = true, string? service = null)
     {
-        Plugin.Log.Info($"Adding wip {key}...");
-        NoncontextualizedSong queuedSong = QueueManager.AddWip(key, user, prepend, service);
+        Plugin.Log.Info($"Adding wip {url}...");
+        NoncontextualizedSong queuedSong = QueueManager.AddWip(url, user, prepend, service);
         
         return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
     }

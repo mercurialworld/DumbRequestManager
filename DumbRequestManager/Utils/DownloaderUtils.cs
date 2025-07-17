@@ -78,7 +78,8 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         byte[] result;
         try
         {
-            result = await DownloadZip($"https://catse.net/wips/{beatmap.BsrKey}.zip", token, progress);
+            //result = await DownloadZip($"https://catse.net/wips/{beatmap.BsrKey}.zip", token, progress);
+            result = await DownloadZip(beatmap.BsrKey, token, progress);
         }
         catch (Exception exception)
         {
@@ -98,7 +99,7 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
             throw new MapDownloadFailedException("Map download was empty");
         }
         
-        string folderName = $"WIP-{beatmap.BsrKey}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+        string folderName = $"WIP-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
         if (beatmap.User != null)
         {
             folderName += $" ({beatmap.User})";
