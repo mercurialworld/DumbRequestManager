@@ -128,7 +128,7 @@ internal class HttpApi : IInitializable
             keyResponse = AddWip(path.Last().Replace("/", string.Empty),
                 urlQuery.Get("user"),
                 bool.Parse(urlQuery.Get("prepend") ?? "true"),
-                urlQuery.Get("user"));
+                urlQuery.Get("service"));
         }
         else
         {
