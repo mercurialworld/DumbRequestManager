@@ -3,6 +3,7 @@ using DumbRequestManager.Configuration;
 using DumbRequestManager.Installers;
 using IPA;
 using IPA.Config.Stores;
+using IPA.Loader;
 using IPA.Utilities;
 using JetBrains.Annotations;
 using SiraUtil.Zenject;
@@ -18,15 +19,18 @@ internal class Plugin
 {
     internal static IPALogger Log { get; private set; } = null!;
     internal static readonly string UserDataDir = Path.Combine(UnityGame.UserDataPath, "DumbRequestManager");
+    internal static Hive.Versioning.Version PluginVersion = null!;
 
     [Init]
-    public Plugin(IPALogger ipaLogger, IPAConfig ipaConfig, Zenjector zenjector)
+    public Plugin(IPALogger ipaLogger, IPAConfig ipaConfig, Zenjector zenjector, PluginMetadata metadata)
     {
         Log = ipaLogger;
         zenjector.UseLogger(Log);
         
         PluginConfig c = ipaConfig.Generated<PluginConfig>();
         PluginConfig.Instance = c;
+
+        PluginVersion = metadata.HVersion;
 
         zenjector.UseHttpService();
         zenjector.Install<AppInstaller>(Location.App);

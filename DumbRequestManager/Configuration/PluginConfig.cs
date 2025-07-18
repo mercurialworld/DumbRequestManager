@@ -1,5 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using IPA.Config.Stores;
+using IPA.Config.Stores.Attributes;
+using IPA.Config.Stores.Converters;
 using JetBrains.Annotations;
 
 // ReSharper disable RedundantDefaultMemberInitializer
@@ -29,4 +32,16 @@ internal class PluginConfig
     public virtual bool ShowRequestersInsteadOfMappers { get; set; } = false;
     
     public virtual string ProtobufCacheURL { get; set; } = "https://theblackparrot.me/DumbRequestManager/cache.proto.gz";
+    
+    [UseConverter(typeof(ListConverter<string>))]
+    public virtual List<string> WhitelistedWipDomains { get; set; } =
+    [
+        "discord.com",
+        "discordapp.com",
+        "dropbox.com",
+        "catbox.moe"
+    ];
+
+    public virtual int MaximumWipSize { get; set; } = 20;
+    public virtual int MaximumDecompressedWipSize { get; set; } = 50;
 }

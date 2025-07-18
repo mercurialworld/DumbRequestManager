@@ -66,6 +66,7 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         return result;
     }
 
+    private static readonly string[] AllowedFiletypes = [".egg", ".ogg", ".dat", ".json", ".png", ".jpg", ".jpeg", ".vivify"];
     internal async Task DownloadWip(NoncontextualizedSong beatmap, CancellationToken token = default, IProgress<float>? progress = null)
     {
         string customSongsPath = Path.Combine(CustomLevelPathHelper.baseProjectPath, "CustomWIPLevels");
@@ -98,6 +99,36 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
             throw new MapDownloadFailedException("Map download was empty");
         }
         
+        MemoryStream stream = new(result);
+        Plugin.DebugMessage("[DownloadUtils] Created MemoryStream");
+        ZipArchive archive = new(stream, ZipArchiveMode.Read);
+        Plugin.DebugMessage("[DownloadUtils] Created ZipArchive");
+
+        long decompressedSize = 0;
+        foreach (ZipArchiveEntry? entry in archive.Entries)
+        {
+            if (entry == null)
+            {
+                continue;
+            }
+
+            string extension = Path.GetExtension(entry.Name);
+            if (string.IsNullOrEmpty(extension))
+            {
+                throw new MapDownloadFailedException("Map download contains files with no extension");
+            }
+            if (!AllowedFiletypes.Contains(extension))
+            {
+                throw new MapDownloadFailedException($"Map download contains disallowed filetype ({extension})");
+            }
+            
+            decompressedSize += entry.Length;
+            if (decompressedSize >= Config.MaximumDecompressedWipSize * 1048576)
+            {
+                throw new MapDownloadFailedException($"Decompressing zip file exceeded decompressed size cap ({Config.MaximumDecompressedWipSize}MB)");
+            }
+        }
+        
         string folderName = $"WIP-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
         if (beatmap.User != null)
         {
@@ -113,10 +144,6 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         string fullFolderPath = Path.Combine(customSongsPath, folderName);
         Directory.CreateDirectory(fullFolderPath);
         
-        MemoryStream stream = new(result);
-        Plugin.DebugMessage("[DownloadUtils] Created MemoryStream");
-        ZipArchive archive = new(stream, ZipArchiveMode.Read);
-        Plugin.DebugMessage("[DownloadUtils] Created ZipArchive");
         archive.ExtractToDirectory(fullFolderPath);
         Plugin.DebugMessage($"[DownloadUtils] Extracted to {fullFolderPath}");
         

@@ -6,6 +6,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
@@ -148,8 +150,18 @@ internal class HttpApi : IInitializable
             return new KeyValuePair<int, byte[]>(code, response);
     }
     
-    private static KeyValuePair<int, byte[]> HandleAddLinkContext(string url, NameValueCollection urlQuery)
+    private static readonly HttpClient HeadersFetchClient = new()
     {
+        MaxResponseContentBufferSize = 1024
+    };
+    private static async Task<KeyValuePair<int, byte[]>> HandleAddLinkContext(string url, NameValueCollection urlQuery)
+    {
+        if (!HeadersFetchClient.DefaultRequestHeaders.Contains("User-Agent"))
+        {
+            HeadersFetchClient.DefaultRequestHeaders.Add("User-Agent",
+                $"DumbRequestManager/{Plugin.PluginVersion} (https://github.com/TheBlackParrot/DumbRequestManager)");
+        }
+
         int code = 400;
         byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
 
@@ -157,6 +169,51 @@ internal class HttpApi : IInitializable
                       && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         if (!isValidURL)
         {
+            goto finalResponse;
+        }
+
+        string[] domainParts = uriResult.DnsSafeHost.Split(".");
+        string domain = $"{domainParts[^2]}.{domainParts[^1]}";
+        if (!Config.WhitelistedWipDomains.Contains(domain))
+        {
+            response = Encoding.Default.GetBytes("{\"message\": \"WIP URL host domain (" + domain + ") is not whitelisted, please check your configuration file\"}");
+            goto finalResponse;
+        }
+        
+        // some file hosts navigate you to a page *to* initiate the download, rather than initiating it immediately. lazy way of handling that
+        url = url.Replace("?dl=0", "?dl=1");
+        url = url.Replace("&dl=0", "&dl=1");
+
+        HttpResponseMessage headResponseMessage;
+        try
+        {
+            headResponseMessage = await HeadersFetchClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+        }
+        catch (HttpRequestException)
+        {
+            try
+            {
+                Plugin.Log.Warn($"{domain} does not support HEAD requests, using a GET request instead");
+                headResponseMessage = await HeadersFetchClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url));
+            }
+            catch (HttpRequestException)
+            {
+                Plugin.Log.Warn($"{domain} appears to be unreachable");
+                response = Encoding.Default.GetBytes("{\"message\": \"WIP URL host domain (" + domain + ") does not appear to be reachable\"}");
+                goto finalResponse;
+            }
+        }
+
+        Plugin.DebugMessage($"WIP is {headResponseMessage.Content.Headers.ContentLength} bytes in size (according to headers)");
+        if (headResponseMessage.Content.Headers.ContentLength <= 0)
+        {
+            response = Encoding.Default.GetBytes("{\"message\": \"WIP file is empty\"}");
+            goto finalResponse;
+        }
+        // Config.MaximumWipSize is set in megabytes, ContentLength header is in bytes
+        if (headResponseMessage.Content.Headers.ContentLength >= Config.MaximumWipSize * 1048576)
+        {
+            response = Encoding.Default.GetBytes("{\"message\": \"WIP file exceeds maximum file size cap\"}");
             goto finalResponse;
         }
 
@@ -310,7 +367,7 @@ internal class HttpApi : IInitializable
                     if (context.Request.HttpMethod == "POST")
                     {
                         using StreamReader reader = new(context.Request.InputStream, context.Request.ContentEncoding);
-                        response = HandleAddLinkContext(await reader.ReadToEndAsync(), urlQuery);
+                        response = await HandleAddLinkContext(await reader.ReadToEndAsync(), urlQuery);
                     }
                     break;
 
