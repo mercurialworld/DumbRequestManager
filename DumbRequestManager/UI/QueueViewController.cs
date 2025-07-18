@@ -617,7 +617,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         detailsMapper.text = queuedSong.Mapper;
         detailsRequester.text = queuedSong.User ?? "someone";
         
-        detailsBsrKey.text = $"<alpha=#AA>!{(queuedSong.IsWip ? "wip" : "bsr")} <alpha=#FF>{queuedSong.BsrKey}";
+        detailsBsrKey.text = queuedSong.IsWip ? "" : $"<alpha=#AA>!bsr <alpha=#FF>{queuedSong.BsrKey}";
         
         DateTimeOffset uploadOffset = DateTimeOffset.FromUnixTimeSeconds(queuedSong.UploadTime);
         detailsUploadDate.text = queuedSong.IsWip ? "" : uploadOffset.LocalDateTime.ToString("d MMM yyyy");
@@ -979,11 +979,21 @@ internal class QueueViewController : BSMLAutomaticViewController
         public async Task Start()
         {
             Progress<float> progress = new();
-            progress.ProgressChanged += (_, value) =>
+            if (queuedSong.IsWip)
             {
-                _loadingSpinner.ShowDownloadingProgress($"Downloading {(queuedSong.IsWip ? "WIP map" : "map")} <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80><size=80%>(<mspace=0.41em>{(value * 100):0}</mspace>%)", value);
-            };
-
+                progress.ProgressChanged += (_, value) =>
+                {
+                    _loadingSpinner.ShowDownloadingProgress($"Downloading WIP map <color=#FFFFFF80><size=80%>(<mspace=0.41em>{(value * 100):0}</mspace>%)", value);
+                };
+            }
+            else
+            {
+               progress.ProgressChanged += (_, value) =>
+               {
+                   _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80><size=80%>(<mspace=0.41em>{(value * 100):0}</mspace>%)", value);
+               };
+            }
+            
             try
             {
                 if (queuedSong.IsWip)

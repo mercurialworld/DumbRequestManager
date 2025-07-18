@@ -78,7 +78,6 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
         byte[] result;
         try
         {
-            //result = await DownloadZip($"https://catse.net/wips/{beatmap.BsrKey}.zip", token, progress);
             result = await DownloadZip(beatmap.BsrKey, token, progress);
         }
         catch (Exception exception)
