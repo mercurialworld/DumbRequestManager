@@ -158,11 +158,6 @@ public static class QueueManager
 
     public static async Task Load()
     {
-        if (!Directory.Exists(Plugin.UserDataDir))
-        {
-            Directory.CreateDirectory(Plugin.UserDataDir);
-        }
-
         if (!File.Exists(PersistentQueueFilename))
         {
             Plugin.Log.Info("No persistent queue data, skipping loading it");
@@ -194,11 +189,6 @@ public static class QueueManager
     // ReSharper disable once MemberCanBePrivate.Global
     public static void Save()
     {
-        if (!Directory.Exists(Plugin.UserDataDir))
-        {
-            Directory.CreateDirectory(Plugin.UserDataDir);
-        }
-        
         // we can do this the easy way, should be fine
         // if it becomes a problem i'll deal with it later
         
