@@ -705,7 +705,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             
             _descriptionCancellationToken = new CancellationTokenSource();
             
-            Plugin.DebugMessage("(downloading BeatSaver data)");
+            Plugin.DebugMessage("(downloading BeatSaver data for description)");
             Beatmap? beatmap = await SongDetailsManager.BeatSaverInstance.Beatmap(queuedSong.BsrKey, _descriptionCancellationToken.Token);
 
             if (!_descriptionCancellationToken.IsCancellationRequested)
