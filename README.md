@@ -164,6 +164,7 @@ All `pressed` events follow the same data structure:
   "DataIsFromLocalMap": <boolean>,
   "DataIsFromLocalCache": <boolean>,
   "DataIsFromBeatSaver": <boolean>,
+  "HasPlayed": <boolean>,
   "Diffs": [
     {
       "Difficulty": <string (Easy, Normal, Hard, Expert, ExpertPlus)>,

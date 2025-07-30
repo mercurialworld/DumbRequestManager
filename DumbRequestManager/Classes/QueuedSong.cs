@@ -318,6 +318,8 @@ public class NoncontextualizedSong
     [JsonProperty] public bool DataIsFromLocalMap { get; set; }
     [JsonProperty] public bool DataIsFromLocalCache { get; set; }
     [JsonProperty] public bool DataIsFromBeatSaver { get; set; }
+    
+    [JsonProperty] public bool HasPlayed => SessionHistoryManager.SessionHistory.Values.Select(x => x.Hash).Contains(Hash);
 
     [JsonProperty] public NoncontextualizedDifficulty[] Diffs { get; set; } = [];
 
