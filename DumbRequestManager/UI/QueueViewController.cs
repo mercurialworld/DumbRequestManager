@@ -333,6 +333,11 @@ internal class QueueViewController : BSMLAutomaticViewController
             _ = SkipButtonPressed(); // waiting on this doesn't matter
         }
 
+        if (!queuedSong.IsWip)
+        {
+            BlacklistManager.AddKey(queuedSong.BsrKey);
+        }
+
         SocketApi.Broadcast("pressedBan", queuedSong);
         await HookApi.TriggerHook("pressedBan", queuedSong);
         

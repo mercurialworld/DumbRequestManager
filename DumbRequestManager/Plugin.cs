@@ -24,6 +24,11 @@ internal class Plugin
     [Init]
     public Plugin(IPALogger ipaLogger, IPAConfig ipaConfig, Zenjector zenjector, PluginMetadata metadata)
     {
+        if (!Directory.Exists(UserDataDir))
+        {
+            Directory.CreateDirectory(UserDataDir);
+        }
+        
         Log = ipaLogger;
         zenjector.UseLogger(Log);
         

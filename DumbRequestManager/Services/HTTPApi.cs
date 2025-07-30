@@ -337,6 +337,46 @@ internal class HttpApi : IInitializable
             return new KeyValuePair<int, byte[]>(code, response);
     }
 
+    private static KeyValuePair<int, byte[]> HandleBlacklistContext(string[] path)
+    {
+        int code = 400;
+        byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
+        
+        if (path.Length <= 2)
+        {
+            code = 200;
+            response = BlacklistManager.GetEncoded();
+            goto finalResponse;
+        }
+
+        string wantedKey = path[3].Replace("/", string.Empty);
+        if (!long.TryParse(wantedKey, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out long _))
+        {
+            response = Encoding.Default.GetBytes("{\"message\": \"Invalid key\"}");
+            goto finalResponse;
+        }
+
+        switch (path[2].Replace("/", string.Empty).ToLower())
+        {
+            case "add":
+                BlacklistManager.AddKey(wantedKey);
+                
+                code = 200;
+                response = Encoding.Default.GetBytes("{\"message\": \"Blacklisted key " + wantedKey + "\"}");
+                break;
+            
+            case "remove":
+                BlacklistManager.RemoveKey(wantedKey);
+                
+                code = 200;
+                response = Encoding.Default.GetBytes("{\"message\": \"Removed key " + wantedKey + " from the blacklist\"}");
+                break;
+        }
+        
+        finalResponse:
+            return new KeyValuePair<int, byte[]>(code, response);
+    }
+
     private static async Task HandleContext(HttpListenerContext context)
     {
         string[] path = context.Request.Url.Segments;
@@ -390,6 +430,10 @@ internal class HttpApi : IInitializable
                 case "version":
                     response = new KeyValuePair<int, byte[]>(200,
                         Encoding.Default.GetBytes(JsonConvert.SerializeObject(new VersionOutput())));
+                    break;
+                
+                case "blacklist":
+                    response = HandleBlacklistContext(path);
                     break;
 
                 default:

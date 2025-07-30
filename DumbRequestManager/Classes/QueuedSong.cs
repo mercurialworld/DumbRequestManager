@@ -321,6 +321,8 @@ public class NoncontextualizedSong
     
     [JsonProperty] public bool HasPlayed => SessionHistoryManager.SessionHistory.Values.Select(x => x.Hash).Contains(Hash);
 
+    [JsonProperty] public bool Blacklisted => BlacklistManager.ContainsKey(BsrKey);
+
     [JsonProperty] public NoncontextualizedDifficulty[] Diffs { get; set; } = [];
 
     private CoverImageContainer _coverImageContainer = null!;
