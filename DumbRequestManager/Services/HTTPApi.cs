@@ -13,12 +13,20 @@ using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
 using DumbRequestManager.UI;
+using IPA.Utilities;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Zenject;
 using PluginConfig = DumbRequestManager.Configuration.PluginConfig;
 
 namespace DumbRequestManager.Services;
+
+[JsonObject(MemberSerialization.OptIn)]
+internal class VersionOutput
+{
+    [JsonProperty] internal static string GameVersion => UnityGame.GameVersion.ToString();
+    [JsonProperty] internal static string ModVersion => Plugin.PluginVersion.ToString();
+}
 
 [UsedImplicitly]
 internal class HttpApi : IInitializable
@@ -377,6 +385,11 @@ internal class HttpApi : IInitializable
                 case "history":
                     response = new KeyValuePair<int, byte[]>(200,
                         GetSessionHistory(int.Parse(urlQuery.Get("limit") ?? "0")));
+                    break;
+                
+                case "version":
+                    response = new KeyValuePair<int, byte[]>(200,
+                        Encoding.Default.GetBytes(JsonConvert.SerializeObject(new VersionOutput())));
                     break;
 
                 default:
