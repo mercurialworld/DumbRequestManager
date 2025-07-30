@@ -25,6 +25,7 @@ internal static class Extensions
 }
 internal abstract class Censor
 {
+    private static readonly string CensorWordsFilename = Path.Combine(Plugin.UserDataDir, "CensorWords.txt");
     private static readonly Dictionary<string, bool> CensorWords = new();
 
     private static readonly string[] AgePhrases =
@@ -39,7 +40,12 @@ internal abstract class Censor
 
     private static void InitializeCensorWords()
     {
-        string[] lines = File.ReadAllLines(Path.Combine(Plugin.UserDataDir, "CensorWords.txt"));
+        if (!File.Exists(CensorWordsFilename))
+        {
+            return;
+        }
+        
+        string[] lines = File.ReadAllLines(CensorWordsFilename);
 
         foreach (string line in lines)
         {
@@ -68,6 +74,11 @@ internal abstract class Censor
 
     private static bool StringContainsCensoredWord(string input)
     {
+        if (!File.Exists(CensorWordsFilename))
+        {
+            return false;
+        }
+        
         if (CensorWords.Count == 0)
         {
             InitializeCensorWords();
@@ -102,6 +113,11 @@ internal abstract class Censor
 
     private static bool SongContainsSplicedPhrase(string[] parts)
     {
+        if (!File.Exists(CensorWordsFilename))
+        {
+            return false;
+        }
+        
         if (CensorWords.Count == 0)
         {
             InitializeCensorWords();
