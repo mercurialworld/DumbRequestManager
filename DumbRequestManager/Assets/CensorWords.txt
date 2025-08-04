@@ -94,3 +94,6 @@ s wiger
 s wigers
 a zigabo
 a zipperhead
+a .com
+a .net
+a .org
