@@ -486,7 +486,7 @@ public class NoncontextualizedSong
         }
         else
         {
-            Beatmap? beatsaverDetails = SongDetailsManager.GetDirectByHash(Hash).ConfigureAwait(true).GetAwaiter().GetResult();
+            Beatmap? beatsaverDetails = Task.Run(() => SongDetailsManager.GetDirectByHash(Hash)).GetAwaiter().GetResult();
             if (beatsaverDetails != null)
             {
                 DataIsFromBeatSaver = true;
