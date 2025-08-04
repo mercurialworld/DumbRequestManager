@@ -27,8 +27,15 @@ internal abstract class SessionHistoryManager
             }
         }
 
-        SessionHistory.Add(DateTimeOffset.UtcNow.ToUnixTimeSeconds(), song);
-        Plugin.DebugMessage($"Added {song.Title} to session history");
+        try
+        {
+            SessionHistory.Add(DateTimeOffset.UtcNow.ToUnixTimeSeconds(), song);
+            Plugin.DebugMessage($"Added {song.Title} to session history");
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.Error(e);
+        }
     }
 }
 
@@ -37,20 +44,31 @@ internal class StartMapEvent(GameplayCoreSceneSetupData gameplayCoreSceneSetupDa
 {
     public void Initialize()
     {
-        BeatmapLevel originalMap = gameplayCoreSceneSetupData.beatmapLevel;
-        string hash = originalMap.levelID.Split("_").Last();
-        if (hash.Length != 40)
+        BeatmapLevel? originalMap = null;
+        try
         {
-            Plugin.Log.Info($"Hash was not of expected length (40): ${hash}");
-            return;
+            originalMap = gameplayCoreSceneSetupData.beatmapLevel;
+            string hash = originalMap.levelID.Split("_").Last();
+            if (hash.Length != 40)
+            {
+                Plugin.Log.Info($"Hash was not of expected length (40): ${hash}");
+                return;
+            }
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.Error(e);
         }
 
         try
         {
-            NoncontextualizedSong queuedSong = new(originalMap, true);
+            if (originalMap != null)
+            {
+                NoncontextualizedSong queuedSong = new(originalMap, true);
 
-            Plugin.DebugMessage($"Adding {queuedSong.Title} to session history...");
-            SessionHistoryManager.AddToSession(queuedSong);
+                Plugin.DebugMessage($"Adding {queuedSong.Title} to session history...");
+                SessionHistoryManager.AddToSession(queuedSong);
+            }
         }
         catch (Exception)
         {
