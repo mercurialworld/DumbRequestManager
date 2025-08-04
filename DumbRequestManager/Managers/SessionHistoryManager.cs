@@ -40,20 +40,31 @@ internal abstract class SessionHistoryManager
 }
 
 [UsedImplicitly]
-internal class StartMapEvent(GameplayCoreSceneSetupData gameplayCoreSceneSetupData) : IInitializable
+internal class StartMapEvent : IInitializable
 {
+    private static GameplayCoreSceneSetupData? _gameplayCoreSceneSetupData;
+    
+    [Inject]
+    public StartMapEvent(GameplayCoreSceneSetupData gameplayCoreSceneSetupData)
+    {
+        _gameplayCoreSceneSetupData = gameplayCoreSceneSetupData;
+    }
+    
     public void Initialize()
     {
         BeatmapLevel? originalMap = null;
         try
         {
-            originalMap = gameplayCoreSceneSetupData.beatmapLevel;
-            string hash = originalMap.levelID.Split("_").Last();
-            if (hash.Length != 40)
+            originalMap = _gameplayCoreSceneSetupData?.beatmapLevel;
+            string? hash = originalMap?.levelID.Split("_").Last();
+            Plugin.DebugMessage($"Hash: {hash}");
+            if (hash?.Length != 40)
             {
                 Plugin.Log.Info($"Hash was not of expected length (40): ${hash}");
                 return;
             }
+
+            Plugin.DebugMessage("Hash was of expected length");
         }
         catch (Exception e)
         {
@@ -68,6 +79,10 @@ internal class StartMapEvent(GameplayCoreSceneSetupData gameplayCoreSceneSetupDa
 
                 Plugin.DebugMessage($"Adding {queuedSong.Title} to session history...");
                 SessionHistoryManager.AddToSession(queuedSong);
+            }
+            else
+            {
+                Plugin.DebugMessage($"originalMap is null?");
             }
         }
         catch (Exception e)

@@ -9,6 +9,6 @@ internal class PlayerInstaller : Installer
 {
     public override void InstallBindings()
     {
-        Container.BindInterfacesAndSelfTo<StartMapEvent>().AsSingle();
+        Container.BindInterfacesTo<StartMapEvent>().AsSingle();
     }
 }
