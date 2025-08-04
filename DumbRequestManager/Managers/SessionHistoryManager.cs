@@ -70,9 +70,9 @@ internal class StartMapEvent(GameplayCoreSceneSetupData gameplayCoreSceneSetupDa
                 SessionHistoryManager.AddToSession(queuedSong);
             }
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            // do nothing
+            Plugin.Log.Error(e);
         }
     }
 }
