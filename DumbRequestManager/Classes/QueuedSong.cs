@@ -180,6 +180,7 @@ public class NoncontextualizedDifficulty
         NoteJumpSpeed = mapData.noteJumpMovementSpeed;
         if (cachedDetails == null)
         {
+            NotesPerSecond = mapData.notesCount / level.songDuration;
             return;
         }
 

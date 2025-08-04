@@ -190,7 +190,7 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
     {
         try
         {
-            return CachedMaps[hash];
+            return CachedMaps[hash.ToLower()];
         }
         catch (Exception)
         {
