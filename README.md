@@ -146,7 +146,7 @@ All `pressed` events follow the same data structure:
   "CensorArtist": <boolean>,
   "Mapper": <string>,
   "CensorMapper": <boolean>,
-  "MetaDataHasSplicedCensor": <boolean>,
+  "MetadataHasSplicedCensor": <boolean>,
   "Duration": <int (seconds)>,
   "Votes": [<int (upvotes)>, <int (downvotes)>],
   "Rating": <float (0-1)>,
