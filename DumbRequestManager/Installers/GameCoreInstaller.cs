@@ -5,7 +5,7 @@ using Zenject;
 namespace DumbRequestManager.Installers;
 
 [UsedImplicitly]
-internal class PlayerInstaller : Installer
+internal class GameCoreInstaller : Installer
 {
     public override void InstallBindings()
     {

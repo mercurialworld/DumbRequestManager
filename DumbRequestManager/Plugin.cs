@@ -40,7 +40,7 @@ internal class Plugin
         zenjector.UseHttpService();
         zenjector.Install<AppInstaller>(Location.App);
         zenjector.Install<MenuInstaller>(Location.Menu);
-        zenjector.Install<PlayerInstaller>(Location.Player);
+        zenjector.Install<GameCoreInstaller>(Location.GameCore);
         
         Log.Info("Plugin loaded");
     }

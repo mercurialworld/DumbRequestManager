@@ -53,18 +53,17 @@ internal class StartMapEvent : IInitializable
     public void Initialize()
     {
         BeatmapLevel? originalMap = null;
+        
         try
         {
             originalMap = _gameplayCoreSceneSetupData?.beatmapLevel;
             string? hash = originalMap?.levelID.Split("_").Last();
-            Plugin.DebugMessage($"Hash: {hash}");
+            
             if (hash?.Length != 40)
             {
                 Plugin.Log.Info($"Hash was not of expected length (40): ${hash}");
                 return;
             }
-
-            Plugin.DebugMessage("Hash was of expected length");
         }
         catch (Exception e)
         {
@@ -82,7 +81,7 @@ internal class StartMapEvent : IInitializable
             }
             else
             {
-                Plugin.DebugMessage($"originalMap is null?");
+                Plugin.DebugMessage("originalMap is null?");
             }
         }
         catch (Exception e)
