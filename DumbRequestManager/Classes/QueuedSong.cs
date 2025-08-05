@@ -113,8 +113,8 @@ public readonly struct QueuedSongMapMods
 [JsonObject(MemberSerialization.OptIn)]
 public class NoncontextualizedDifficulty
 {
-    [JsonProperty] public string Difficulty { get; set; }
-    [JsonProperty] public string Characteristic { get; set; }
+    [JsonProperty] public string Difficulty { get; set; } = null!;
+    [JsonProperty] public string Characteristic { get; set; } = null!;
     [JsonProperty] public float NoteJumpSpeed { get; set; }
     [JsonProperty] public float NotesPerSecond { get; set; }
     [JsonProperty] public QueuedSongMapMods MapMods { get; set; }
@@ -198,6 +198,12 @@ public class NoncontextualizedDifficulty
 
         BeatLeaderStars = cachedDiff?.RankedStatus.BeatLeader.Stars ?? 0;
         NotesPerSecond = cachedDiff?.Notes / level.songDuration ?? 0;
+    }
+
+    // JSON constructor (for session history, all data should be there already ready to go)
+    [JsonConstructor]
+    public NoncontextualizedDifficulty(object obj)
+    {
     }
 }
 
@@ -521,6 +527,11 @@ public class NoncontextualizedSong
         }
         
         _coverImageContainer = PluginConfig.Instance.NeverUseLocalCoverImages ? new CoverImageContainer(Hash) : new CoverImageContainer(level);
+    }
+
+    [JsonConstructor]
+    public NoncontextualizedSong(object obj)
+    {
     }
 
     public NoncontextualizedSong()

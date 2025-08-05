@@ -36,6 +36,7 @@ internal class MapCacheManager(IHttpService httpService) : IInitializable
         {
             await SetupCacheStuff();
             await SetupBeatLeaderCacheStuff();
+            SessionHistoryManager.LoadPreviousSessionHistory();
         });
     }
 

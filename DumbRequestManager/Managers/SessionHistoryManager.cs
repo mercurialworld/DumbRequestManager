@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DumbRequestManager.Classes;
+using DumbRequestManager.Configuration;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using Zenject;
 
 namespace DumbRequestManager.Managers;
 
 internal abstract class SessionHistoryManager
 {
-    public static readonly Dictionary<long, NoncontextualizedSong> SessionHistory = new();
+    private static PluginConfig Config => PluginConfig.Instance;
+    public static Dictionary<long, NoncontextualizedSong> SessionHistory = new();
 
     public static void AddToSession(NoncontextualizedSong song)
     {
@@ -35,6 +39,35 @@ internal abstract class SessionHistoryManager
         catch (Exception e)
         {
             Plugin.Log.Error(e);
+        }
+        
+        File.WriteAllText(Path.Combine(Plugin.UserDataDir, "history.json"), JsonConvert.SerializeObject(SessionHistory, Formatting.Indented));
+    }
+
+    internal static void LoadPreviousSessionHistory()
+    {
+        string filename = Path.Combine(Plugin.UserDataDir, "history.json");
+        if (!File.Exists(filename))
+        {
+            Plugin.DebugMessage("No history file found");
+            return;
+        }
+
+        if (DateTime.UtcNow > File.GetLastWriteTimeUtc(filename).AddMinutes(Config.AssumeNewSessionAfterMinutes))
+        {
+            Plugin.Log.Info($"History file was last modified more than {Config.AssumeNewSessionAfterMinutes} minutes ago, assuming this is a new session");
+            return;
+        }
+
+        try
+        {
+            SessionHistory = JsonConvert.DeserializeObject<Dictionary<long, NoncontextualizedSong>>(File.ReadAllText(filename))!;
+            Plugin.Log.Info("Loaded previous session history");
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.Warn("Could not load previous session history");
+            Plugin.Log.Warn(e);
         }
     }
 }
