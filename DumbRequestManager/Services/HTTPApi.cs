@@ -171,6 +171,11 @@ internal class HttpApi : IInitializable
 
         int code = 400;
         byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
+        
+        if (int.TryParse(url, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int _))
+        {
+            url = $"https://wipbot.com/wips/{url.ToUpper()}.zip";
+        }
 
         bool isValidURL = Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) 
                       && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
