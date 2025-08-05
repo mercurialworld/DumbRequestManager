@@ -109,7 +109,7 @@ internal static class Cover
                 return null;
             }
             
-            Plugin.DebugMessage(CoverCache.TryAdd(url, cover) ? "Cover was cached" : "Cover was not cached???");
+            Plugin.DebugMessage(CoverCache.TryAdd(url, cover) ? "Cover added to cache" : "Cover not added to cache???");
             return cover;
         }
         catch (Exception e)

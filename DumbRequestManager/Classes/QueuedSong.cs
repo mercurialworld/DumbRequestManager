@@ -540,6 +540,11 @@ public class NoncontextualizedSong
         IsWip = true;
         _coverImageContainer = new CoverImageContainer();
     }
+
+    internal void UpdateCoverImageContainer()
+    {
+        _coverImageContainer = new CoverImageContainer(Hash);
+    }
 }
 
 internal class LevelIDComparer : IEqualityComparer<BeatmapLevel>

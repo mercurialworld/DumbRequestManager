@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
+using DumbRequestManager.Configuration;
 using DumbRequestManager.Services;
 using DumbRequestManager.UI;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace DumbRequestManager.Managers;
 
@@ -23,10 +25,11 @@ public readonly struct PersistentQueueEntry(string key, string? user, bool isWip
 [UsedImplicitly]
 public static class QueueManager
 {
+    private static PluginConfig Config => PluginConfig.Instance;
     private static readonly string PersistentQueueFilename = Path.Combine(Plugin.UserDataDir, "queue.json");
     
     public static readonly List<NoncontextualizedSong> QueuedSongs = [];
-    public static readonly List<NoncontextualizedSong> MapsActedOn = [];
+    public static List<NoncontextualizedSong> MapsActedOn = [];
 
     public static async Task<NoncontextualizedSong?> AddKey(string key, string? user = null, bool skipPersistence = false, bool prepend = false, string? service = null)
     {
@@ -185,6 +188,9 @@ public static class QueueManager
         }
         Plugin.DebugMessage("Loaded persistent queue");
     }
+    
+    public static void SaveQueueHistory() => File.WriteAllText(Path.Combine(Plugin.UserDataDir, "queueHistory.json"),
+        JsonConvert.SerializeObject(MapsActedOn, Formatting.Indented));
 
     // ReSharper disable once MemberCanBePrivate.Global
     public static void Save()
@@ -196,5 +202,37 @@ public static class QueueManager
         File.WriteAllText(PersistentQueueFilename, JsonConvert.SerializeObject(keys, Formatting.Indented));
         
         Plugin.DebugMessage("Saved persistent queue");
+    }
+
+    public static void LoadQueueHistory()
+    {
+        string filename = Path.Combine(Plugin.UserDataDir, "queueHistory.json");
+        if (!File.Exists(filename))
+        {
+            Plugin.DebugMessage("No queue history file found");
+            return;
+        }
+
+        if (DateTime.UtcNow > File.GetLastWriteTimeUtc(filename).AddMinutes(Config.AssumeNewSessionAfterMinutes))
+        {
+            Plugin.Log.Info($"Queue history file was last modified more than {Config.AssumeNewSessionAfterMinutes} minutes ago, assuming this is a new session");
+            return;
+        }
+
+        try
+        {
+            MapsActedOn = JsonConvert.DeserializeObject<List<NoncontextualizedSong>>(File.ReadAllText(filename))!;
+            Plugin.Log.Info("Loaded previous session queue history");
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.Warn("Could not load previous session queue history");
+            Plugin.Log.Warn(e);
+        }
+
+        foreach (NoncontextualizedSong entry in MapsActedOn)
+        {
+            entry.UpdateCoverImageContainer();
+        }
     }
 }

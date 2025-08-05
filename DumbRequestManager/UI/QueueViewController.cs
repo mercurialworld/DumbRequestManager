@@ -936,6 +936,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
         
         MapsActedOn.Insert(0, queuedSong);
+        QueueManager.SaveQueueHistory();
         
         _songPreviewPlayer.CrossfadeToDefault();
         
@@ -958,6 +959,7 @@ internal class QueueViewController : BSMLAutomaticViewController
         
         NoncontextualizedSong selectedMap = MapsActedOn[index];
         MapsActedOn.RemoveAt(index);
+        QueueManager.SaveQueueHistory();
         Queue.Insert(0, selectedMap);
         
 #if !DEBUG
@@ -1173,6 +1175,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             });
 
             MapsActedOn.Insert(0, queuedSong);
+            QueueManager.SaveQueueHistory();
 
             ChatRequestButton.Instance.UseAttentiveButton(Queue.Count > 0);
         }

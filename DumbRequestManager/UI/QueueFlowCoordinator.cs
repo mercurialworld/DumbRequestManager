@@ -31,6 +31,7 @@ internal class QueueFlowCoordinator : FlowCoordinator
     private static void EventLoadThing(SongCore.Loader loader, ConcurrentDictionary<string, BeatmapLevel> concurrentDictionary)
     {
         _ = QueueManager.Load();
+        QueueManager.LoadQueueHistory();
         SongCore.Loader.SongsLoadedEvent -= EventLoadThing;
     }
 
