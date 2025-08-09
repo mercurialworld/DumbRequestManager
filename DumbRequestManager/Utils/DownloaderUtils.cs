@@ -91,6 +91,11 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
             throw new MapDownloadFailedException("Map download failed", exception);
         }
         
+        if (result.LongLength >= Config.MaximumWipSize * 1048576)
+        {
+            throw new MapDownloadFailedException("WIP size limit exceeded.");
+        }
+        
         token.ThrowIfCancellationRequested();
         Plugin.DebugMessage($"[DownloadUtils] Downloaded WIP map {beatmap.BsrKey}");
         
