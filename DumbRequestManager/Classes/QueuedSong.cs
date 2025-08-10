@@ -271,8 +271,8 @@ public class NoncontextualizedSong
     [JsonProperty]
     public bool MetadataHasSplicedCensor { get; set; }
     
-    private string SecondaryLineWithMapper => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color=#CBADFF>{Mapper.StripTMPTags()}<color=#FFFFFF>]";
-    private string SecondaryLineWithRequester => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color=#CBFFAD>{User?.StripTMPTags()}<color=#FFFFFF>]";
+    private string SecondaryLineWithMapper => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color={PrimaryTextColor}>{Mapper.StripTMPTags()}<color=#FFFFFF>]";
+    private string SecondaryLineWithRequester => $"<alpha=#AA>{Artist.StripTMPTags()} <alpha=#FF>[<color={SecondaryTextColor}>{User?.StripTMPTags()}<color=#FFFFFF>]";
     
     [UIValue("displayedSecondaryLine")]
     public string DisplayedSecondaryLine => PluginConfig.Instance.ShowRequestersInsteadOfMappers
@@ -335,6 +335,12 @@ public class NoncontextualizedSong
     private CoverImageContainer _coverImageContainer = null!;
     public byte[]? CoverImage => _coverImageContainer.CoverImage ?? null;
     public Sprite CoverImageSprite => _coverImageContainer.CoverImageSprite;
+
+    internal static string PrimaryTextColor => PluginConfig.Instance.PrimaryColor;
+    internal static string SecondaryTextColor => PluginConfig.Instance.SecondaryColor;
+    internal static readonly string PrimaryGradient0 = $"{PrimaryTextColor}60";
+    internal static readonly string PrimaryGradient1 = $"{PrimaryTextColor}40";
+    internal static readonly string TransparentGradient = $"{PrimaryTextColor}00";
     // ReSharper restore MemberCanBePrivate.Global
     
     // https://github.com/TheBlackParrot/DumbRequestManager/issues/7#issue-3072545753 (ty Lack)

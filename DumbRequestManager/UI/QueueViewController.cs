@@ -165,6 +165,14 @@ internal class QueueViewController : BSMLAutomaticViewController
 
     private static readonly Sprite BorderSprite = Resources.FindObjectsOfTypeAll<Sprite>().First(x => x.name == "RoundRect10Border");
 
+    private string PrimaryGradient0 = $"{Config.PrimaryColor}60";
+    private string PrimaryGradient1 = $"{Config.PrimaryColor}40";
+    private string TransparentGradient = $"{Config.PrimaryColor}00";
+    private string HighlightedTextColor = $"{Config.PrimaryColor}FF";
+    private string HighlightedTextSecondaryColor = $"{Config.SecondaryColor}FF";
+    private string TransparentHighlightedTextColor = $"{Config.PrimaryColor}AA";
+    private string TransparentHighlightedTextSecondaryColor = $"{Config.SecondaryColor}AA";
+
     [Inject]
     [UsedImplicitly]
     private void Construct(LevelFilteringNavigationController levelFilteringNavigationController,
@@ -620,12 +628,12 @@ internal class QueueViewController : BSMLAutomaticViewController
         detailsTitle.text = queuedSong.SubTitle == string.Empty ? queuedSong.Title : $"{queuedSong.Title} <size=75%><alpha=#AA>{queuedSong.SubTitle}";
         detailsArtist.text = queuedSong.Artist;
         detailsMapper.text = queuedSong.Mapper;
-        detailsRequester.text = queuedSong.User ?? "someone";
+        detailsRequester.text = queuedSong.User ?? string.Empty;
         
-        detailsBsrKey.text = queuedSong.IsWip ? "" : $"<alpha=#AA>!bsr <alpha=#FF>{queuedSong.BsrKey}";
+        detailsBsrKey.text = queuedSong.IsWip ? "" : $"<alpha=#AA>{Config.RequestCommandString} <alpha=#FF>{queuedSong.BsrKey}";
         
         DateTimeOffset uploadOffset = DateTimeOffset.FromUnixTimeSeconds(queuedSong.UploadTime);
-        detailsUploadDate.text = queuedSong.IsWip ? "" : uploadOffset.LocalDateTime.ToString("d MMM yyyy");
+        detailsUploadDate.text = queuedSong.IsWip ? "" : uploadOffset.LocalDateTime.ToString(Config.DateFormat);
 
         detailsUpvotes.text = queuedSong.Votes[0].ToString("N0");
         detailsDownvotes.text = queuedSong.Votes[1].ToString("N0");
@@ -997,7 +1005,7 @@ internal class QueueViewController : BSMLAutomaticViewController
             {
                progress.ProgressChanged += (_, value) =>
                {
-                   _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#CBADFF><b>{bsrKey}</b> <color=#FFFFFF80><size=80%>(<mspace=0.41em>{(value * 100):0}</mspace>%)", value);
+                   _loadingSpinner.ShowDownloadingProgress($"Downloading map <color=#{Config.PrimaryColor}><b>{bsrKey}</b> <color=#FFFFFF80><size=80%>(<mspace=0.41em>{(value * 100):0}</mspace>%)", value);
                };
             }
             

@@ -27,14 +27,15 @@
                     <background tags="neither" background="panel-top" bg-color="#000000C0"
                                 anchor-min-x="0.01" anchor-max-x="0.99"
                                 anchor-min-y="0.025"/>
-                    <background tags="selected" background="title-gradient" bg-color="#FFFFFFFF" bg-color0="#CBADFF60" bg-color1="#CBADFF50"
+                    <background tags="selected" background="title-gradient" bg-color="#FFFFFFFF" bg-color0="~PrimaryGradient0" bg-color1="~PrimaryGradient1"
                                 anchor-min-x="0.01" anchor-max-x="0.99"
                                 anchor-min-y="0.025"/>
                     <background active="false" name="CellHighlightBG"
-                                background="title-gradient" bg-color="#FFFFFFFF" bg-color0="#CBADFF60" bg-color1="#CBADFF00"
+                                background="title-gradient" bg-color="#FFFFFFFF" bg-color0="~PrimaryGradient0" bg-color1="~TransparentGradient"
                                 anchor-min-x="0.01" anchor-max-x="0.99"
                                 anchor-min-y="0.025"/>
-                    <background tags="hovered" background="title-gradient" bg-color="#FFFFFF40"
+                    <background tags="hovered" background="title-gradient"
+                                bg-color="#FFFFFFFF" bg-color0="#FFFFFF50" bg-color1="#FFFFFF10"
                                 anchor-min-x="0.01" anchor-max-x="0.99"
                                 anchor-min-y="0.025"/>
                     <vertical hover-hint="~hoverString"
@@ -104,22 +105,22 @@
                                     spacing="0.5">
                             <text text="mapped by"
                                   font-size="3" align="Left"
-                                  color="#CBADFFAA"/>
+                                  color="~TransparentHighlightedTextColor"/>
                             <horizontal horizontal-fit="Unconstrained">
                                 <text id="detailsMapper"
                                       font-size="3" align="Left" overflow-mode="Ellipsis"
-                                      color="#CBADFFFF"/>
+                                      color="~HighlightedTextColor"/>
                             </horizontal>
                         </horizontal>
                         <horizontal child-expand-width="false" child-align="LowerLeft"
                                     spacing="0.5">
                             <text text="requested by"
                                   font-size="3" align="Left"
-                                  color="#CBFFADAA"/>
+                                  color="~TransparentHighlightedTextSecondaryColor"/>
                             <horizontal horizontal-fit="Unconstrained">
                                 <text id="detailsRequester"
                                       font-size="3" align="Left" overflow-mode="Ellipsis"
-                                      color="#CBFFADFF"/>
+                                      color="~HighlightedTextSecondaryColor"/>
                             </horizontal>
                         </horizontal>
                     </vertical>
@@ -203,7 +204,7 @@
                                 preferred-height="4" vertical-fit="PreferredSize"
                                 child-align="MiddleLeft" child-expand-width="false">
                         <horizontal child-expand-width="false">
-                            <image src="#NPSIcon" image-color="#CBADFF" preserve-aspect="true"
+                            <image src="#NPSIcon" image-color="~HighlightedTextColor" preserve-aspect="true"
                                    preferred-height="4" preferred-width="5"/>
                         </horizontal>
                         <horizontal child-expand-width="true">
@@ -231,7 +232,7 @@
                                   font-size="4" font-align="CaplineRight"/>
                         </horizontal>
                         <horizontal child-expand-width="false">
-                            <image src="#FastNotesIcon" image-color="#CBADFF" preserve-aspect="true"
+                            <image src="#FastNotesIcon" image-color="~HighlightedTextColor" preserve-aspect="true"
                                    preferred-height="4" preferred-width="5"/>
                         </horizontal>
                     </horizontal>

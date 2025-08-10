@@ -47,4 +47,9 @@ internal class PluginConfig
     public virtual int MaximumDecompressedWipSize { get; set; } = 50;
     
     public virtual int AssumeNewSessionAfterMinutes { get; set; } = 60;
+    
+    public virtual string DateFormat { get; set; } = "d MMM yyyy";
+    public virtual string RequestCommandString { get; set; } = "!bsr";
+    public virtual string PrimaryColor { get; set; } = "#CBADFF";
+    public virtual string SecondaryColor { get; set; } = "#CBFFAD";
 }
