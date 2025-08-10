@@ -83,14 +83,14 @@
                       preferred-height="80" vertical-fit="PreferredSize" pad-bottom="2">
                 <horizontal preferred-height="15" vertical-fit="PreferredSize"
                             preferred-width="58" horizontal-fit="PreferredSize"
-                            bg="round-rect-panel" bg-color="grey">
+                            bg="round-rect-panel" bg-color="grey" spacing="3">
                     <horizontal preferred-height="15" vertical-fit="PreferredSize"
-                                preferred-width="14" horizontal-fit="PreferredSize" pad-left="1">
+                                preferred-width="14" horizontal-fit="PreferredSize" pad-left="2">
                         <image id="detailsCoverImage" preferred-height="14" preferred-width="14" preserve-aspect="true"/>
                     </horizontal>
-                    <vertical preferred-height="15" vertical-fit="PreferredSize"
+                    <vertical preferred-height="14" vertical-fit="PreferredSize"
                               preferred-width="44" horizontal-fit="PreferredSize"
-                              child-expand-width="false" padding="2" pad-top="1" pad-bottom="1">
+                              child-expand-width="false" pad-top="1" pad-bottom="1" pad-right="2">
                         <horizontal horizontal-fit="Unconstrained">
                             <text id="detailsTitle" text="Title"
                                   font-size="4" align="Left" overflow-mode="Ellipsis"/>
@@ -126,15 +126,15 @@
                 </horizontal>
                 <horizontal preferred-height="4" vertical-fit="PreferredSize"
                             preferred-width="58" horizontal-fit="PreferredSize" child-align="UpperCenter"
-                            pad-left="2" pad-right="2">
+                            pad-left="2" pad-right="2" pad-top="-1">
                     <text id="detailsBsrKey" rich-text="true"
                           font-size="4" font-align="CaplineLeft"/>
                     <text id="detailsUploadDate"
                           font-size="4" font-align="CaplineRight"/>
                 </horizontal>
-                <horizontal preferred-height="4" vertical-fit="PreferredSize"
+                <horizontal preferred-height="3" vertical-fit="PreferredSize"
                             preferred-width="58" horizontal-fit="PreferredSize" child-align="MiddleCenter"
-                            pad-left="2" pad-right="2">
+                            pad-left="2" pad-right="2" pad-bottom="1">
                     <horizontal preferred-width="58" horizontal-fit="PreferredSize">
                         <horizontal preferred-height="4" vertical-fit="PreferredSize"
                                     preferred-width="19" horizontal-fit="PreferredSize" child-expand-width="false"
@@ -180,11 +180,11 @@
                         </horizontal>
                     </horizontal>
                 </horizontal>
-                <vertical preferred-height="30" vertical-fit="PreferredSize"
+                <vertical preferred-height="32" vertical-fit="PreferredSize"
                           preferred-width="56" horizontal-fit="PreferredSize"
                           background="round-rect-panel" bg-color="grey">
                     <scroll-view id="detailsDescriptionScrollView"
-                                 preferred-height="30" child-control-height="true" child-expand-height="false"
+                                 preferred-height="32" child-control-height="true" child-expand-height="false"
                                  preferred-width="56" child-control-width="true" child-expand-width="false"
                                  child-alignment="UpperLeft" padding="0">
                         <vertical horizontal-fit="PreferredSize" preferred-width="44"
@@ -198,7 +198,7 @@
                 </vertical>
                 <horizontal preferred-height="4" vertical-fit="PreferredSize"
                             preferred-width="58" horizontal-fit="PreferredSize"
-                            pad-left="4" pad-right="4">
+                            pad-left="2" pad-right="2">
                     <horizontal preferred-width="19" horizontal-fit="PreferredSize"
                                 preferred-height="4" vertical-fit="PreferredSize"
                                 child-align="MiddleLeft" child-expand-width="false">
