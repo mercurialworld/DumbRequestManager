@@ -338,9 +338,9 @@ public class NoncontextualizedSong
 
     internal static string PrimaryTextColor => PluginConfig.Instance.PrimaryColor;
     internal static string SecondaryTextColor => PluginConfig.Instance.SecondaryColor;
-    internal static string PrimaryGradient0 => $"{PrimaryTextColor}60";
-    internal static string PrimaryGradient1 => $"{PrimaryTextColor}40";
-    internal static string TransparentGradient => $"{PrimaryTextColor}00";
+    internal static string PrimaryGradient0 => $"{PluginConfig.Instance.PrimaryColor}60";
+    internal static string PrimaryGradient1 => $"{PluginConfig.Instance.PrimaryColor}40";
+    internal static string TransparentGradient => $"{PluginConfig.Instance.PrimaryColor}00";
     // ReSharper restore MemberCanBePrivate.Global
     
     // https://github.com/TheBlackParrot/DumbRequestManager/issues/7#issue-3072545753 (ty Lack)
