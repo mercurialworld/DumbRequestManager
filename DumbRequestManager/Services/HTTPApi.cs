@@ -172,10 +172,8 @@ internal class HttpApi : IInitializable
         int code = 400;
         byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
 
-        bool isWipBot = false;
         if (int.TryParse(url, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int _))
         {
-            isWipBot = true;
             url = $"https://wipbot.com/wips/{url.ToUpper()}.zip";
         }
 
@@ -219,7 +217,7 @@ internal class HttpApi : IInitializable
         }
 
         Plugin.DebugMessage($"WIP is {headResponseMessage.Content.Headers.ContentLength} bytes in size (according to headers)");
-        if (headResponseMessage.Content.Headers.ContentLength <= 0 && !isWipBot)
+        if (headResponseMessage.Content.Headers.ContentLength <= 0) 
         {
             // Danielduel's wipbot has a hard-coded limit of 64MB
             // https://github.com/Danielduel/wipbot-website/blob/0b4e511c246ff934a1b2b1fde12c9b77525a0457/process/uploadWip.ts#L25
