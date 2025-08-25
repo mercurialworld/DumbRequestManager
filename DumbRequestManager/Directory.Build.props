@@ -21,12 +21,12 @@
   <PropertyGroup>
     <PluginId>DumbRequestManager</PluginId>
     <PluginName>DumbRequestManager</PluginName>
-    <Authors>TheBlackParrot</Authors>
-    <Version>0.6.3+$(GameVersion)</Version>
+    <Authors>TheBlackParrot, mercurialworld</Authors>
+    <Version>0.6.4+$(GameVersion)</Version>
     <Description>Beat Saber map request manager that abstracts various functions for use in external applications</Description>
-    <ProjectSource>https://github.com/TheBlackParrot/DumbRequestManager</ProjectSource>
-    <ProjectHome>https://github.com/TheBlackParrot/DumbRequestManager</ProjectHome>
-    <DonateUrl>https://ko-fi.com/septilateral</DonateUrl>
+    <ProjectSource>https://github.com/mercurialworld/DumbRequestManager</ProjectSource>
+    <ProjectHome>https://github.com/mercurialworld/DumbRequestManager</ProjectHome>
+    <!-- <DonateUrl>https://ko-fi.com/septilateral</DonateUrl> -->
   </PropertyGroup>
 
   <!-- Plugin Dependencies -->
