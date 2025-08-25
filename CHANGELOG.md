@@ -14,3 +14,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changes
 - Removed workaround for wipbot.com, as it's no longer necessary (see this [comment](https://github.com/Danielduel/wipbot-website/issues/1#issuecomment-3215786715))
+- Edited README.md to further specify the data required in `POST /addWip` and add the `IsWip` map parameter
+    - it's just like how i had to dig into the code to find that DataPuller's MapData message has an `InLevel` parameter
