@@ -17,13 +17,13 @@ namespace DumbRequestManager.Managers
     
     internal class VersionManager
     {
-        private static readonly HttpClient HttpClient = new() { BaseAddress = new Uri("https://theblackparrot.me") };
+        private static readonly HttpClient HttpClient = new() { BaseAddress = new Uri("https://api.pocha.moe") };
 
         private async Task<Version?> GetRemoteVersionData()
         {
             Plugin.Log.Info($"Getting version data from {HttpClient.BaseAddress} ...");
             
-            HttpResponseMessage response = await HttpClient.GetAsync("DumbRequestManager/version.json");
+            HttpResponseMessage response = await HttpClient.GetAsync($"v1/version/DumbRequestManager/{_gameVersion.ToString(3)}");
             if (!response.IsSuccessStatusCode)
             {
                 Plugin.Log.Warn("Failed to get version data");
@@ -34,10 +34,7 @@ namespace DumbRequestManager.Managers
 
             string rawVersionData = await response.Content.ReadAsStringAsync();
             
-            JObject json = JObject.Parse(rawVersionData);
-            string? rawVersionString = json[_gameVersion.ToString(3)]?.ToString();
-            
-            return rawVersionString != null ? new Version(rawVersionString) : null;
+            return rawVersionData != null ? new Version(rawVersionData) : null;
         }
         
         internal readonly Version ModVersion = Assembly.GetExecutingAssembly().GetName().Version;
