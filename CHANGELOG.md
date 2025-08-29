@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - for now, it only works with this mod, but if anyone wants to maintain another of Parrot's mods and wants to make sure people are keeping up-to-date, please contact me! My Discord is `mercurial_world`.
 - Add new domain to the `WhitelistedWipDomains` configuration option
     - https://wip.hawk.quest namely
+- Change WIP parsing to add support for https://wip.hawk.quest codes by themselves
+- WIP description now shows the domain that the WIP came from
+    - sanity check!
 
 # `0.6.4`
 
