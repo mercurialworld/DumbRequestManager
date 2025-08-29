@@ -40,7 +40,8 @@ internal class PluginConfig
         "discordapp.com",
         "dropbox.com",
         "catbox.moe",
-        "wipbot.com"
+        "wipbot.com",
+        "hawk.quest"
     ];
 
     public virtual int MaximumWipSize { get; set; } = 20;
