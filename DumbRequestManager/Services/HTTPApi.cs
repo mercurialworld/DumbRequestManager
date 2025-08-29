@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
 using DumbRequestManager.Classes;
@@ -34,6 +35,10 @@ internal class HttpApi : IInitializable
     private static PluginConfig Config => PluginConfig.Instance;
 
     private static HttpListener? _httpListener;
+
+    // ReSharper disable once InconsistentNaming
+    private static readonly Regex WIPBotRegex = new("^[0-9A-F]{6}$");
+    private static readonly Regex HawkWipRegex = new("^[0-9a-fA-F]{5}$");
     
     public void Initialize()
     {
@@ -174,7 +179,21 @@ internal class HttpApi : IInitializable
 
         if (int.TryParse(url, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int _))
         {
-            url = $"https://wipbot.com/wips/{url.ToUpper()}.zip";
+            // https://wipbot.com codes are ^[0-9A-F]{6}$
+            if (WIPBotRegex.IsMatch(url)) 
+            {
+                url = $"https://wipbot.com/wips/{url}.zip";
+            } 
+            // https://wip.hawk.quest codes are ^[0-9a-fA-F]{5}$
+            else if (HawkWipRegex.IsMatch(url))
+            {
+                url = $"https://wip.hawk.quest/upload/{url}.zip";
+            }
+            else
+            {
+                response = Encoding.Default.GetBytes("{\"message\": \"Invalid WIP code\"}");
+                goto finalResponse;
+            }
         }
 
         bool isValidURL = Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) 
