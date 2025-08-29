@@ -705,8 +705,11 @@ internal class QueueViewController : BSMLAutomaticViewController
         Task.Run(async () =>
         {
             if (queuedSong.IsWip)
-            {
-                detailsDescription.text = "Map is a WIP, no description available.";
+            {        
+                string[] domainParts = new Uri(queuedSong.BsrKey).DnsSafeHost.Split(".");
+                string domain = $"{domainParts[^2]}.{domainParts[^1]}";
+               
+                detailsDescription.text = $"Map is a WIP (from {domain}), no description available.";
                 detailsDescription.color = Color.white;
                 return;
             }
