@@ -29,7 +29,12 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
     }
     
     [UIValue("IsQueueOpen")]
-    public bool IsQueueOpen { get; set; }
+    public bool IsQueueOpen
+    {
+        get => Config.QueueOpenStatus;
+        set => Config.QueueOpenStatus = value;
+    }
+
     public static SideSettingsViewController Instance { get; private set; } = null!;
     
     private readonly VersionManager _versionData = new VersionManager();

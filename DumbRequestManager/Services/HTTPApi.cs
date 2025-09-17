@@ -357,6 +357,10 @@ internal class HttpApi : IInitializable
                             
                 QueueManager.Shuffle();
                 break;
+            case "status":
+                code = 200;
+                response = Encoding.Default.GetBytes($"{{\"QueueOpen\": {JsonConvert.SerializeObject(Config.QueueOpenStatus)}}}");
+                break;
         }
         
         finalResponse:
