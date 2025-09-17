@@ -51,6 +51,7 @@ As this is really only a web server, you can test any of these endpoints in any 
 |              | `/open`     |        | Opens and closes the request queue.<br/>`/queue/open/true`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | [Message](#message-data-type)                      |
 |              | `/move`     |        | Moves the wanted queue entry (first number) to a different spot in the queue (second number *OR* `top`/`bottom`).<br/>`/queue/move/4/1`                                                                                                                                                                                                                                                                                                                                                                                                                 | [Message](#message-data-type)                      |
 |              | `/shuffle`  |        | Shuffles the request queue.<br/>`/queue/shuffle`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | [Message](#message-data-type)                      |
+|              | `/status`   |        | Gets whether the queue switch is turned on or off (that is, whether requests are allowed or not).<br/>`/queue/shuffle`                                                                                                                                                                                                                                                                                                                                                                                                                                  | [Queue Status Message](#queue-message-data-type)   |
 | `/history`   |             | GET    | Gets the current play session history, sorted most recent to least recent.<br/>Response limits can be tacked on with a `limit` query parameter.<br/>`/history?limit=1`                                                                                                                                                                                                                                                                                                                                                                                  | (Array) [Session History Data](#history-data-type) |
 | `/version`   |             | GET    | Gets version information for both the mod and the game.<br/>`/version`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                                    |
 
@@ -219,5 +220,13 @@ All `pressed` events follow the same data structure:
 ```json
 {
   "message": <string>
+}
+```
+
+<a name="queue-message-data-type"></a>
+## Message
+```json
+{
+  "QueueStatus": <boolean>
 }
 ```
