@@ -30,9 +30,9 @@ internal class ChatRequestButton(
     
     private static readonly Color IdleColor = new Color(1, 1, 1, 0.5f);
     private static Color AttentionColor => 
-        ColorUtility.TryParseHtmlString(Config.PrimaryColor, out var color)
-            ? new Color(color.r - 0.1f, color.g - 0.1f, color.b - 0.1f, 2f)
-            : new Color(203, 173, 255, 1f);
+        ColorUtility.TryParseHtmlString(Config.AttentionColor, out var color)
+            ? color
+            : new Color(255, 114, 118, 1f);
     
     public void Initialize()
     {

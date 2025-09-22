@@ -54,4 +54,5 @@ internal class PluginConfig
     public virtual string RequestCommandString { get; set; } = "!bsr";
     public virtual string PrimaryColor { get; set; } = "#CBADFF";
     public virtual string SecondaryColor { get; set; } = "#CBFFAD";
+    public virtual string AttentionColor { get; set; } = "#FF7276";
 }
