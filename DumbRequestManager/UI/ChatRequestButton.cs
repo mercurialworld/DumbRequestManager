@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
+using DumbRequestManager.Configuration;
 using HMUI;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -19,6 +20,7 @@ internal class ChatRequestButton(
     QueueFlowCoordinator queueFlowCoordinator)
     : IInitializable, IDisposable
 {
+    private static PluginConfig Config => PluginConfig.Instance;
     public static ChatRequestButton Instance = null!;
     
     // ReSharper disable FieldCanBeMadeReadOnly.Local
@@ -27,6 +29,10 @@ internal class ChatRequestButton(
     // ReSharper restore FieldCanBeMadeReadOnly.Local
     
     private static readonly Color IdleColor = new Color(1, 1, 1, 0.5f);
+    private static Color AttentionColor => 
+        ColorUtility.TryParseHtmlString(Config.PrimaryColor, out var color)
+            ? new Color(color.r - 0.1f, color.g - 0.1f, color.b - 0.1f, 2f)
+            : new Color(203, 173, 255, 1f);
     
     public void Initialize()
     {
@@ -38,9 +44,10 @@ internal class ChatRequestButton(
         
         _standardButton.gameObject.name = "DRM_StandardButton";
         _standardButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = IdleColor;
-        _attentionButton.gameObject.name = "DRM_AttentionButton";
-        _attentionButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = Color.white;
 
+        _attentionButton.gameObject.name = "DRM_AttentionButton";
+        _attentionButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = AttentionColor;
+        
         if (_attentionButton.transform.Find("BG").TryGetComponent(out ImageView imageView))
         {
             imageView.material = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "AnimatedButton");
