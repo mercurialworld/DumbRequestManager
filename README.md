@@ -227,6 +227,6 @@ All `pressed` events follow the same data structure:
 ## Message
 ```json
 {
-  "QueueStatus": <boolean>
+  "QueueOpen": <boolean>
 }
 ```

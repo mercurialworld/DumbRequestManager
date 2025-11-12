@@ -5,12 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# `0.6.6` [UNRELEASED]
+# `0.6.6`
 
 ## Changes
 - Make AttentionButton a lot more visible
   - changes the color of the pro mode icon for now. trying to find a way to change the color of the background because that tends to be more visible
   - there's now an option to change the color of this, different from the primary/secondary colors (`AttentionColor`)
+- Add endpoint for queue status
+  - `/queue/status`: returns an object with whether the queue is open or not
 
 ## Fixes
 - Fix queue status not being consistent on (soft) restart
