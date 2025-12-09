@@ -32,7 +32,7 @@ public class QueueRouter
         if (route.Length <= 2)
         {
             res.StatusCode = (int)HttpStatusCode.OK;
-            res.Message = GetStringifiedQueue;
+            res.Payload = GetStringifiedQueue;
         }
         else
         {
@@ -109,7 +109,7 @@ public class QueueRouter
 
         if (!(minIndex <= existingSpot && existingSpot <= maxIndex) || !(minIndex <= newSpot && newSpot <= maxIndex))
         {
-            res.Message = APIResponse.APIMessage("Indices out of bounds");
+            res.Payload = APIResponse.APIMessage("Indices out of bounds");
             return res;
         }
         
@@ -120,7 +120,7 @@ public class QueueRouter
         QueueViewController.RefreshQueue();
                             
         res.StatusCode = (int)HttpStatusCode.OK;
-        res.Message = APIResponse.APIMessage("Moved entry");
+        res.Payload = APIResponse.APIMessage("Moved entry");
 
         return res;
     }
@@ -162,7 +162,7 @@ public class QueueRouter
         if (path.Length <= 3 || !bool.TryParse(path[3].Replace("/", string.Empty), out bool openResult)) return res;
         
         res.StatusCode = (int)HttpStatusCode.OK;
-        res.Message = APIResponse.APIMessage("Queue gate changed");
+        res.Payload = APIResponse.APIMessage("Queue gate changed");
         await SideSettingsViewController.Instance.SetState(openResult);
 
         return res;

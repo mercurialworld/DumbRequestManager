@@ -6,12 +6,12 @@ namespace DumbRequestManager.API.Models;
 public class APIResponse
 {
     public int StatusCode { get; set; } = (int)HttpStatusCode.BadRequest;
-    public string Message { get; set; } = APIMessage("Invalid request.");
+    public string Payload { get; set; } = APIMessage("Invalid request.");
 
-    public APIResponse(HttpStatusCode statusCode, string message)
+    public APIResponse(HttpStatusCode statusCode, string payload)
     {
         StatusCode = (int)statusCode;
-        Message = message;
+        Payload = payload;
     }
     
     public APIResponse() {}

@@ -37,12 +37,12 @@ public class AddMapRouter
         if (keyRes != null)
         {
             res.StatusCode = (int)HttpStatusCode.OK;
-            res.Message = keyRes;
+            res.Payload = keyRes;
         }
         else
         {
             res.StatusCode = (int)HttpStatusCode.BadGateway;
-            res.Message = "Map not found on BeatSaver.";
+            res.Payload = APIResponse.APIMessage("Map not found on BeatSaver.");
         }
         return res;
     }
