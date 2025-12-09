@@ -12,6 +12,7 @@ namespace DumbRequestManager.Managers;
 internal class BlacklistManager : IInitializable
 {
     private static List<string> _blacklistedIds = [];
+    public static List<string> BlacklistedIDs => _blacklistedIds;
     private static readonly string BlacklistPath = Path.Combine(Plugin.UserDataDir, "blacklist.json");
     
     public void Initialize()
