@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using BeatSaverSharp.Models;
 using DumbRequestManager.API.Routes;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
@@ -93,32 +90,6 @@ internal class HttpApi : IInitializable
         });
     }
 
-    private static async Task<KeyValuePair<int, byte[]>> HandleQueryContext(string[] path)
-    {
-        int code = 400;
-        byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-        
-        if (!int.TryParse(path.Last().Replace("/", string.Empty).ToLower(), NumberStyles.HexNumber,
-                CultureInfo.InvariantCulture, out int _))
-        {
-            goto finalResponse;
-        }
-        
-        byte[]? queryResponse = path[2][..^1].ToLower() == "nocache"
-            ? await QuerySkipCache(path.Last().Replace("/", string.Empty))
-            : await Query(path.Last().Replace("/", string.Empty));
-                
-        // ReSharper disable once InvertIf
-        if (queryResponse != null)
-        {
-            code = 200;
-            response = queryResponse;
-        }
-        
-        finalResponse:
-            return new KeyValuePair<int, byte[]>(code, response);
-    }
-    
     private static readonly HttpClient HeadersFetchClient = new()
     {
         MaxResponseContentBufferSize = 1024
@@ -219,46 +190,6 @@ internal class HttpApi : IInitializable
             return new KeyValuePair<int, byte[]>(code, response);
     }
 
-    private static KeyValuePair<int, byte[]> HandleBlacklistContext(string[] path)
-    {
-        int code = 400;
-        byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-        
-        if (path.Length <= 2)
-        {
-            code = 200;
-            response = BlacklistManager.GetEncoded();
-            goto finalResponse;
-        }
-
-        string wantedKey = path[3].Replace("/", string.Empty);
-        if (!long.TryParse(wantedKey, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out long _))
-        {
-            response = Encoding.Default.GetBytes("{\"message\": \"Invalid key\"}");
-            goto finalResponse;
-        }
-
-        switch (path[2].Replace("/", string.Empty).ToLower())
-        {
-            case "add":
-                BlacklistManager.AddKey(wantedKey);
-                
-                code = 200;
-                response = Encoding.Default.GetBytes("{\"message\": \"Blacklisted key " + wantedKey + "\"}");
-                break;
-            
-            case "remove":
-                BlacklistManager.RemoveKey(wantedKey);
-                
-                code = 200;
-                response = Encoding.Default.GetBytes("{\"message\": \"Removed key " + wantedKey + " from the blacklist\"}");
-                break;
-        }
-        
-        finalResponse:
-            return new KeyValuePair<int, byte[]>(code, response);
-    }
-
     private static async Task HandleContext(HttpListenerContext context)
     {
         string[] path = context.Request.Url.Segments;
@@ -284,14 +215,16 @@ internal class HttpApi : IInitializable
                     return;
                 
                 case "query":
-                    response = await HandleQueryContext(path);
+                    var result = await QueryRouter.HandleContext(context);
+                    response = new KeyValuePair<int, byte[]>(result.StatusCode, Encoding.Default.GetBytes(result.Payload));
                     break;
 
                 case "addkey":
-                    var result = await AddMapRouter.HandleContext(context);
-                    response = new KeyValuePair<int, byte[]>(result.StatusCode, Encoding.Default.GetBytes(result.Message));
+                    result = await AddMapRouter.HandleContext(context);
+                    response = new KeyValuePair<int, byte[]>(result.StatusCode, Encoding.Default.GetBytes(result.Payload));
                     break;
-
+                
+                // [TODO] separate wip getter
                 case "addwip":
                     response = new KeyValuePair<int, byte[]>(400, Encoding.Default.GetBytes("{\"message\": \"Please use POST for this endpoint.\"}"));
                     if (context.Request.HttpMethod == "POST")
@@ -303,21 +236,22 @@ internal class HttpApi : IInitializable
 
                 case "queue":
                     result = await QueueRouter.HandleContext(context);
-                    response = new KeyValuePair<int, byte[]>(result.StatusCode, Encoding.Default.GetBytes(result.Message));
+                    response = new KeyValuePair<int, byte[]>(result.StatusCode, Encoding.Default.GetBytes(result.Payload));
                     break;
 
                 case "history":
-                    response = new KeyValuePair<int, byte[]>(200,
-                        GetSessionHistory(int.Parse(urlQuery.Get("limit") ?? "0")));
+                    result =  await HistoryRouter.HandleContext(context);
+                    response = new KeyValuePair<int, byte[]>(result.StatusCode, Encoding.Default.GetBytes(result.Payload));
                     break;
                 
                 case "version":
-                    response = new KeyValuePair<int, byte[]>(200,
-                        Encoding.Default.GetBytes(JsonConvert.SerializeObject(new VersionOutput())));
+                    result = await VersionRouter.HandleContext();
+                    response = new KeyValuePair<int, byte[]>(result.StatusCode, Encoding.Default.GetBytes(result.Payload));
                     break;
                 
                 case "blacklist":
-                    response = HandleBlacklistContext(path);
+                    result = await BlacklistRouter.HandleContext(context);
+                    response = new KeyValuePair<int, byte[]>(result.StatusCode, Encoding.Default.GetBytes(result.Payload));
                     break;
 
                 default:
@@ -338,107 +272,12 @@ internal class HttpApi : IInitializable
         outputStream.Close();
         context.Response.Close();
     }
-    
-    private class TimestampComparer : IComparer
-    {
-        private readonly CaseInsensitiveComparer _comparer = new();
-        public int Compare(object? x, object? y)
-        {
-            return _comparer.Compare(y, x);
-        }
-    }
-    private static readonly TimestampComparer TimestampComparerInstance = new();
 
-    [JsonObject(MemberSerialization.OptIn)]
-    private struct HistorySpotItem(long timestamp, NoncontextualizedSong historyItem)
-    {
-        [JsonProperty] private int Timestamp => (int)timestamp;
-        [JsonProperty] private NoncontextualizedSong HistoryItem => historyItem;
-    }
-
-    private static byte[] GetSessionHistory(int limit = 0)
-    {
-        long[] keys = SessionHistoryManager.SessionHistory.Keys.ToArray();
-        Array.Sort(keys, TimestampComparerInstance);
-        if (limit > 0)
-        {
-            limit = Math.Min(keys.Length, limit);
-            keys = keys[0..limit];
-        }
-
-        HistorySpotItem[] historyItems = keys.Select(timestamp => new HistorySpotItem(timestamp, SessionHistoryManager.SessionHistory[timestamp])).ToArray();
-        
-        return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(historyItems));
-    }
-
-    [JsonObject(MemberSerialization.OptIn)]
-    private struct QueueSpotItem(int spot, NoncontextualizedSong queueItem)
-    {
-        [JsonProperty] private int Spot => spot;
-        [JsonProperty] private NoncontextualizedSong QueueItem => queueItem;
-    }
-    
     private static byte[] AddWip(string url, string? user = null, bool prepend = true, string? service = null)
     {
         Plugin.Log.Info($"Adding wip {url}...");
         NoncontextualizedSong queuedSong = QueueManager.AddWip(url, user, prepend, service);
         
         return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
-    }
-
-    private static async Task<byte[]?> QuerySkipCache(string key)
-    {
-        Plugin.Log.Info($"Querying key {key} (directly)...");
-        
-        Beatmap? beatmap = await SongDetailsManager.GetDirectByKey(key);
-        if (beatmap != null)
-        {
-            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NoncontextualizedSong(beatmap)));
-        }
-
-        Plugin.Log.Info($"No beatmap found for key {key}");
-        return null;
-    }
-
-    private static async Task<byte[]?> Query(string key)
-    {
-        Plugin.Log.Info($"Querying key {key}...");
-
-        NoncontextualizedSong queriedSong;
-        
-        CachedMap? song = SongDetailsManager.GetByKey(key);
-        if (song == null)
-        {
-            Beatmap? beatmap = await SongDetailsManager.GetDirectByKey(key); 
-            if (beatmap != null)
-            {
-                Plugin.DebugMessage("Using BeatSaverSharp method");
-                queriedSong = new NoncontextualizedSong(beatmap);
-            }
-            else
-            {
-                Plugin.Log.Info("oh we're screwed");
-                return null;
-            }
-        }
-        else
-        {
-            string hash = song.Hash.ToLower();
-            Plugin.DebugMessage($"Checking SongCore for hash {hash}");
-            
-            BeatmapLevel? beatmapLevel = SongCore.Loader.GetLevelByHash(hash);
-            if (beatmapLevel != null)
-            {
-                Plugin.DebugMessage("Using local map method");
-                queriedSong = new NoncontextualizedSong(beatmapLevel);
-            }
-            else
-            {
-                Plugin.DebugMessage("Using protobuf cache method");
-                queriedSong = new NoncontextualizedSong(song);
-            }
-        }
-
-        return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queriedSong));
     }
 }
