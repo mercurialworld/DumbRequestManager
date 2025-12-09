@@ -7,30 +7,21 @@ internal static class Normalize
 {
     public static string GetCharacteristicIcon(string characteristic)
     {
-        switch (characteristic)
+        return characteristic switch
         {
-            case "OneSaber":
-                return "#SingleSaberIcon";
-            case "NoArrows":
-                return "#NoArrowsIcon";
-            case "NinetyDegree":
-            case "90Degree":
-                return "#90DegreesIcon";
-            case "ThreeSixtyDegree":
-            case "360Degree":
-                return "#360DegreesIcon";
-            case "Custom" or "Legacy": // wtf
-                return "#LegacyIcon";
-            case "Lightshow":
+            "OneSaber" => "#SingleSaberIcon",
+            "NoArrows" => "#NoArrowsIcon",
+            "NinetyDegree" or "90Degree" => "#90DegreesIcon",
+            "ThreeSixtyDegree" or "360Degree" => "#360DegreesIcon",
+            "Custom" or "Legacy" => // wtf
+                "#LegacyIcon",
+            "Lightshow" =>
                 // coming back to this later maybe
                 // return SongCore.Loader.beatmapCharacteristicCollection.beatmapCharacteristics[0].icon;
-                return "#LightIcon";
-            case "Lawless":
-                return "#FailIcon";
-            
-            default:
-                return $"#{characteristic}BeatmapCharacteristicIcon";
-        }
+                "#LightIcon",
+            "Lawless" => "#FailIcon",
+            _ => $"#{characteristic}BeatmapCharacteristicIcon"
+        };
     }
 
     public static string GetCharacteristicName(string characteristic)
@@ -47,42 +38,26 @@ internal static class Normalize
         // new BeatmapKey().beatmapCharacteristic.serializedName -> 90Degree
         
         // ...can we like, come together and figure this out? Can we agree.
-        
-        switch (characteristic)
+
+        return characteristic switch
         {
-            case "SingleSaber":
-            case "OneSaber":
-                return "OneSaber";
-            case "NinetyDegree":
-            case "90Degree":
-            case "_90Degree":
-                return "90Degree";
-            case "ThreeSixtyDegree":
-            case "360Degree":
-            case "_360Degree":
-                return "360Degree";
-            
-            default:
-                return characteristic;
-        }
+            "SingleSaber" or "OneSaber" => "OneSaber",
+            "NinetyDegree" or "90Degree" or "_90Degree" => "90Degree",
+            "ThreeSixtyDegree" or "360Degree" or "_360Degree" => "360Degree",
+            _ => characteristic
+        };
     }
 
     public static string GetDifficultyName(string difficulty)
     {
-        switch (difficulty)
+        return difficulty switch
         {
-            case "E" or "Easy":
-                return "Easy";
-            case "N" or "Normal":
-                return "Normal";
-            case "H" or "Hard":
-                return "Hard";
-            case "X" or "Expert":
-                return "Expert";
-            
-            default:
-                return "Expert+";
-        }
+            "E" or "Easy" => "Easy",
+            "N" or "Normal" => "Normal",
+            "H" or "Hard" => "Hard",
+            "X" or "Expert" => "Expert",
+            _ => "Expert+"
+        };
     }
 
     // https://stackoverflow.com/a/62596727

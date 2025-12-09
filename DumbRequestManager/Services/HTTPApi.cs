@@ -11,9 +11,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BeatSaverSharp.Models;
+using DumbRequestManager.API.Routes;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
-using DumbRequestManager.UI;
 using IPA.Utilities;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -118,49 +118,6 @@ internal class HttpApi : IInitializable
         finalResponse:
             return new KeyValuePair<int, byte[]>(code, response);
     }
-
-    private static async Task<KeyValuePair<int, byte[]>> HandleAddKeyContext(string[] path,
-        NameValueCollection urlQuery, bool isWip = false)
-    {
-        int code = 400;
-        byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-
-        if (path.Length <= 2)
-        {
-            goto finalResponse;
-        }
-
-        if (!int.TryParse(path.Last().Replace("/", string.Empty).ToLower(), NumberStyles.HexNumber,
-                CultureInfo.InvariantCulture, out int _))
-        {
-            goto finalResponse;
-        }
-
-        byte[]? keyResponse;
-        if (isWip)
-        {
-            keyResponse = AddWip(path.Last().Replace("/", string.Empty),
-                urlQuery.Get("user"),
-                bool.Parse(urlQuery.Get("prepend") ?? "true"),
-                urlQuery.Get("service"));
-        }
-        else
-        {
-            keyResponse = await AddKey(path.Last().Replace("/", string.Empty),
-                urlQuery.Get("user"),
-                bool.Parse(urlQuery.Get("prepend") ?? "false"),
-                urlQuery.Get("service"));
-        }
-
-        if (keyResponse != null)
-        {
-            code = 200;
-            response = keyResponse;
-        }
-
-        finalResponse:
-            return new KeyValuePair<int, byte[]>(code, response);
-    }
     
     private static readonly HttpClient HeadersFetchClient = new()
     {
@@ -262,111 +219,6 @@ internal class HttpApi : IInitializable
             return new KeyValuePair<int, byte[]>(code, response);
     }
 
-    private static async Task<KeyValuePair<int, byte[]>> HandleQueueContext(string[] path)
-    {
-        int code = 400;
-        byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
-
-        if (path.Length <= 2)
-        {
-            code = 200;
-            response = GetEncodedQueue;
-            goto finalResponse;
-        }
-
-        switch (path[2].Replace("/", string.Empty).ToLower())
-        {
-            case "where":
-                code = 200;
-                response = GetPositionsInQueue(path.Last().Replace("/", string.Empty));
-                break;
-                        
-            case "clear":
-                code = 200;
-                            
-                QueueManager.QueuedSongs.Clear();
-                            
-                QueueViewController.RefreshQueue();
-                ChatRequestButton.Instance.UseAttentiveButton(false);
-                            
-                response = Encoding.Default.GetBytes("{\"message\": \"Queue cleared\"}");
-                break;
-                        
-            case "open":
-                if (path.Length <= 3)
-                {
-                    break;
-                }
-
-                if (bool.TryParse(path[3].Replace("/", string.Empty), out bool openResult))
-                {
-                    code = 200;
-                    response = Encoding.Default.GetBytes("{\"message\": \"Queue gate changed\"}");
-                    await SideSettingsViewController.Instance.SetState(openResult);
-                }
-                break;
-                        
-            case "move":
-                if (path.Length != 5)
-                {
-                    break;
-                }
-                            
-                const int min = 0;
-                int max = QueueManager.QueuedSongs.Count - 1;
-
-                if (!int.TryParse(path[3].Replace("/", string.Empty), out int targetedIndex))
-                {
-                    break;
-                }
-                targetedIndex--;
-
-                int newIndex;
-                if (!int.TryParse(path[4].Replace("/", string.Empty), out int newerIndex))
-                {
-                    switch (path[4].Replace("/", string.Empty).ToLower())
-                    {
-                        case "top": newIndex = 0; break;
-                        case "bottom": newIndex = max; break;
-                        default: goto finalResponse;
-                    }
-                }
-                else
-                {
-                    newIndex = newerIndex - 1;
-                }
-                            
-                if (targetedIndex < min || targetedIndex > max || newIndex < min || newIndex > max)
-                {
-                    break;
-                }
-                            
-                NoncontextualizedSong oldSong = QueueManager.QueuedSongs[targetedIndex];
-                QueueManager.QueuedSongs.RemoveAt(targetedIndex);
-                QueueManager.QueuedSongs.Insert(newIndex, oldSong);
-
-                QueueViewController.RefreshQueue();
-                            
-                code = 200;
-                response = Encoding.Default.GetBytes("{\"message\": \"Moved entry\"}");
-                break;
-                        
-            case "shuffle":
-                code = 200;
-                response = Encoding.Default.GetBytes("{\"message\": \"Queue shuffled\"}");
-                            
-                QueueManager.Shuffle();
-                break;
-            case "status":
-                code = 200;
-                response = Encoding.Default.GetBytes($"{{\"QueueOpen\": {JsonConvert.SerializeObject(Config.QueueOpenStatus)}}}");
-                break;
-        }
-        
-        finalResponse:
-            return new KeyValuePair<int, byte[]>(code, response);
-    }
-
     private static KeyValuePair<int, byte[]> HandleBlacklistContext(string[] path)
     {
         int code = 400;
@@ -436,7 +288,8 @@ internal class HttpApi : IInitializable
                     break;
 
                 case "addkey":
-                    response = await HandleAddKeyContext(path, urlQuery);
+                    var result = await AddMapRouter.HandleContext(context);
+                    response = new KeyValuePair<int, byte[]>(result.StatusCode, Encoding.Default.GetBytes(result.Message));
                     break;
 
                 case "addwip":
@@ -449,7 +302,8 @@ internal class HttpApi : IInitializable
                     break;
 
                 case "queue":
-                    response = await HandleQueueContext(path);
+                    result = await QueueRouter.HandleContext(context);
+                    response = new KeyValuePair<int, byte[]>(result.StatusCode, Encoding.Default.GetBytes(result.Message));
                     break;
 
                 case "history":
@@ -524,34 +378,6 @@ internal class HttpApi : IInitializable
         [JsonProperty] private NoncontextualizedSong QueueItem => queueItem;
     }
     
-    private static byte[] GetPositionsInQueue(string user)
-    {
-        int index = 0;
-        List<QueueSpotItem> relevantQueueItems = [];
-        
-        QueueManager.QueuedSongs.ForEach(x =>
-        {
-            index++;
-
-            if (x.User == user)
-            {
-                relevantQueueItems.Add(new QueueSpotItem(index, x));
-            }
-        });
-        
-        return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(relevantQueueItems));
-    }
-
-    private static byte[] GetEncodedQueue => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(QueueManager.QueuedSongs));
-
-    private static async Task<byte[]?> AddKey(string key, string? user = null, bool prepend = false, string? service = null)
-    {
-        Plugin.Log.Info($"Adding key {key}...");
-        NoncontextualizedSong? queuedSong = await QueueManager.AddKey(key, user, false, prepend, service);
-        
-        return queuedSong == null ? null : Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queuedSong));
-    }
-
     private static byte[] AddWip(string url, string? user = null, bool prepend = true, string? service = null)
     {
         Plugin.Log.Info($"Adding wip {url}...");

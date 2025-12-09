@@ -59,6 +59,7 @@ public static class QueueManager
                 Plugin.DebugMessage("Using local map method");
                 
                 // can't be null here
+                // note from empoleon: yes it can, if you deleted the map in the past
                 BeatmapLevel beatmapLevel = SongCore.Loader.GetLevelByHash(hash)!;
                 queuedSong = new NoncontextualizedSong(beatmapLevel);
             }
