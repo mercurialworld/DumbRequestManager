@@ -31,7 +31,7 @@ public class MapDownloadFailedException : Exception
 internal class DownloaderUtils(IHttpService httpService) : IInitializable
 {
     private static PluginConfig Config => PluginConfig.Instance;
-    
+
     public void Initialize()
     {
         MethodInfo? timeoutMethod = httpService.GetType().GetMethod("set_Timeout");

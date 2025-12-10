@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace DumbRequestManager.API.Models;
@@ -15,7 +16,14 @@ public class APIResponse
     }
     
     public APIResponse() {}
-    
+
+    public void Set(HttpStatusCode statusCode, string payload)
+    {
+        StatusCode = (int)statusCode;
+        Payload = payload;
+    }
+
+    public byte[] PayloadInBytes => Encoding.Default.GetBytes(Payload);
     public static string APIMessage(string message) => $"{{\"message\": \"{message}\"}}";
     public static string APISingleValueObject(string key, string value) => $"{{\"{key}\": \"{value}\"}}";
 }
