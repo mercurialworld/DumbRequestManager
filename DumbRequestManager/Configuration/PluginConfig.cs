@@ -42,7 +42,8 @@ internal class PluginConfig
         "dropbox.com",
         "catbox.moe",
         "wipbot.com",
-        "hawk.quest"
+        "hawk.quest",
+        "thnght.pro"
     ];
 
     public virtual int MaximumWipSize { get; set; } = 20;
