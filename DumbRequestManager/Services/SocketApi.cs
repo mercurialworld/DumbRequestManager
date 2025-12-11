@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Reflection;
 using DumbRequestManager.Configuration;
+using DumbRequestManager.Services.API.Models;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 using Zenject;
 
 namespace DumbRequestManager.Services;
-
-[JsonObject(MemberSerialization.OptIn)]
-internal class Message(string eventType, object? obj = null)
-{
-    [JsonProperty] private long Timestamp => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-    [JsonProperty] private string EventType => eventType;
-    [JsonProperty] private object? Data => obj;
-}
 
 [UsedImplicitly]
 internal class SocketApi : IInitializable, IDisposable
@@ -26,7 +18,7 @@ internal class SocketApi : IInitializable, IDisposable
 
     public static void Broadcast(string eventType, object? obj = null)
     {
-        _webSocketServiceHost?.Sessions.Broadcast(JsonConvert.SerializeObject(new Message(eventType, obj)));
+        _webSocketServiceHost?.Sessions.Broadcast(new SocketMessage(eventType, obj).ToString());
     }
     
     public void Initialize()

@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using DumbRequestManager.API.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Configuration;
 using DumbRequestManager.Managers;
+using DumbRequestManager.Services.API.Models;
 using DumbRequestManager.UI;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace DumbRequestManager.API.Routes;
+namespace DumbRequestManager.Services.API.Routes;
 
 [JsonObject(MemberSerialization.OptIn)]
 internal struct QueueSpotItem(int spot, NoncontextualizedSong queueItem)

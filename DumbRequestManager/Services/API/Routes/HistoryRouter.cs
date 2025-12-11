@@ -4,13 +4,13 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using DumbRequestManager.API.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
+using DumbRequestManager.Services.API.Models;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace DumbRequestManager.API.Routes;
+namespace DumbRequestManager.Services.API.Routes;
 
 [JsonObject(MemberSerialization.OptIn)]
 internal struct HistorySpotItem(long timestamp, NoncontextualizedSong historyItem)

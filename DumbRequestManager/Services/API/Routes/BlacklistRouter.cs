@@ -1,12 +1,12 @@
 ﻿using System.Globalization;
 using System.Net;
 using System.Threading.Tasks;
-using DumbRequestManager.API.Models;
 using DumbRequestManager.Managers;
+using DumbRequestManager.Services.API.Models;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace DumbRequestManager.API.Routes;
+namespace DumbRequestManager.Services.API.Routes;
 
 [UsedImplicitly]
 public class BlacklistRouter

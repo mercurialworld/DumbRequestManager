@@ -3,18 +3,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DumbRequestManager.Configuration;
-using Newtonsoft.Json;
+using DumbRequestManager.Services.API.Models;
 
 namespace DumbRequestManager.Services;
-
-[JsonObject(MemberSerialization.OptIn)]
-internal readonly struct HookObject(string eventName, object? data)
-{
-    [JsonProperty("timestamp")] private long Timestamp => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-    [JsonProperty("id")] private readonly string _id = Guid.NewGuid().ToString();
-    [JsonProperty("event")] private string Event => eventName;
-    [JsonProperty("data")] private object? Data => data;
-}
 
 internal abstract class HookApi
 {
@@ -36,7 +27,7 @@ internal abstract class HookApi
         {
             Dictionary<string, string> formValues = new()
             {
-                { "data", JsonConvert.SerializeObject(new HookObject(eventName, data)) }
+                { "data", new HookMessage(eventName, data).ToString() }
             };
             FormUrlEncodedContent formUrlEncodedContent = new(formValues);
             

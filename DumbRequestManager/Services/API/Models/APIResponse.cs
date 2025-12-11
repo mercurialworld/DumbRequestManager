@@ -1,8 +1,7 @@
 ﻿using System.Net;
 using System.Text;
-using Newtonsoft.Json;
 
-namespace DumbRequestManager.API.Models;
+namespace DumbRequestManager.Services.API.Models;
 
 public class APIResponse
 {

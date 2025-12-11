@@ -4,17 +4,15 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using DumbRequestManager.API.Models;
 using DumbRequestManager.Classes;
 using DumbRequestManager.Managers;
-using DumbRequestManager.Utils;
+using DumbRequestManager.Services.API.Models;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using PluginConfig = DumbRequestManager.Configuration.PluginConfig;
 
-namespace DumbRequestManager.API.Routes;
+namespace DumbRequestManager.Services.API.Routes;
 
 [UsedImplicitly]
 // ReSharper disable once InconsistentNaming (screw this)
