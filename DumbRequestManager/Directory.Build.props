@@ -22,7 +22,7 @@
     <PluginId>DumbRequestManager</PluginId>
     <PluginName>DumbRequestManager</PluginName>
     <Authors>TheBlackParrot, mercurialworld</Authors>
-    <Version>0.6.6+$(GameVersion)</Version>
+    <Version>0.6.7+$(GameVersion)</Version>
     <Description>Beat Saber map request manager that abstracts various functions for use in external applications</Description>
     <ProjectSource>https://github.com/mercurialworld/DumbRequestManager</ProjectSource>
     <ProjectHome>https://github.com/mercurialworld/DumbRequestManager</ProjectHome>
