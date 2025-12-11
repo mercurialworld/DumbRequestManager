@@ -36,10 +36,6 @@ internal class HttpApi : IInitializable
 
     private static HttpListener? _httpListener;
 
-    // ReSharper disable once InconsistentNaming
-    private static readonly Regex WIPBotRegex = new("^[0-9A-F]{6}$");
-    private static readonly Regex HawkWipRegex = new("^[0-9a-fA-F]{5}$");
-    
     public void Initialize()
     {
         if (_httpListener != null)
@@ -177,24 +173,26 @@ internal class HttpApi : IInitializable
         int code = 400;
         byte[] response = Encoding.Default.GetBytes("{\"message\": \"Invalid request\"}");
 
-        if (int.TryParse(url, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int _))
+        if (int.TryParse(url, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out _))
         {
-            // https://wipbot.com codes are ^[0-9A-F]{6}$
-            if (WIPBotRegex.IsMatch(url)) 
+            string urlSuffix = $"/wips/{url}.zip";
+            
+            switch (url[0])
             {
-                url = $"https://wipbot.com/wips/{url}.zip";
-            } 
-            // https://wip.hawk.quest codes are ^[0-9a-fA-F]{5}$
-            else if (HawkWipRegex.IsMatch(url))
-            {
-                url = $"https://wip.hawk.quest/upload/{url}.zip";
+                case '0':
+                    url = "https://wipbot.com" + urlSuffix;
+                    break;
+                case '8':
+                case '9':
+                    // both point to the same backend, so there's less work for me to do on my end
+                    // https://github.com/mercurialworld/DumbRequestManager/issues/9#issuecomment-3605892011
+                    url = "https://wip.hawk.quest" + urlSuffix;
+                    break;
+                default:
+                    response = Encoding.Default.GetBytes("{\"message\": \"Invalid WIP code\"}");
+                    goto finalResponse;
             }
-            else
-            {
-                response = Encoding.Default.GetBytes("{\"message\": \"Invalid WIP code\"}");
-                goto finalResponse;
-            }
-        }
+        } 
 
         bool isValidURL = Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) 
                       && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
