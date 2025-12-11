@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using DumbRequestManager.UI;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -11,8 +10,8 @@ namespace DumbRequestManager.Managers;
 [UsedImplicitly]
 internal class BlacklistManager : IInitializable
 {
-    private static List<string> _blacklistedIds = [];
-    public static List<string> BlacklistedIDs => _blacklistedIds;
+    public static List<string> BlacklistedIDs { get; private set; } = [];
+
     private static readonly string BlacklistPath = Path.Combine(Plugin.UserDataDir, "blacklist.json");
     
     public void Initialize()
@@ -24,26 +23,26 @@ internal class BlacklistManager : IInitializable
         }
         
         string json = File.ReadAllText(BlacklistPath);
-        _blacklistedIds = JsonConvert.DeserializeObject<List<string>>(json)!;
+        BlacklistedIDs = JsonConvert.DeserializeObject<List<string>>(json)!;
         
-        Plugin.Log.Info($"{_blacklistedIds.Count} map(s) are blacklisted.");
+        Plugin.Log.Info($"{BlacklistedIDs.Count} map(s) are blacklisted.");
     }
 
     private static void Save()
     {
-        File.WriteAllText(BlacklistPath, JsonConvert.SerializeObject(_blacklistedIds, Formatting.Indented));
+        File.WriteAllText(BlacklistPath, JsonConvert.SerializeObject(BlacklistedIDs, Formatting.Indented));
         Plugin.DebugMessage("Saved blacklist");
     }
 
-    public static bool ContainsKey(string bsrKey) => _blacklistedIds.Contains(bsrKey.ToLower());
+    public static bool ContainsKey(string bsrKey) => BlacklistedIDs.Contains(bsrKey.ToLower());
 
     public static void AddKey(string bsrKey)
     {
         bsrKey = bsrKey.ToLower();
         
-        if (!_blacklistedIds.Contains(bsrKey))
+        if (!BlacklistedIDs.Contains(bsrKey))
         {
-            _blacklistedIds.Add(bsrKey);
+            BlacklistedIDs.Add(bsrKey);
         }
         
         int foundIndex = QueueManager.QueuedSongs.FindIndex(x => x.BsrKey == bsrKey);
@@ -60,13 +59,11 @@ internal class BlacklistManager : IInitializable
     {
         bsrKey = bsrKey.ToLower();
         
-        if (_blacklistedIds.Contains(bsrKey))
+        if (BlacklistedIDs.Contains(bsrKey))
         {
-            _blacklistedIds.Remove(bsrKey);
+            BlacklistedIDs.Remove(bsrKey);
         }
         
         Save();
     }
-    
-    public static byte[] GetEncoded() => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(_blacklistedIds));
 }
