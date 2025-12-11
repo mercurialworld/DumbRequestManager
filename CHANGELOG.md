@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# `0.6.7`
+
+## Changes
+- Update, once again, WIPBot code parsing (https://github.com/Danielduel/wipbot/releases/tag/1.21.0)
+  - hawk and daniel have talked about a standardization and it takes a big weight off my shoulders! yay
+  - if a code starts with 0, it's from wipbot.com; if it starts with 8/9, it's from wip.hawk.quest
+
 # `0.6.6`
 
 ## Changes
