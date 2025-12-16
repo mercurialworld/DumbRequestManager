@@ -11,11 +11,11 @@ Essentially meaning, any streaming bot you use (e.g. Streamer.bot, Firebot, MixI
 ## Dependencies
 Currently only tested on Beat Saber versions 1.39.1 or newer. Versions of the mod for older game versions are not planned at this time.
 > [!NOTE]
-> Some issues involving version 3.15.3 of SongCore may intermittently pop up from time to time. **This only effects 1.40.1, 1.40.2, 1.40.3, and 1.40.4.**
+> Some issues involving version 3.15.3 of SongCore may intermittently pop up from time to time. **This only affects 1.40.1 – 1.40.8.**
 >
 > 1.39.1 and 1.40.0 *(which use older versions)* seem to be stable.
 
-### Mods
+### Mod Dependencies
 - BeatSaberMarkupLanguage
 - BeatSaberPlaylistsLib
 - BeatSaverSharp
@@ -224,7 +224,7 @@ All `pressed` events follow the same data structure:
 ```
 
 <a name="queue-message-data-type"></a>
-## Message
+## Queue Status Message
 ```json
 {
   "QueueOpen": <boolean>
