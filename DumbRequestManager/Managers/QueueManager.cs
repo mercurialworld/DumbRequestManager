@@ -146,17 +146,13 @@ public static class QueueManager
     public static Task<bool> RemoveKey(string key, out NoncontextualizedSong? song)
     {
         song = QueuedSongs.FirstOrDefault(x => x.BsrKey == key);
-
         if (song == null) return Task.FromResult(false);
         
         QueuedSongs.Remove(song);
-        
         Plugin.Log.Info($"Removed {key} from queue, queue now has {QueuedSongs.Count} map(s)");
         
-        QueueViewController.RefreshQueue();
-        
         // [TODO] remove preview stuff if the song being removed from queue is the selected one 
-
+        QueueViewController.RefreshQueue();
         if (QueuedSongs.Count == 0)
         {
             ChatRequestButton.Instance.UseAttentiveButton(false);
