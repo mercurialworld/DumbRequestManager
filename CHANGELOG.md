@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Code structure changes
   - all routes are now in their own separate static handler, woo! HTTPApi is no longer a 600+ line long file.
 
+## Additions
+- Add endpoint to remove a map from queue given the map's BSR key/ID/whatever they call it
+  - `/removeKey/:bsr`
+
+# `0.6.7`
+
+## Changes
+- Update, once again, WIPBot code parsing (https://github.com/Danielduel/wipbot/releases/tag/1.21.0)
+  - hawk and daniel have talked about a standardization and it takes a big weight off my shoulders! yay
+  - if a code starts with 0, it's from wipbot.com; if it starts with 8/9, it's from wip.hawk.quest
+
 # `0.6.6`
 
 ## Changes
