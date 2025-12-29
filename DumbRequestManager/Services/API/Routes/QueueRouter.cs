@@ -36,27 +36,16 @@ public class QueueRouter
         }
         else
         {
-            switch (route[2].Replace("/", string.Empty).ToLower())
+            res = route[2].Replace("/", string.Empty).ToLower() switch
             {
-                case "where":
-                    res = HandleWhere(route.Last().Replace("/", string.Empty));
-                    break;
-                case "clear":
-                    res = HandleClear();
-                    break;
-                case "open":
-                    res = await HandleOpen(route);
-                    break;
-                case "move":
-                    res = HandleMove(route);
-                    break;
-                case "shuffle":
-                    res = HandleShuffle();
-                    break;
-                case "status":
-                    res = HandleQueueStatus();
-                    break;
-            }
+                "where" => HandleWhere(route.Last().Replace("/", string.Empty)),
+                "clear" => HandleClear(),
+                "open" => await HandleOpen(route),
+                "move" => HandleMove(route),
+                "shuffle" => HandleShuffle(),
+                "status" => HandleQueueStatus(),
+                _ => res
+            };
         }
 
         return res;

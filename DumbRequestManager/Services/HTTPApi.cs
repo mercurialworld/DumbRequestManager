@@ -120,6 +120,10 @@ internal class HttpApi : IInitializable
                 case "blacklist":
                     response = await BlacklistRouter.HandleContext(context);
                     break;
+                
+                case "removekey":
+                    response = await RemoveMapRouter.HandleContext(context);
+                    break;
 
                 default:
                     response.Set(HttpStatusCode.NotImplemented, APIResponse.APIMessage("Not implemented"));
