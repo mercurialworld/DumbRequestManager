@@ -38,7 +38,8 @@ public class HistoryRouter
         var res = new APIResponse();
         var route = context.Request.Url.Segments;
         NameValueCollection urlQuery = System.Web.HttpUtility.ParseQueryString(context.Request.Url.Query);
-
+        
+        res.StatusCode = (int)HttpStatusCode.OK;
         res.Payload = GetSessionHistory(int.Parse(urlQuery.Get("limit") ?? "0"));
 
         return Task.FromResult(res);
