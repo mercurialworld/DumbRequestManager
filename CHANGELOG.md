@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Additions
 - Add endpoint to remove a map from queue given the map's BSR key/ID/whatever they call it
   - `/removeKey/:bsr`
+- Also added a websocket message for maps removed from that endpoint
+  - event name is `mapRemoved`, event data is the map that was removed
 
 # `0.6.7`
 
