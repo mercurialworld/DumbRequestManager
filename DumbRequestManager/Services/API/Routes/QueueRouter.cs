@@ -53,7 +53,9 @@ public class QueueRouter
 
     private static APIResponse HandleQueueStatus()
     {
-        return new APIResponse(HttpStatusCode.OK, APIResponse.APISingleValueObject("QueueOpen", JsonConvert.SerializeObject(Config.QueueOpenStatus)));
+        // why is it automatically capitalized
+        // also no it's not a redundant specification i promise
+        return new APIResponse(HttpStatusCode.OK, APIResponse.APISingleValueObject<string>("QueueOpen", JsonConvert.SerializeObject(Config.QueueOpenStatus)));
     }
 
     private static APIResponse HandleShuffle()
