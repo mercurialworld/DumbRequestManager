@@ -157,6 +157,8 @@ public static class QueueManager
         {
             ChatRequestButton.Instance.UseAttentiveButton(false);
         }
+        SocketApi.Broadcast("mapRemoved", song);
+        _ = HookApi.TriggerHook("mapRemoved", song);
         
         return Task.FromResult(true);
     }
