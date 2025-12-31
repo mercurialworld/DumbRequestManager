@@ -24,8 +24,7 @@ internal class ChatRequestButton(
     public static ChatRequestButton Instance = null!;
     
     // ReSharper disable FieldCanBeMadeReadOnly.Local
-    [UIComponent("standardButton")] private Button _standardButton = null!;
-    [UIComponent("attentionButton")] private Button _attentionButton = null!;
+    [UIComponent("requestButton")] private Button _requestButton = null!;
     // ReSharper restore FieldCanBeMadeReadOnly.Local
     
     private static readonly Color IdleColor = new Color(1, 1, 1, 0.5f);
@@ -42,17 +41,8 @@ internal class ChatRequestButton(
             "DumbRequestManager.UI.BSML.ChatRequestButton.bsml"),
             levelSelectionNavigationController.rectTransform.gameObject, this);
         
-        _standardButton.gameObject.name = "DRM_StandardButton";
-        _standardButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = IdleColor;
-
-        _attentionButton.gameObject.name = "DRM_AttentionButton";
-        _attentionButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = AttentionColor;
-        
-        if (_attentionButton.transform.Find("BG").TryGetComponent(out ImageView imageView))
-        {
-            imageView.material = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "AnimatedButton");
-            imageView.SetAllDirty();
-        }
+        _requestButton.gameObject.name = "DRM_RequestButton";
+        _requestButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = IdleColor;
         
         UseAttentiveButton(false);
     }
@@ -60,13 +50,35 @@ internal class ChatRequestButton(
     public void Dispose()
     {
     }
-    
-    public void UseAttentiveButton(bool value)
+
+    private void MakeButtonAttentive()
     {
-        _standardButton.gameObject.SetActive(!value);
-        _attentionButton.gameObject.SetActive(value);
+        _requestButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = AttentionColor;
         
-        _standardButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = value ? Color.white : IdleColor;
+        if (!_requestButton.transform.Find("BG").TryGetComponent(out ImageView imageView)) return;
+        imageView.material = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "AnimatedButton");
+        imageView.SetAllDirty();
+    }
+    
+    private void MakeButtonStandard()
+    {
+        _requestButton.transform.FindChildRecursively("Icon").GetComponent<ImageView>().color = IdleColor;
+        
+        if (!_requestButton.transform.Find("BG").TryGetComponent(out ImageView imageView)) return;
+        imageView.material = Resources.FindObjectsOfTypeAll<Material>().First(x => x.name == "UINoGlow");
+        imageView.SetAllDirty();
+    }
+    
+    public void UseAttentiveButton(bool attention)
+    {
+        if (attention)
+        {
+            MakeButtonAttentive();
+        }
+        else
+        {
+            MakeButtonStandard();
+        }
     }
 
     [UIAction("openQueue")]

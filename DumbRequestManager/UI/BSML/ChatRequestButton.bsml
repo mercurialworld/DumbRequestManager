@@ -1,9 +1,6 @@
 ﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
     xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
-    <button-with-icon id="standardButton" icon="#ProModeIcon"
-                      on-click="openQueue"
-                      anchor-pos-x="150" scale="0.5 0.5 1.0" size-delta="25 25"/>
-    <button-with-icon id="attentionButton" icon="#ProModeIcon"
+    <button-with-icon id="requestButton" icon="#ProModeIcon"
                       on-click="openQueue"
                       anchor-pos-x="150" scale="0.5 0.5 1.0" size-delta="25 25"/>
 </bg>
