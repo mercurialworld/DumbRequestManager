@@ -116,8 +116,9 @@ internal class DownloaderUtils(IHttpService httpService) : IInitializable
             {
                 continue;
             }
-
-            string extension = Path.GetExtension(entry.Name);
+            
+            // making them "case-insensitive"
+            string extension = Path.GetExtension(entry.Name).ToLower();
             if (string.IsNullOrEmpty(extension))
             {
                 throw new MapDownloadFailedException("Map download contains files with no extension");
