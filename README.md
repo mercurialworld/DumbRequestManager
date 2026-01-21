@@ -1,3 +1,8 @@
+> [!NOTE]
+> I'm currently working on v0.7.0, which is a major refactor of the codebase. This update adds a `/removeKey` endpoint that's useful for commands like `!oops`. 
+> 
+> If you want to try it out yourself, build from the `refactor` branch or ask me on Discord (`mercurial_world`) for it. :3
+
 # DumbRequestManager
 A map request manager for Beat Saber that abstracts out functions to an HTTP GET API, with a WebSocket API and Webhook API for real-time in-game queue event responses.  
 
