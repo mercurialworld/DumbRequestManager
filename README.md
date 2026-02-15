@@ -235,3 +235,7 @@ All `pressed` events follow the same data structure:
   "QueueOpen": <boolean>
 }
 ```
+
+# Contributing
+
+If you're seeing this on GitHub, **I am not accepting pull requests on there**. If you are really adamant about improving the documentation, or if you want to fix a bug, please make an account on the Forgejo server hosted at [git.gay](https://git.gay), or better yet, [send me your PR via email](https://git-scm.com/book/en/v2/Appendix-C%3A-Git-Commands-Email).
