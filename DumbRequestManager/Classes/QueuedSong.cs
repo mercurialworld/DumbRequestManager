@@ -161,7 +161,7 @@ public class NoncontextualizedDifficulty
     };
     public NoncontextualizedDifficulty(BeatmapLevel level, BeatmapKey key, BeatmapBasicData mapData, CachedMap? cachedDetails)
     {
-        ExtraSongData.DifficultyData? diffData = SongCore.Collections.RetrieveDifficultyData(level, key);
+        SongData.DifficultyData? diffData = SongCore.Collections.GetCustomLevelSongDifficultyData(key);
         
         int mods = 0;
         if (diffData != null)
@@ -465,7 +465,7 @@ public class NoncontextualizedSong
         UsesVivify = false;
         foreach (BeatmapKey key in level.GetBeatmapKeys())
         {
-            ExtraSongData.DifficultyData? diffData = SongCore.Collections.RetrieveDifficultyData(level, key);
+            SongData.DifficultyData? diffData = SongCore.Collections.GetCustomLevelSongDifficultyData(key);
 
             if (diffData == null)
             {
@@ -520,7 +520,7 @@ public class NoncontextualizedSong
         Diffs = level.GetBeatmapKeys().Select(key =>
         {
             BeatmapBasicData? diff = level.GetDifficultyBeatmapData(key.beatmapCharacteristic, key.difficulty);
-            return new NoncontextualizedDifficulty(level, key, diff, cachedDetails);
+            return new NoncontextualizedDifficulty(level, key, diff ?? throw new NullReferenceException(), cachedDetails);
         }).ToArray();
 
         LevelIDComparer comparer = new();

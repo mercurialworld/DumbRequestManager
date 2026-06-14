@@ -10,15 +10,15 @@
         <EnableFrameworkPathOverride>true</EnableFrameworkPathOverride>
         <FrameworkPathOverride>$(BeatSaberDir)\Beat Saber_Data\Managed</FrameworkPathOverride>
         <MarkPackageReferencesAsExternallyResolved>false</MarkPackageReferencesAsExternallyResolved>
-        <Configurations>Release-1.39.1;Debug-1.39.1</Configurations>
+        <Configurations>Release-1.44.0;Debug-1.44.0</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release-1.39.1' ">
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release-1.44.0' ">
       <Optimize Condition=" '$(Optimize)' == '' ">true</Optimize>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug-1.39.1' ">
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug-1.44.0' ">
       <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
       <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
     </PropertyGroup>
