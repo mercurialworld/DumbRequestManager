@@ -161,7 +161,11 @@ public class NoncontextualizedDifficulty
     };
     public NoncontextualizedDifficulty(BeatmapLevel level, BeatmapKey key, BeatmapBasicData mapData, CachedMap? cachedDetails)
     {
+#if V1_44_0
         SongData.DifficultyData? diffData = SongCore.Collections.GetCustomLevelSongDifficultyData(key);
+#else
+        ExtraSongData.DifficultyData? diffData = SongCore.Collections.RetrieveDifficultyData(level, key);
+#endif
         
         int mods = 0;
         if (diffData != null)
@@ -465,8 +469,12 @@ public class NoncontextualizedSong
         UsesVivify = false;
         foreach (BeatmapKey key in level.GetBeatmapKeys())
         {
+#if V1_44_0
             SongData.DifficultyData? diffData = SongCore.Collections.GetCustomLevelSongDifficultyData(key);
-
+#else
+            ExtraSongData.DifficultyData? diffData = SongCore.Collections.RetrieveDifficultyData(level, key);
+#endif
+            
             if (diffData == null)
             {
                 continue;
