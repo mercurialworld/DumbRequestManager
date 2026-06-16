@@ -3,6 +3,20 @@
 <Project>
 
   <!-- Game version-dependent stuff -->
+  <PropertyGroup Condition="$(Configuration) == 'Release-1.44.0' Or $(Configuration) == 'Debug-1.44.0'">
+    <GameVersion>1.44.0</GameVersion>
+
+    <BSIPAVersion>4.3.7</BSIPAVersion>
+    <BSMLVersion>1.14.1</BSMLVersion>
+    <SiraUtilVersion>3.3.1</SiraUtilVersion>
+    <SongCoreVersion>3.16.0</SongCoreVersion>
+    <BeatSaverSharpVersion>3.4.5</BeatSaverSharpVersion>
+    <BeatSaberPlaylistsLibVersion>1.7.2</BeatSaberPlaylistsLibVersion>
+    <!-- Top-Cat's github has the updated version of BeatSaverVoting, but no binaries. Good luck talking to him about this I suppose. -->
+    <BeatSaverVotingVersion>2.4.7</BeatSaverVotingVersion>
+    <ProtobufVersion>3.0.102</ProtobufVersion>
+    <WebsocketVersion>1.0.4</WebsocketVersion>
+  </PropertyGroup>
   <PropertyGroup Condition="$(Configuration) == 'Release-1.39.1' Or $(Configuration) == 'Debug-1.39.1'">
     <GameVersion>1.39.1</GameVersion>
 
