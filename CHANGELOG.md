@@ -10,12 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changes
 - Code structure changes
   - all routes are now in their own separate static handler, woo! HTTPApi is no longer a 600+ line long file.
+- SongCore changes for 1.41+ (@TheBlackParrot !1)
+- Cached song vote scores are no longer calculated internally
+  - ok so apparently parrot forgor
 
 ## Additions
 - Add endpoint to remove a map from queue given the map's BSR key/ID/whatever they call it
   - `/removeKey/:bsr`
 - Also added a websocket message for maps removed from that endpoint
   - event name is `mapRemoved`, event data is the map that was removed
+- Set up LunaBSMod.Tasks (@TheBlackParrot !1, indirectly)
+- Add `tags`: a string array of map tags
+  - fun fact: did you know that there's a slug and a pretty display name for tags? for the sake of consistency with the API docs all tags will use the slug 
 
 # `0.6.7`
 

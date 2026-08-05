@@ -335,6 +335,8 @@ public class NoncontextualizedSong
     [JsonProperty] public bool Blacklisted => BlacklistManager.ContainsKey(BsrKey);
 
     [JsonProperty] public NoncontextualizedDifficulty[] Diffs { get; set; } = [];
+    
+    [JsonProperty] public string[] Tags { get; set; } = [];
 
     private CoverImageContainer _coverImageContainer = null!;
     public byte[]? CoverImage => _coverImageContainer.CoverImage ?? null;
@@ -386,7 +388,7 @@ public class NoncontextualizedSong
         MetadataHasSplicedCensor = Censor.Check([Title, SubTitle, Artist, Mapper]);
         Duration = song.Duration;
         Votes = [song.Votes.Up, song.Votes.Down];
-        Rating = CalculateRating(song.Votes.Up, song.Votes.Down);
+        Rating = (float)song.Votes.Score;
         UploadTime = song.UploadTimestamp;
         LastUpdated = song.LastUpdateTimestamp;
         Cover = $"https://cdn.beatsaver.com/{song.Hash}.jpg";
@@ -399,6 +401,8 @@ public class NoncontextualizedSong
         UsesMappingExtensions = ((CachedMapMods)song.Mods).HasFlag(CachedMapMods.MappingExtensions);
         UsesNoodleExtensions = ((CachedMapMods)song.Mods).HasFlag(CachedMapMods.NoodleExtensions);
         UsesVivify = ((CachedMapMods)song.Mods).HasFlag(CachedMapMods.Vivify);
+        Tags = song.Tags ?? [];
+        
         // (Local cache doesn't cache automapped maps, always false)
         Diffs = song.Difficulties.Select(x => new NoncontextualizedDifficulty(x, song)).ToArray();
         if (!skipCoverImage)
@@ -439,6 +443,7 @@ public class NoncontextualizedSong
         UsesMappingExtensions = song.LatestVersion.Difficulties.Any(x => x.MappingExtensions);
         UsesNoodleExtensions = song.LatestVersion.Difficulties.Any(x => x.NoodleExtensions);
         Diffs = song.LatestVersion.Difficulties.Select(x => new NoncontextualizedDifficulty(x)).ToArray();
+        Tags = song.Tags.ToArray();
         if (!skipCoverImage)
         {
             _coverImageContainer = new CoverImageContainer(song);
@@ -496,7 +501,7 @@ public class NoncontextualizedSong
 
             BsrKey = cachedDetails.Key.ToString("x") ?? string.Empty;
             Votes = [cachedDetails.Votes.Up, cachedDetails.Votes.Down];
-            Rating = CalculateRating(cachedDetails.Votes.Up, cachedDetails.Votes.Down);
+            Rating = (float)cachedDetails.Votes.Score;
             LastUpdated = cachedDetails.LastUpdateTimestamp;
             UploadTime = cachedDetails.UploadTimestamp;
             Cover = $"https://cdn.beatsaver.com/{cachedDetails.Hash}.jpg";
@@ -504,6 +509,7 @@ public class NoncontextualizedSong
             ScoreSaberRanked = cachedDetails.Difficulties.Any(x => x.RankedStatus.ScoreSaber.IsRanked);
             Curated = cachedDetails.Curator != null;
             CuratorName = cachedDetails.Curator ?? string.Empty;
+            Tags = cachedDetails.Tags;
         }
         else
         {
@@ -522,6 +528,7 @@ public class NoncontextualizedSong
                 ScoreSaberRanked = beatsaverDetails.Ranked;
                 Curated = beatsaverDetails.BeatmapCurator != null;
                 CuratorName = beatsaverDetails.BeatmapCurator?.Name ?? string.Empty;
+                Tags = beatsaverDetails.Tags.ToArray();
             }
         }
 
