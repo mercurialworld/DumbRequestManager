@@ -193,7 +193,7 @@ All `pressed` events follow the same data structure:
     ...
   ],
   "Tags": [
-    "kebab-case-tag",
+    <string (kebab-case-tag)>,
     ...
   ]
 } 
