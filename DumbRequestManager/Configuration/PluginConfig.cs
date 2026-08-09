@@ -32,7 +32,7 @@ internal class PluginConfig
     public virtual bool ShowRequestersInsteadOfMappers { get; set; } = false;
     public virtual bool QueueOpenStatus { get; set; } = true;
     
-    public virtual string ProtobufCacheURL { get; set; } = "https://theblackparrot.me/DumbRequestManager/cache.proto.gz";
+    public virtual string ProtobufCacheURL { get; set; } = "https://cache.pocha.moe/cache";
     
     [UseConverter(typeof(ListConverter<string>))]
     public virtual List<string> WhitelistedWipDomains { get; set; } =
