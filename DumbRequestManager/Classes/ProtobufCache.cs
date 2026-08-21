@@ -69,7 +69,7 @@ public class CachedMap
     [ProtoMember(11)] public string? Curator { get; private set; }
     [ProtoMember(12)] public CachedMapVotes Votes { get; private set; } = null!;
     [ProtoMember(13)] public CachedMapDifficulty[] Difficulties { get; private set; } = null!;
-    [ProtoMember(14)] public string[] Tags { get; private set; } = null!;
+    [ProtoMember(14)] public string[] Tags { get; private set; } = [];
 }
 
 [ProtoContract]

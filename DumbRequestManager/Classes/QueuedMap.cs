@@ -336,7 +336,7 @@ public class NoncontextualizedSong
 
     [JsonProperty] public NoncontextualizedDifficulty[] Diffs { get; set; } = [];
     
-    [JsonProperty] public string[] Tags { get; set; } = [];
+    [JsonProperty] public string[]? Tags { get; set; } = [];
 
     private CoverImageContainer _coverImageContainer = null!;
     public byte[]? CoverImage => _coverImageContainer.CoverImage ?? null;
@@ -444,6 +444,7 @@ public class NoncontextualizedSong
         UsesNoodleExtensions = song.LatestVersion.Difficulties.Any(x => x.NoodleExtensions);
         Diffs = song.LatestVersion.Difficulties.Select(x => new NoncontextualizedDifficulty(x)).ToArray();
         Tags = song.Tags.ToArray();
+        
         if (!skipCoverImage)
         {
             _coverImageContainer = new CoverImageContainer(song);
