@@ -10,7 +10,7 @@
     <BSMLVersion>1.14.1</BSMLVersion>
     <SiraUtilVersion>3.3.1</SiraUtilVersion>
     <SongCoreVersion>3.16.0</SongCoreVersion>
-    <BeatSaverSharpVersion>3.4.5</BeatSaverSharpVersion>
+    <BeatSaverSharpVersion>3.4.6</BeatSaverSharpVersion>
     <BeatSaberPlaylistsLibVersion>1.7.2</BeatSaberPlaylistsLibVersion>
     <!-- Top-Cat's github has the updated version of BeatSaverVoting, but no binaries. Good luck talking to him about this I suppose. -->
     <BeatSaverVotingVersion>2.4.7</BeatSaverVotingVersion>
@@ -24,7 +24,7 @@
     <BSMLVersion>1.12.4</BSMLVersion>
     <SiraUtilVersion>3.1.14</SiraUtilVersion>
     <SongCoreVersion>3.14.15</SongCoreVersion>
-    <BeatSaverSharpVersion>3.4.5</BeatSaverSharpVersion>
+    <BeatSaverSharpVersion>3.4.6</BeatSaverSharpVersion>
     <BeatSaberPlaylistsLibVersion>1.7.2</BeatSaberPlaylistsLibVersion>
     <BeatSaverVotingVersion>2.4.6</BeatSaverVotingVersion>
     <ProtobufVersion>3.0.102</ProtobufVersion>
@@ -36,10 +36,10 @@
     <PluginId>DumbRequestManager</PluginId>
     <PluginName>DumbRequestManager</PluginName>
     <Authors>TheBlackParrot, mercurialworld</Authors>
-    <Version>0.6.7+$(GameVersion)</Version>
+    <Version>0.7.0+$(GameVersion)</Version>
     <Description>Beat Saber map request manager that abstracts various functions for use in external applications</Description>
-    <ProjectSource>https://github.com/mercurialworld/DumbRequestManager</ProjectSource>
-    <ProjectHome>https://github.com/mercurialworld/DumbRequestManager</ProjectHome>
+    <ProjectSource>https://git.gay/imaginaldisk/DumbRequestManager</ProjectSource>
+    <ProjectHome>https://git.gay/imaginaldisk/DumbRequestManager</ProjectHome>
     <!-- <DonateUrl>https://ko-fi.com/septilateral</DonateUrl> -->
   </PropertyGroup>
 

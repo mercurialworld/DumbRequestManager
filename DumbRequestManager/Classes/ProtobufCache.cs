@@ -49,6 +49,7 @@ public class CachedMapVotes
 {
     [ProtoMember(1)] public uint Up { get; private set; }
     [ProtoMember(2)] public uint Down { get; private set; }
+    [ProtoMember(3)] public double Score { get; private set; }
 }
 
 [ProtoContract]
@@ -68,6 +69,7 @@ public class CachedMap
     [ProtoMember(11)] public string? Curator { get; private set; }
     [ProtoMember(12)] public CachedMapVotes Votes { get; private set; } = null!;
     [ProtoMember(13)] public CachedMapDifficulty[] Difficulties { get; private set; } = null!;
+    [ProtoMember(14)] public string[] Tags { get; private set; } = [];
 }
 
 [ProtoContract]

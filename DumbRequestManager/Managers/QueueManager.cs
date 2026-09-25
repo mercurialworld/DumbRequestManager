@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -59,6 +60,7 @@ public static class QueueManager
                 Plugin.DebugMessage("Using local map method");
                 
                 // can't be null here
+                // note from empoleon: yes it can, if you deleted the map in the past
                 BeatmapLevel beatmapLevel = SongCore.Loader.GetLevelByHash(hash)!;
                 queuedSong = new NoncontextualizedSong(beatmapLevel);
             }
@@ -139,6 +141,26 @@ public static class QueueManager
         _ = HookApi.TriggerHook("mapAdded", queuedSong);
         
         return queuedSong;
+    }
+
+    public static Task<bool> RemoveKey(string key, out NoncontextualizedSong? song)
+    {
+        song = QueuedSongs.FirstOrDefault(x => x.BsrKey == key);
+        if (song == null) return Task.FromResult(false);
+        
+        QueuedSongs.Remove(song);
+        Plugin.Log.Info($"Removed {key} from queue, queue now has {QueuedSongs.Count} map(s)");
+        
+        // [TODO] remove preview stuff if the song being removed from queue is the selected one 
+        QueueViewController.RefreshQueue();
+        if (QueuedSongs.Count == 0)
+        {
+            ChatRequestButton.Instance.UseAttentiveButton(false);
+        }
+        SocketApi.Broadcast("mapRemoved", song);
+        _ = HookApi.TriggerHook("mapRemoved", song);
+        
+        return Task.FromResult(true);
     }
 
     public static void Shuffle()
