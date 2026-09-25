@@ -10,7 +10,7 @@
     <BSMLVersion>1.14.1</BSMLVersion>
     <SiraUtilVersion>3.3.1</SiraUtilVersion>
     <SongCoreVersion>3.16.0</SongCoreVersion>
-    <BeatSaverSharpVersion>3.4.5</BeatSaverSharpVersion>
+    <BeatSaverSharpVersion>3.4.6</BeatSaverSharpVersion>
     <BeatSaberPlaylistsLibVersion>1.7.2</BeatSaberPlaylistsLibVersion>
     <!-- Top-Cat's github has the updated version of BeatSaverVoting, but no binaries. Good luck talking to him about this I suppose. -->
     <BeatSaverVotingVersion>2.4.7</BeatSaverVotingVersion>
