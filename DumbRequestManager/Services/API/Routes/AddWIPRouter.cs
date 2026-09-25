@@ -82,24 +82,13 @@ public class AddWIPRouter
         
         if (int.TryParse(input, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out _))
         {
-            var urlSuffix = $"/wips/{input}.zip";
-            
-            switch (input[0])
-            {
-                case '0':
-                    url = "https://wipbot.com" + urlSuffix;
-                    break;
-                case '8':
-                case '9':
-                    // both point to the same backend, so there's less work for me to do on my end
-                    // https://github.com/mercurialworld/DumbRequestManager/issues/9#issuecomment-3605892011
-                    url = "https://wip.hawk.quest" + urlSuffix;
-                    break;
-                default:
-                    res.Payload = APIResponse.APIMessage("Invalid WIP code.");
-                    return null;
-            }
-        } 
+            url = $"https://wipbot.com/wips/{input}.zip";
+        }
+        else
+        {
+            res.Payload = APIResponse.APIMessage("Invalid WIP URL.");
+            return null;
+        }
         
         bool isValidURL = Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) 
                           && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
