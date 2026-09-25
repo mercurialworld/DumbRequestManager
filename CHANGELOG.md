@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project adheres\* to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 # UNRELEASED
 
@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SongCore changes for 1.41+ (@TheBlackParrot !1)
 - Cached song vote scores are no longer calculated internally
   - ok so apparently parrot forgor
+- When querying from BeatSaver, maps with Vivify will actually show that they have Vivify
+  - this also fixes a bug where maps with null tags will hang the entire API
+  - i will include Parrot's fork of BeatSaverSharp with this release
 
 ## Additions
 - Add endpoint to remove a map from queue given the map's BSR key/ID/whatever they call it
@@ -21,7 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - event name is `mapRemoved`, event data is the map that was removed
 - Set up LunaBSMod.Tasks (@TheBlackParrot !1, indirectly)
 - Add `tags`: a string array of map tags
-  - fun fact: did you know that there's a slug and a pretty display name for tags? for the sake of consistency with the API docs all tags will use the slug 
+  - fun fact: did you know that there's a slug and a pretty display name for tags? for the sake of consistency with the API docs all tags will use the slug (`kebab-case`)
+
+## Removals
+- Removed ThaNightHawk's WIPBot server (o7)
+  - wasn't being used as much as daniel's, according to him
 
 # `0.6.7`
 
