@@ -24,7 +24,7 @@
     <BSMLVersion>1.12.4</BSMLVersion>
     <SiraUtilVersion>3.1.14</SiraUtilVersion>
     <SongCoreVersion>3.14.15</SongCoreVersion>
-    <BeatSaverSharpVersion>3.4.5</BeatSaverSharpVersion>
+    <BeatSaverSharpVersion>3.4.6</BeatSaverSharpVersion>
     <BeatSaberPlaylistsLibVersion>1.7.2</BeatSaberPlaylistsLibVersion>
     <BeatSaverVotingVersion>2.4.6</BeatSaverVotingVersion>
     <ProtobufVersion>3.0.102</ProtobufVersion>

@@ -18,7 +18,8 @@ Currently only tested on Beat Saber versions 1.39.1 or newer. Versions of the mo
 ### Mod Dependencies
 - BeatSaberMarkupLanguage
 - BeatSaberPlaylistsLib
-- BeatSaverSharp
+- BeatSaverSharp **v3.4.6** (TheBlackParrot fork) (REQUIRED)
+  - https://github.com/TheBlackParrot/BeatSaverSharper/releases/tag/3.4.6
 - BeatSaverVoting
 - protobuf-net
 - SiraUtil
