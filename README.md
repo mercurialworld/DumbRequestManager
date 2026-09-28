@@ -1,3 +1,7 @@
+> [!NOTE]
+> This branch is for if you want to use TheBlackParrot's library mods (BeatLeaderStarRatingCache, OpenMapVoting) instead of whatever's already available in BeatMods.
+> Eventually I'll get around to merging this to main and adding a build flag or something.
+
 # DumbRequestManager
 A map request manager for Beat Saber that abstracts out functions to an HTTP GET API, with a WebSocket API and Webhook API for real-time in-game queue event responses.  
 
