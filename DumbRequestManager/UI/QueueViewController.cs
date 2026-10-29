@@ -724,7 +724,16 @@ internal class QueueViewController : BSMLAutomaticViewController
                 if (beatmap != null)
                 {
                     Plugin.DebugMessage("Description updated");
-                    detailsDescription.text = beatmap.Description;
+
+                    string descriptionText = beatmap.Description;
+
+                    if (queuedSong.Message != null)
+                    {
+                        descriptionText =
+                            $"<color={PluginConfig.Instance.AttentionColor}>🗨️ {queuedSong.Message}</color>\n\n{descriptionText}";
+                    }
+                    
+                    detailsDescription.text = descriptionText;
                     detailsDescription.color = Color.white;
                 }
             }

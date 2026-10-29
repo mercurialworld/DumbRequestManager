@@ -240,6 +240,12 @@ public class NoncontextualizedSong
     [JsonProperty] [UIValue("user")]
     public string? User { get; set; }
     
+    [JsonProperty] 
+    public string? Message { get; set; }
+
+    [UIValue("messageIndicator")] 
+    public string MessageIndicator => string.IsNullOrEmpty(Message) ? "" : "🗒️";
+    
     [JsonProperty] public string? Service { get; set; }
     
     private string HoverStringForMapperDisplay => $"requested by {User}";

@@ -16,10 +16,11 @@ using Random = UnityEngine.Random;
 namespace DumbRequestManager.Managers;
 
 [JsonObject(MemberSerialization.OptIn)]
-public readonly struct PersistentQueueEntry(string key, string? user, bool isWip = false)
+public readonly struct PersistentQueueEntry(string key, string? user, string? message, bool isWip = false)
 {
     [JsonProperty] internal string Key => key;
     [JsonProperty] internal string? User => user;
+    [JsonProperty] internal string? Message => message;
     [JsonProperty] internal bool IsWip => isWip;
 }
 
@@ -32,7 +33,7 @@ public static class QueueManager
     public static readonly List<NoncontextualizedSong> QueuedSongs = [];
     public static List<NoncontextualizedSong> MapsActedOn = [];
 
-    public static async Task<NoncontextualizedSong?> AddKey(string key, string? user = null, bool skipPersistence = false, bool prepend = false, string? service = null)
+    public static async Task<NoncontextualizedSong?> AddKey(string key, string? user = null, bool skipPersistence = false, bool prepend = false, string? service = null, string? message = null)
     {
         NoncontextualizedSong queuedSong;
         
@@ -81,6 +82,11 @@ public static class QueueManager
             queuedSong.Service = service;
         }
 
+        if (message != null)
+        {
+            queuedSong.Message = message;
+        }
+
         if (prepend)
         {
             QueuedSongs.Insert(0, queuedSong);
@@ -89,7 +95,7 @@ public static class QueueManager
         {
             QueuedSongs.Add(queuedSong);
         }
-
+        
         ChatRequestButton.Instance.UseAttentiveButton(true);
         QueueViewController.RefreshQueue();
 
@@ -205,7 +211,7 @@ public static class QueueManager
             }
             else
             {
-                await AddKey(entry.Key, entry.User, true);
+                await AddKey(entry.Key, entry.User, true, message: entry.Message);
             }
         }
         Plugin.DebugMessage("Loaded persistent queue");
@@ -220,7 +226,7 @@ public static class QueueManager
         // we can do this the easy way, should be fine
         // if it becomes a problem i'll deal with it later
         
-        PersistentQueueEntry[] keys = QueuedSongs.Select(x => new PersistentQueueEntry(x.BsrKey, x.User)).ToArray();
+        PersistentQueueEntry[] keys = QueuedSongs.Select(x => new PersistentQueueEntry(x.BsrKey, x.User, x.Message)).ToArray();
         File.WriteAllText(PersistentQueueFilename, JsonConvert.SerializeObject(keys, Formatting.Indented));
         
         Plugin.DebugMessage("Saved persistent queue");
