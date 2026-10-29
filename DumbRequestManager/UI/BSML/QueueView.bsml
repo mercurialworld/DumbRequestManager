@@ -148,7 +148,8 @@
                             </horizontal>
                             <horizontal preferred-height="4" vertical-fit="PreferredSize"
                                         child-expand-width="false">
-                                <image src="#ArrowIcon" image-color="#44AA77" preserve-aspect="true"
+                                <image id="detailsUpvoteIcon" 
+                                       src="#ArrowIcon" image-color="#44AA77" preserve-aspect="true"
                                        local-scale="1 -1 1"
                                        preferred-height="3" preferred-width="4"/>
                             </horizontal>
@@ -169,7 +170,8 @@
                                     child-align="MiddleLeft" spacing="1">
                             <horizontal preferred-height="4" vertical-fit="PreferredSize"
                                         child-expand-width="false">
-                                <image src="#ArrowIcon" image-color="#FF6644" preserve-aspect="true"
+                                <image id="detailsDownvoteIcon"
+                                       src="#ArrowIcon" image-color="#FF6644" preserve-aspect="true"
                                        preferred-height="3" preferred-width="4"/>
                             </horizontal>
                             <horizontal preferred-height="4" vertical-fit="PreferredSize"

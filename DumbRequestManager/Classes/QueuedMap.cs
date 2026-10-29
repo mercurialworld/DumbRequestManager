@@ -313,10 +313,10 @@ public class NoncontextualizedSong
 
     [JsonProperty] public string[] Playlists { get; set; } = [];
 
-    [JsonProperty] public int VoteStatus => string.IsNullOrEmpty(Hash) ? 0 : BeatSaverVoting.Plugin.CurrentVoteStatus(Hash) switch
+    [JsonProperty] public int VoteStatus => string.IsNullOrEmpty(Hash) ? 0 : OpenMapVoting.Actions.GetSavedVoteStatus(Hash.ToUpper()) switch
     {
-        BeatSaverVoting.Plugin.VoteType.Upvote => 1,
-        BeatSaverVoting.Plugin.VoteType.Downvote => 2,
+        true => 1,
+        false => 2,
         _ => 0
     };
     

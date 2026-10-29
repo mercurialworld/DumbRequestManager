@@ -12,8 +12,7 @@
     <SongCoreVersion>3.16.0</SongCoreVersion>
     <BeatSaverSharpVersion>3.4.6</BeatSaverSharpVersion>
     <BeatSaberPlaylistsLibVersion>1.7.2</BeatSaberPlaylistsLibVersion>
-    <!-- Top-Cat's github has the updated version of BeatSaverVoting, but no binaries. Good luck talking to him about this I suppose. -->
-    <BeatSaverVotingVersion>2.4.7</BeatSaverVotingVersion>
+    <OpenMapVotingVersion>0.0.1</OpenMapVotingVersion>
     <ProtobufVersion>3.0.102</ProtobufVersion>
     <WebsocketVersion>1.0.4</WebsocketVersion>
   </PropertyGroup>
@@ -26,7 +25,7 @@
     <SongCoreVersion>3.14.15</SongCoreVersion>
     <BeatSaverSharpVersion>3.4.6</BeatSaverSharpVersion>
     <BeatSaberPlaylistsLibVersion>1.7.2</BeatSaberPlaylistsLibVersion>
-    <BeatSaverVotingVersion>2.4.6</BeatSaverVotingVersion>
+    <OpenMapVotingVersion>0.0.1</OpenMapVotingVersion>
     <ProtobufVersion>3.0.102</ProtobufVersion>
     <WebsocketVersion>1.0.4</WebsocketVersion>
   </PropertyGroup>
@@ -51,7 +50,7 @@
     <DependsOn Include="SongCore" Version="^$(SongCoreVersion)"/>
     <DependsOn Include="BeatSaverSharp" Version="^$(BeatSaverSharpVersion)"/>
     <DependsOn Include="BeatSaberPlaylistsLib" Version="^$(BeatSaberPlaylistsLibVersion)"/>
-    <DependsOn Include="BeatSaverVoting" Version="^$(BeatSaverVotingVersion)"/>
+    <DependsOn Include="OpenMapVoting" Version=">=$(OpenMapVotingVersion)"/>
     <DependsOn Include="protobuf-net" Version="^$(ProtobufVersion)"/>
     <DependsOn Include="websocket-sharp" Version="^$(WebsocketVersion)"/>
   </ItemGroup>

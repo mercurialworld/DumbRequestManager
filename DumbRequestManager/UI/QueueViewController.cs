@@ -123,6 +123,10 @@ internal class QueueViewController : BSMLAutomaticViewController
     public TextMeshProUGUI detailsDescription = null!;
     [UIComponent("detailsDescriptionScrollView")]
     public ScrollView detailsDescriptionScrollView = null!;
+    [UIComponent("detailsUpvoteIcon")] 
+    public ImageView detailsUpvoteIcon = null!;
+    [UIComponent("detailsDownvoteIcon")] 
+    public ImageView detailsDownvoteIcon = null!;
     
     [UIComponent("detailsNotesPerSecond")]
     private static TextMeshProUGUI _detailsNps = null!;
@@ -255,6 +259,9 @@ internal class QueueViewController : BSMLAutomaticViewController
             _tableSelector.TextSegmentedControl.SelectCellWithNumber(0);
             ChangedTableView(_tableSelector.TextSegmentedControl, 0);
         }
+
+        detailsUpvoteIcon.color = OpenMapVoting.Classes.ColorSettings.UpvoteColor;
+        detailsDownvoteIcon.color = OpenMapVoting.Classes.ColorSettings.DownvoteColor;
         
         ToggleSelectionPanel(false);
 
