@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres\* to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# 0.7.0
+# UNRELEASED
+
+## Additions
+- Added functionality for request messages 
+- Add endpoint to add a (non-empty) message to a request 
+  - `/addMessage/:bsr`
+  - it's a POST request with the same formatting (or lack thereof, it's `text/plain`) as `/addWip`
+
+# `0.7.0`
 
 ## Changes
 - Code structure changes
@@ -29,13 +37,6 @@ and this project adheres\* to [Semantic Versioning](https://semver.org/spec/v2.0
 ## Removals
 - Removed ThaNightHawk's WIPBot server (o7)
   - wasn't being used as much as daniel's, according to him
-
-# `0.6.7`
-
-## Changes
-- Update, once again, WIPBot code parsing (https://github.com/Danielduel/wipbot/releases/tag/1.21.0)
-  - hawk and daniel have talked about a standardization and it takes a big weight off my shoulders! yay
-  - if a code starts with 0, it's from wipbot.com; if it starts with 8/9, it's from wip.hawk.quest
 
 # `0.6.7`
 
