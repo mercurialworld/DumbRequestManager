@@ -444,7 +444,7 @@ public class NoncontextualizedSong
         UsesNoodleExtensions = song.LatestVersion.Difficulties.Any(x => x.NoodleExtensions);
         UsesVivify = song.LatestVersion.Difficulties.Any(x => x.Vivify);
         Diffs = song.LatestVersion.Difficulties.Select(x => new NoncontextualizedDifficulty(x)).ToArray();
-        Tags = song.Tags.ToArray() ?? [];
+        Tags = song.Tags?.ToArray() ?? [];
         
         if (!skipCoverImage)
         {
