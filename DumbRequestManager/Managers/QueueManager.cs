@@ -169,6 +169,18 @@ public static class QueueManager
         return Task.FromResult(true);
     }
 
+    public static Task<bool> EditMessageByKey(string key, string message, out NoncontextualizedSong? song)
+    {
+        song = QueuedSongs.FirstOrDefault(x => x.BsrKey == key);
+        if (song == null) return Task.FromResult(false); 
+        
+        song.Message = message;
+        Plugin.Log.Info($"Song message for {key} updated");
+        QueueViewController.RefreshQueue();
+        
+        return Task.FromResult(true);
+    }
+
     public static void Shuffle()
     {
         if (QueuedSongs.Count <= 1)

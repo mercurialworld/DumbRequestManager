@@ -101,6 +101,10 @@ internal class HttpApi : IInitializable
                     response = await AddMapRouter.HandleContext(context);
                     break;
                 
+                case "addmessage":
+                    response = await AddMessageRouter.HandleContext(context);
+                    break;
+                
                 case "addwip":
                     response = await AddWIPRouter.HandleContext(context);
                     break;
