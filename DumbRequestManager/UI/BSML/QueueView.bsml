@@ -44,7 +44,9 @@
                               child-expand-width="true" child-control-width="true"
                               padding="2"
                               child-align="MiddleLeft" anchor-min-x="-0.15">
-                        <horizontal child-align="UpperLeft" child-expand-width="true">
+                        <horizontal child-align="UpperLeft" child-expand-width="false">
+                            <text data="messageIndicator"
+                                  font-size="4" align="Left" rich-text="true"/>
                             <text data="displayedTitle"
                                   font-size="4" align="Left" rich-text="true"
                                   overflow-mode="Ellipsis"/>
