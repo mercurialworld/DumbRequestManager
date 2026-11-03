@@ -730,7 +730,15 @@ internal class QueueViewController : BSMLAutomaticViewController
                     if (queuedSong.Message != null)
                     {
                         descriptionText =
-                            $"<color={PluginConfig.Instance.AttentionColor}>🗨️ {queuedSong.Message}</color>\n\n{descriptionText}";
+                            $"<line-height=75%><color={PluginConfig.Instance.AttentionColor}>🗨 {queuedSong.Message}</color>" +
+                            
+// i love this. this is so funny and not cursed at all. unity font rendering is awesome
+#if V1_44_0
+                            "<color=#FFFFFF99>\n⸻⸻⸻⸻⸻⸻⸻⸻\n</color>" + 
+#else
+                            "<color=#FFFFFF99>\n⸻⸻⸻⸻⸻⸻⸻\n</color>" + 
+#endif
+                            $"<line-height=100%>{descriptionText}";
                     }
                     
                     detailsDescription.text = descriptionText;

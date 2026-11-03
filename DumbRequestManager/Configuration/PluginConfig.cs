@@ -54,6 +54,7 @@ internal class PluginConfig
     
     public virtual string DateFormat { get; set; } = "d MMM yyyy";
     public virtual string RequestCommandString { get; set; } = "!bsr";
+    public virtual string SongMessageSymbol { get; set; } = "★";
     
     public virtual string PrimaryColor { get; set; } = "#CBADFF";
     public virtual string SecondaryColor { get; set; } = "#CBFFAD";

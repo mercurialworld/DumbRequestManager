@@ -8,6 +8,7 @@ using BeatSaverSharp.Models;
 using DumbRequestManager.Configuration;
 using DumbRequestManager.Managers;
 using DumbRequestManager.Utils;
+using IPA.Config;
 using IPA.Utilities.Async;
 using Newtonsoft.Json;
 using SongCore.Data;
@@ -232,7 +233,7 @@ public class NoncontextualizedSong
     public string? Message { get; set; }
 
     [UIValue("messageIndicator")] 
-    public string MessageIndicator => string.IsNullOrEmpty(Message) ? "" : "🗒️";
+    public string MessageIndicator => string.IsNullOrEmpty(Message) ? "" : PluginConfig.Instance.SongMessageSymbol;
     
     [JsonProperty] public string? Service { get; set; }
     
