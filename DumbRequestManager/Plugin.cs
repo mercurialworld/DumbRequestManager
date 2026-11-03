@@ -34,6 +34,7 @@ internal class Plugin
         
         PluginConfig c = ipaConfig.Generated<PluginConfig>();
         PluginConfig.Instance = c;
+        PluginConfig.MigrateCache();
 
         PluginVersion = metadata.HVersion;
 

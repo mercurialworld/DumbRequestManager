@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using IPA.Config;
 using IPA.Config.Stores;
 using IPA.Config.Stores.Attributes;
 using IPA.Config.Stores.Converters;
@@ -53,7 +54,17 @@ internal class PluginConfig
     
     public virtual string DateFormat { get; set; } = "d MMM yyyy";
     public virtual string RequestCommandString { get; set; } = "!bsr";
+    
     public virtual string PrimaryColor { get; set; } = "#CBADFF";
     public virtual string SecondaryColor { get; set; } = "#CBFFAD";
     public virtual string AttentionColor { get; set; } = "#FF7276";
+
+    public static void MigrateCache()
+    {
+        // move to my version of the cache with tags
+        if (Instance.ProtobufCacheURL.StartsWith("https://theblackparrot.me"))
+        {
+            Instance.ProtobufCacheURL = "https://cache.pocha.moe/cache";
+        }
+    }
 }
