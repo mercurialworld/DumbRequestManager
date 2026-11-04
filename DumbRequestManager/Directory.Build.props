@@ -36,7 +36,7 @@
     <PluginId>DumbRequestManager</PluginId>
     <PluginName>DumbRequestManager</PluginName>
     <Authors>TheBlackParrot, mercurialworld</Authors>
-    <Version>0.7.0+$(GameVersion)</Version>
+    <Version>0.8.0+$(GameVersion)</Version>
     <Description>Beat Saber map request manager that abstracts various functions for use in external applications</Description>
     <ProjectSource>https://git.gay/imaginaldisk/DumbRequestManager</ProjectSource>
     <ProjectHome>https://git.gay/imaginaldisk/DumbRequestManager</ProjectHome>
