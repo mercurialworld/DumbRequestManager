@@ -30,7 +30,7 @@ public class AddWIPRouter
         if (!ClientOnlyUsedForHeadRequests.DefaultRequestHeaders.Contains("User-Agent"))
         {
             ClientOnlyUsedForHeadRequests.DefaultRequestHeaders.Add("User-Agent",
-                $"DumbRequestManager/{Plugin.PluginVersion} (https://github.com/mercurialworld/DumbRequestManager)");
+                $"DumbRequestManager/{Plugin.PluginVersion} (https://git.gay/imaginaldisk/DumbRequestManager)");
         }
 
         if (!context.Request.HttpMethod.Equals("POST"))

@@ -122,7 +122,7 @@ module.exports = {
                             `${SOURCE_ID}:map-readded`
                         ]
                     },
-                    description: "The map information attached to the button press, see https://github.com/TheBlackParrot/DumbRequestManager#map-data for map data keys",
+                    description: "The map information attached to the button press, see https://git.gay/imaginaldisk/DumbRequestManager#map-data for map data keys",
                     possibleDataOutput: ["text"]
                 },
                 evaluator: (trigger, key) => {

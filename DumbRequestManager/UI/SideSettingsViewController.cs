@@ -65,7 +65,7 @@ internal class SideSettingsViewController : BSMLAutomaticViewController
     [UsedImplicitly]
     private void OpenNewReleaseTag()
     {
-        Application.OpenURL($"https://github.com/mercurialworld/DumbRequestManager/releases/tag/{VersionManager.LatestVersion?.ToString(3)}");
+        Application.OpenURL($"https://git.gay/imaginaldisk/DumbRequestManager/releases/tag/{VersionManager.LatestVersion?.ToString(3)}");
     }
     
 
